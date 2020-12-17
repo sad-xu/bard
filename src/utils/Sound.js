@@ -44,7 +44,7 @@ const LOWER_NOTE_MAP = {
 }
 
 class Sound {
-  constructor(maxSource = 3) {
+  constructor(maxSource = 5) {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
@@ -52,6 +52,7 @@ class Sound {
     for (let i = 0; i < maxSource; i++) {
       const oscillator = context.createOscillator()
       const gainNode = context.createGain()
+      oscillator.frequency.value = 0
       oscillator.connect(gainNode)
       gainNode.connect(totalGainNode)
       // oscillator.start()
@@ -67,12 +68,19 @@ class Sound {
     this.totalGainNode = totalGainNode
     this.analyser = analyser
     this.index = 0
+    this.flag = true
   }
 
   // 听个响
   // 音调 A-G
   // 高 低 平 higher lower ''
   sing(note, pitch) {
+    if (this.flag) {
+      this.sourceList.forEach(item => {
+        item.oscillator.start()
+      })
+      this.flag = false
+    }
     const { oscillator, gainNode } = this.sourceList[this.index]
     this.index = (this.index + 1) % this.sourceList.length
     if (pitch === 'higher') {
@@ -83,8 +91,9 @@ class Sound {
       oscillator.frequency.value = NOTE_MAP[note]
     }
     // gainNode.gain.value = 1
-    gainNode.gain.exponentialRampToValueAtTime(1, this.context.currentTime + 0.1)
-    gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 1)
+    const currentTime = this.context.currentTime
+    gainNode.gain.exponentialRampToValueAtTime(1, currentTime + 0.1)
+    gainNode.gain.exponentialRampToValueAtTime(0.00001, currentTime + 2)
     // this.oscillator.start()
   }
 
