@@ -43,46 +43,33 @@ const LOWER_NOTE_MAP = {
   B: 493.883
 }
 
+// https://blog.szynalski.com/2014/04/web-audio-api/
+
 class Sound {
-  constructor(maxSource = 5) {
+  constructor() {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
-    const sourceList = []
-    for (let i = 0; i < maxSource; i++) {
-      const oscillator = context.createOscillator()
-      const gainNode = context.createGain()
-      oscillator.frequency.value = 0
-      oscillator.connect(gainNode)
-      gainNode.connect(totalGainNode)
-      // oscillator.start()
-      sourceList.push({
-        oscillator,
-        gainNode
-      })
-    }
     totalGainNode.connect(analyser)
     analyser.connect(context.destination)
     this.context = context
-    this.sourceList = sourceList
     this.totalGainNode = totalGainNode
     this.analyser = analyser
-    this.index = 0
-    this.flag = true
   }
 
   // 听个响
   // 音调 A-G
   // 高 低 平 higher lower ''
   sing(note, pitch) {
-    if (this.flag) {
-      this.sourceList.forEach(item => {
-        item.oscillator.start()
-      })
-      this.flag = false
-    }
-    const { oscillator, gainNode } = this.sourceList[this.index]
-    this.index = (this.index + 1) % this.sourceList.length
+    const context = this.context
+    const oscillator = context.createOscillator()
+    const gainNode = context.createGain()
+    oscillator.connect(gainNode)
+    gainNode.connect(this.totalGainNode)
+    // 试图结束后手动断开连接，结果内存没变，每次调用反而多了一个事件监听，得出 gainNode 也会自动断开并回收
+    // oscillator.onended = () => {
+    //   gainNode.disconnect(this.totalGainNode)
+    // }
     if (pitch === 'higher') {
       oscillator.frequency.value = HIGHER_NOTE_MAP[note]
     } else if (pitch === 'lower') {
@@ -90,11 +77,11 @@ class Sound {
     } else {
       oscillator.frequency.value = NOTE_MAP[note]
     }
-    // gainNode.gain.value = 1
     const currentTime = this.context.currentTime
+    oscillator.start()
     gainNode.gain.exponentialRampToValueAtTime(1, currentTime + 0.1)
-    gainNode.gain.exponentialRampToValueAtTime(0.00001, currentTime + 2)
-    // this.oscillator.start()
+    gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + 1.5)
+    oscillator.stop(currentTime + 1.5)
   }
 
   // 设置总音量

@@ -11,7 +11,7 @@ import Sound from '@/utils/Sound'
 import KeyBoard from './keyboard/KeyBoard'
 import MenuBoard from './menuboard/MenuBoard'
 
-const sounder = new Sound(10)
+const sounder = new Sound(5)
 
 export default {
   name: 'Home',
