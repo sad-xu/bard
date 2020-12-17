@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+//  TODO: add Vuex
 
 import '@/styles/index.scss'
 

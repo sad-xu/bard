@@ -44,16 +44,8 @@ const LOWER_NOTE_MAP = {
 }
 
 class Sound {
-  constructor() {
-    this.context = new (window.AudioContext || window.webkitAudioContext)()
-    this.sourceList = []
-    this.totalGainNode = null
-    this.analyser = null
-    this.index = 0
-  }
-
-  init(maxSource = 3) {
-    const context = this.context
+  constructor(maxSource = 3) {
+    const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
     const sourceList = []
@@ -62,6 +54,7 @@ class Sound {
       const gainNode = context.createGain()
       oscillator.connect(gainNode)
       gainNode.connect(totalGainNode)
+      // oscillator.start()
       sourceList.push({
         oscillator,
         gainNode
@@ -69,8 +62,11 @@ class Sound {
     }
     totalGainNode.connect(analyser)
     analyser.connect(context.destination)
+    this.context = context
+    this.sourceList = sourceList
     this.totalGainNode = totalGainNode
     this.analyser = analyser
+    this.index = 0
   }
 
   // 听个响
@@ -78,21 +74,23 @@ class Sound {
   // 高 低 平 higher lower ''
   sing(note, pitch) {
     const { oscillator, gainNode } = this.sourceList[this.index]
+    this.index = (this.index + 1) % this.sourceList.length
     if (pitch === 'higher') {
-      oscillator.freqency.value = HIGHER_NOTE_MAP[note]
+      oscillator.frequency.value = HIGHER_NOTE_MAP[note]
     } else if (pitch === 'lower') {
-      oscillator.freqency.value = LOWER_NOTE_MAP[note]
+      oscillator.frequency.value = LOWER_NOTE_MAP[note]
     } else {
-      oscillator.freqency.value = NOTE_MAP[note]
+      oscillator.frequency.value = NOTE_MAP[note]
     }
-    gainNode.gain.value = 1
-    gainNode.gain.exponentialRampToValueAtTime(0, this.contect.currentTime + 1)
+    // gainNode.gain.value = 1
+    gainNode.gain.exponentialRampToValueAtTime(1, this.context.currentTime + 0.1)
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 1)
     // this.oscillator.start()
   }
 
   // 设置总音量
   setVolume(percentage) {
-    this.totalGainNode.gain.setValueAtTime(3.4 * percentage, this.contect.currentTime)
+    this.totalGainNode.gain.setValueAtTime(3.4 * percentage, this.context.currentTime)
   }
 }
 
