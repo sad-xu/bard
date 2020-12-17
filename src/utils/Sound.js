@@ -1,57 +1,47 @@
-
-// 音階表記リスト
-// フラット・シャープは別途計算する
-var WebAudioPlayerPitchNameMap = {
-  C: 0,
-  D: 2,
-  E: 4,
-  F: 5,
-  G: 7,
-  A: 9,
-  B: 11
+const HIGHER_NOTE_MAP = {
+  C: 1046.502, // 63: 6C
+  'C+': 1108.731, // 64: 6C+
+  D: 1174.659, // 65: 6D
+  'D+': 1244.508, // 66: 6D+
+  E: 1318.510, // 67: 6E
+  F: 1396.913, // 68: 6F
+  'F+': 1479.978, // 69: 6F+
+  G: 1567.982, // 70: 6G
+  'G+': 1661.219, // 71: 6G+
+  A: 1760.000, // 72: 6A
+  'A+': 1864.655, // 73: 6A+
+  B: 1975.533 // 74: 6B
 }
 
-// 周波数リスト
-var WebAudioPlayerFrequencyList = [
-  261.626, // 39: 4C
-  277.183, // 40: 4C+
-  293.665, // 41: 4D
-  311.127, // 42: 4D+
-  329.628, // 43: 4E
-  349.228, // 44: 4F
-  369.994, // 45: 4F+
-  391.995, // 46: 4G
-  415.305, // 47: 4G+
-  440.000, // 48: 4A
-  466.164, // 49: 4A+
-  493.883, // 50: 4B
+const NOTE_MAP = {
+  C: 523.251,
+  'C+': 554.365,
+  D: 587.330,
+  'D+': 622.254,
+  E: 659.255,
+  F: 698.456,
+  'F+': 739.989,
+  G: 783.991,
+  'G+': 830.609,
+  A: 880.000,
+  'A+': 932.328,
+  B: 987.767
+}
 
-  523.251, // 51: 5C
-  554.365, // 52: 5C+
-  587.330, // 53: 5D
-  622.254, // 54: 5D+
-  659.255, // 55: 5E
-  698.456, // 56: 5F
-  739.989, // 57: 5F+
-  783.991, // 58: 5G
-  830.609, // 59: 5G+
-  880.000, // 60: 5A
-  932.328, // 61: 5A+
-  987.767, // 62: 5B
-
-  1046.502, // 63: 6C
-  1108.731, // 64: 6C+
-  1174.659, // 65: 6D
-  1244.508, // 66: 6D+
-  1318.510, // 67: 6E
-  1396.913, // 68: 6F
-  1479.978, // 69: 6F+
-  1567.982, // 70: 6G
-  1661.219, // 71: 6G+
-  1760.000, // 72: 6A
-  1864.655, // 73: 6A+
-  1975.533 // 74: 6B
-]
+const LOWER_NOTE_MAP = {
+  C: 261.626,
+  'C+': 277.183,
+  D: 293.665,
+  'D+': 311.127,
+  E: 329.628,
+  F: 349.228,
+  'F+': 369.994,
+  G: 391.995,
+  'G+': 415.305,
+  A: 440.000,
+  'A+': 466.164,
+  B: 493.883
+}
 
 class Sound {
   constructor() {
@@ -84,15 +74,23 @@ class Sound {
   }
 
   // 听个响
-  sing(s) {
+  // 音调 A-G
+  // 高 低 平 higher lower ''
+  sing(note, pitch) {
     const { oscillator, gainNode } = this.sourceList[this.index]
-    oscillator.freqency.value = 523.251
+    if (pitch === 'higher') {
+      oscillator.freqency.value = HIGHER_NOTE_MAP[note]
+    } else if (pitch === 'lower') {
+      oscillator.freqency.value = LOWER_NOTE_MAP[note]
+    } else {
+      oscillator.freqency.value = NOTE_MAP[note]
+    }
     gainNode.gain.value = 1
     gainNode.gain.exponentialRampToValueAtTime(0, this.contect.currentTime + 1)
     // this.oscillator.start()
   }
 
-  // 设置音量
+  // 设置总音量
   setVolume(percentage) {
     this.totalGainNode.gain.setValueAtTime(3.4 * percentage, this.contect.currentTime)
   }

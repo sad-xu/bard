@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 
+import '@/styles/index.scss'
+
 const IS_DEV = process.env.NODE_ENV !== 'production'
 
 Vue.config.devtools = IS_DEV

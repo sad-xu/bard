@@ -15,7 +15,7 @@ module.exports = {
   assetsDir: 'static',
   productionSourceMap: false,
   devServer: {
-    port: 8543,
+    port: 8024,
     open: true,
     overlay: {
       warnings: false,
