@@ -1,23 +1,21 @@
 <template>
   <div>
     <!-- <canvas id="bg-canvas"></canvas> -->
-    <menu-board></menu-board>
-    <key-board @sing="sing"></key-board>
+    <keyboard-menu></keyboard-menu>
+    <keyboard @sing="sing"></keyboard>
   </div>
 </template>
 
 <script>
-import Sound from '@/utils/Sound'
-import KeyBoard from './keyboard/KeyBoard'
-import MenuBoard from './menuboard/MenuBoard'
-
-const sounder = new Sound(5)
+import sounder from '@/utils/Sound'
+import Keyboard from './keyboard/Keyboard'
+import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 
 export default {
   name: 'Home',
   components: {
-    MenuBoard,
-    KeyBoard
+    Keyboard,
+    KeyboardMenu
   },
   data() {
     return {
@@ -31,7 +29,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

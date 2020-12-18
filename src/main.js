@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-//  TODO: add Vuex
+import store from './store'
 
 import '@/styles/index.scss'
 
@@ -16,5 +16,6 @@ window.addEventListener('unhandledrejection', e => console.log('reject', e))
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

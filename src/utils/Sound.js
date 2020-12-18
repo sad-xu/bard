@@ -43,8 +43,6 @@ const LOWER_NOTE_MAP = {
   B: 493.883
 }
 
-// https://blog.szynalski.com/2014/04/web-audio-api/
-
 class Sound {
   constructor() {
     const context = new (window.AudioContext || window.webkitAudioContext)()
@@ -60,6 +58,7 @@ class Sound {
   // 听个响
   // 音调 A-G
   // 高 低 平 higher lower ''
+  // https://blog.szynalski.com/2014/04/web-audio-api/
   sing(note, pitch) {
     const context = this.context
     const oscillator = context.createOscillator()
@@ -90,4 +89,4 @@ class Sound {
   }
 }
 
-export default Sound
+export default new Sound()
