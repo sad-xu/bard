@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <canvas id="bg-canvas"></canvas> -->
-    <keyboard-menu></keyboard-menu>
+    <keyboard-menu v-if="showKeyboardMenu"></keyboard-menu>
     <keyboard @sing="sing"></keyboard>
   </div>
 </template>
@@ -20,6 +20,11 @@ export default {
   data() {
     return {
 
+    }
+  },
+  computed: {
+    showKeyboardMenu() {
+      return this.$store.getters.showKeyboardMenu
     }
   },
   methods: {
