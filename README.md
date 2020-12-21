@@ -15,3 +15,15 @@
 动态背景 切换
 
 MIDI 相关
+
+## 公共组件
+
+ff-dialog 模态框
+
+ff-radio 单选框
+
+ff-select 选择器
+
+ff-silder 滑块
+
+ff-button 按钮

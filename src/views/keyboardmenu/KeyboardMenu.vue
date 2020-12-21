@@ -1,25 +1,42 @@
 <template>
-  <div class="menu-model">
-    <div class="menu" :style="`transform:translate(${x}px, ${y}px);`">
-      <div
-        class="menu-header"
-        @mousedown="handleMouseDown"
-        @mousemove="handleMouseMove"
-        @mouseup="handleMouseUp"
-        @mouseout="handleMouseUp">
-        <div class="menu-title">
-          标题
+  <ff-dialog title="乐器演奏操作设置">
+    <div>
+      <input type="radio">
+      <span>全音阶一同显示、设置按键</span>
+    </div>
+    <div class="panel-wrapper">
+      <div class="panel">
+        <div class="panel-item">
+          <div v-for="item in keyConfig[0]" :key="item.note">
+            {{ item.note }}
+            <div class="input">
+              {{ item.key }}
+            </div>
+          </div>
         </div>
-        <div class="menu-close" @click="closeKeyboardMenu">
-          x
+        <div>
+          <div class="panel-item">
+            <div v-for="item in keyConfig[1]" :key="item.note">
+              {{ item.note }}
+              <div class="input">
+                {{ item.key }}
+              </div>
+            </div>
+          </div>
+          <div class="panel-item">
+            <div v-for="item in keyConfig[2]" :key="item.note">
+              {{ item.note }}
+              <div class="input">
+                {{ item.key }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="menu-body">
-      </div>
-      <div class="menu-footer">
+      <div class="panel">
       </div>
     </div>
-  </div>
+  </ff-dialog>
 </template>
 
 <script>
@@ -27,82 +44,62 @@ export default {
   name: 'KeyboardMenu',
   data() {
     return {
-      // 拖拽相关
-      isMoving: false,
-      startX: 0,
-      srartY: 0,
-      lastX: 0,
-      lastY: 0,
-      x: 0,
-      y: 0
-    }
-  },
-  methods: {
-    closeKeyboardMenu() {
-      this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
-    },
-    handleMouseDown(e) {
-      this.isMoving = true
-      this.startX = e.x
-      this.startY = e.y
-    },
-    handleMouseMove(e) {
-      if (this.isMoving) {
-        this.x = this.lastX + e.x - this.startX
-        this.y = this.lastY + e.y - this.startY
-      }
-    },
-    handleMouseUp(e) {
-      this.isMoving = false
-      this.lastX = this.x
-      this.lastY = this.y
+      keyConfig: [
+        [
+          { note: '1', key: '' },
+          { note: '2', key: '' },
+          { note: '3', key: '' },
+          { note: '4', key: '' },
+          { note: '5', key: '' },
+          { note: '6', key: '' },
+          { note: '7', key: '' },
+          { note: 'i', key: '' }
+        ],
+        [
+          { note: '1#', key: '' },
+          { note: '3b', key: '' }
+        ],
+        [
+          { note: '4#', key: '' },
+          { note: '5#', key: '' },
+          { note: '6b', key: '' }
+        ]
+      ]
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.menu-model {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.1);
-  z-index: 9;
+.panel-wrapper {
+  display: flex;
+}
+.panel {
+  display: flex;
+  background-color: #2e302e;
+  box-shadow: 1px 1px #000;
+  padding: 18px;
+  > div {
+    width: 130px;
+  }
+  .panel-item {
+    display: flex;
+    flex-direction: column;
+    > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
 }
 
-.menu {
-  position: absolute;
-  top: 10px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 710px;
-  height: 430px;
-  z-index: 10;
-  padding: 6px;
-  background-color: #383838;
-  color: #fff;
-  border-radius: 10px;
-  .menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #bfbfbf;
-    cursor: move;
-    .menu-title {
-      cursor: default;
-    }
-    .menu-close {
-      cursor: default;
-    }
-  }
-  .menu-body {
-
-  }
-  .menu-footer {
-
-  }
+.input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 18px;
+  background-color: #c7c7c7;
+  color: #3a3a3a;
 }
 </style>

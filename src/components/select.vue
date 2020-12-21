@@ -1,8 +1,8 @@
 <template>
   <div class="ff-select" @click.stop="toggleMenu">
     <div class="ff-select-label">
-      <div>{{ selectedLabel }}</div>
       <span class="ff-arrow" :class="{ 'ff-arrow-rotate': visible }">▶</span>
+      <div>{{ selectedLabel }}</div>
     </div>
     <transition name="ff-zome-in-top">
       <ul v-show="visible" class="ff-select-dropdown__list">
@@ -18,8 +18,17 @@
 </template>
 
 <script>
+/**
+ * 选择器
+ *  v-model 绑定值
+ *  options 备选项 [{ label, value }]
+ *
+ *  @change 选中值变化时触发
+ *
+ */
+
 export default {
-  name: 'FfMenu',
+  name: 'FfSelect',
   model: {
     prop: 'value',
     event: 'select'
@@ -42,7 +51,10 @@ export default {
     }
   },
   created() {
-    // if (this.value = )
+    const selecteditem = this.options.find(item => item.value === this.value)
+    if (selecteditem) {
+      this.selectedLabel = selecteditem.label
+    }
   },
   methods: {
     toggleMenu() {
@@ -51,6 +63,7 @@ export default {
     handleSelect(item) {
       if (this.value !== item.value) {
         this.$emit('select', item.value)
+        this.$emit('change', item)
         this.selectedLabel = item.label
       }
     }
@@ -74,6 +87,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
+  background-color: #6b6d6b;
+  color: #fff;
   cursor: pointer;
   .ff-arrow {
     transition: transform 0.3s;
@@ -86,10 +101,13 @@ export default {
 .ff-select-dropdown__list {
   position: absolute;
   top: 100%;
+  width: 100%;
+  margin-top: 4px;
+  background-color: #6b6d6b;
+  color: #fff;
   .ff-select-dropdown__item {
     font-size: 14px;
     padding: 0 10px;
-    color: #606266;
     // height: 34px;
     // line-height: 34px;
     cursor: pointer;

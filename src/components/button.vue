@@ -9,6 +9,11 @@
 </template>
 
 <script>
+/**
+ * 按钮
+ *
+ */
+
 export default {
   name: 'FfButton',
   methods: {

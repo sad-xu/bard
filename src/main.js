@@ -5,8 +5,13 @@ import store from './store'
 
 import '@/styles/index.scss'
 
-const IS_DEV = process.env.NODE_ENV !== 'production'
+import components from './components'
 
+components.forEach(component => {
+  Vue.component(component.name, component)
+})
+
+const IS_DEV = process.env.NODE_ENV !== 'production'
 Vue.config.devtools = IS_DEV
 Vue.config.silent = IS_DEV
 Vue.config.productionTip = IS_DEV
