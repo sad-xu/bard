@@ -104,7 +104,7 @@ export default {
     }
   }
   .menu-body {
-
+    padding: 10px;
   }
   .menu-footer {
 

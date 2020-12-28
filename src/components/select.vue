@@ -105,6 +105,7 @@ export default {
   margin-top: 4px;
   background-color: #6b6d6b;
   color: #fff;
+  z-index: 9;
   .ff-select-dropdown__item {
     font-size: 14px;
     padding: 0 10px;

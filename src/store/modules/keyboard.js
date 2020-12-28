@@ -2,14 +2,15 @@ const state = {
   keyMap: {
     higher: 'shiftKey',
     lower: 'ctrlKey',
-    common: {
-      Digit1: 'C',
-      Digit2: 'D',
-      Digit3: 'E',
-      Digit4: 'F',
-      Digit5: 'G',
-      Digit6: 'A',
-      Digit7: 'B'
+    common: { // 物理按键 -> 音符
+      Digit1: '1',
+      Digit2: '2',
+      Digit3: '3',
+      Digit4: '4',
+      Digit5: '5',
+      Digit6: '6',
+      Digit7: '7',
+      Digit8: 'i'
     }
   },
   showKeyboardMenu: false

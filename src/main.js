@@ -19,6 +19,8 @@ Vue.config.errorHandler = (err, vm, info) => console.log(err, info)
 window.addEventListener('error', e => console.log('window err:', e))
 window.addEventListener('unhandledrejection', e => console.log('reject', e))
 
+window.addEventListener('contextmenu', e => e.preventDefault())
+
 new Vue({
   router,
   store,

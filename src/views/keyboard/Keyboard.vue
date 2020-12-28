@@ -54,14 +54,14 @@ export default {
     return {
       // [ label 音符, code 物理按键 ]
       keyboard: [
-        { label: '1', code: 'Digit1' },
-        { label: '2', code: 'Digit2' },
-        { label: '3', code: 'Digit3' },
-        { label: '4', code: 'Digit4' },
-        { label: '5', code: 'Digit5' },
-        { label: '6', code: 'Digit6' },
-        { label: '7', code: 'Digit7' },
-        { label: 'i', code: 'Digit8' }
+        { label: '1', code: '' },
+        { label: '2', code: '' },
+        { label: '3', code: '' },
+        { label: '4', code: '' },
+        { label: '5', code: '' },
+        { label: '6', code: '' },
+        { label: '7', code: '' },
+        { label: 'i', code: '' }
       ],
       higherPressed: false,
       lowerPressed: false,
@@ -72,6 +72,29 @@ export default {
   computed: {
     canPlay() {
       return !this.$store.getters.showKeyboardMenu
+    },
+    keyMap() {
+      return this.$store.getters.keyMap
+    }
+  },
+  watch: {
+    // 键位映射变化后
+    'keyMap.common': {
+      handler(common) {
+        const obj = {}
+        for (const code in common) {
+          obj[common[code]] = code
+        }
+        const keyboard = []
+        this.keyboard.forEach(item => {
+          keyboard.push({
+            label: item.label,
+            code: obj[item.label]
+          })
+        })
+        this.keyboard = keyboard
+      },
+      immediate: true
     }
   },
   created() {
@@ -80,20 +103,7 @@ export default {
   methods: {
     // 绑定键盘按键
     bindMusicKeys() {
-      const keyMap = {
-        higher: 'shiftKey',
-        lower: 'ctrlKey',
-        common: {
-          Digit1: 'C',
-          Digit2: 'D',
-          Digit3: 'E',
-          Digit4: 'F',
-          Digit5: 'G',
-          Digit6: 'A',
-          Digit7: 'B'
-        }
-      }
-
+      const keyMap = this.keyMap
       // 按住重复触发处理
       let lastCode = ''
       window.addEventListener('keyup', e => {
@@ -107,9 +117,9 @@ export default {
         }
         this.pressedCodes[code] = false
       })
-
       // 组合键 altKey ctrlKey shiftKey metaKey
       window.addEventListener('keydown', e => {
+        if (e.code === 'F12') return
         e.preventDefault()
         event.returnValue = ''
         if (this.canPlay) {
