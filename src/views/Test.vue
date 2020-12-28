@@ -13,21 +13,15 @@
         每小节敲响震铃
       </ff-checkbox>
     </div>
+    <div>
+      <ff-silder v-model="silderNum" @change="handleSilderChange"></ff-silder>
+    </div>
   </div>
 </template>
 
 <script>
-import FfButton from '@/components/button.vue'
-import FfSelect from '@/components/select.vue'
-import FfCheckbox from '@/components/checkbox.vue'
-
 export default {
   name: 'Test',
-  components: {
-    FfButton,
-    FfSelect,
-    FfCheckbox
-  },
   data() {
     return {
       selectedValue: '',
@@ -36,7 +30,8 @@ export default {
         { label: 'Alt', value: 'AltKey' },
         { label: 'Ctrl', value: 'CtrlKey' }
       ],
-      checked: false
+      checked: false,
+      silderNum: 9
     }
   },
   created() {
@@ -48,6 +43,9 @@ export default {
     },
     handleSelectChange(item) {
       console.log('select', item)
+    },
+    handleSilderChange(value) {
+      console.log('silder', value)
     }
   }
 }
