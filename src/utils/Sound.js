@@ -65,7 +65,7 @@ class Sound {
     const gainNode = context.createGain()
     oscillator.connect(gainNode)
     gainNode.connect(this.totalGainNode)
-    // 试图结束后手动断开连接，结果内存没变，每次调用反而多了一个事件监听，得出 gainNode 也会自动断开并回收
+    // 试图结束后手动断开连接，结果内存没变，每次调用反而多了一个事件监听 --> gainNode 也会自动断开并回收
     // oscillator.onended = () => {
     //   gainNode.disconnect(this.totalGainNode)
     // }

@@ -30,7 +30,8 @@
     <div
       v-for="item in keyboard" :key="item.label"
       class="key" :class="{ 'key-pressed': pressedCodes[item.code] }">
-      <span>{{ item.label }}</span>
+      <span class="code">{{ item.code | toggleKeycode }}</span>
+      <span class="label">{{ item.label }}</span>
     </div>
   </div>
 </template>
@@ -103,19 +104,23 @@ export default {
   methods: {
     // 绑定键盘按键
     bindMusicKeys() {
-      const keyMap = this.keyMap
       // 按住重复触发处理
       let lastCode = ''
       window.addEventListener('keyup', e => {
-        lastCode = ''
-        // 指示器
-        const { code, key } = e
-        if (key === COMPOSITE_KEYS[keyMap.higher]) {
-          this.higherPressed = false
-        } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
-          this.lowerPressed = false
+        e.preventDefault()
+        event.returnValue = ''
+        if (this.canPlay) {
+          const keyMap = this.keyMap
+          lastCode = ''
+          // 指示器
+          const { code, key } = e
+          if (key === COMPOSITE_KEYS[keyMap.higher]) {
+            this.higherPressed = false
+          } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
+            this.lowerPressed = false
+          }
+          this.pressedCodes[code] = false
         }
-        this.pressedCodes[code] = false
       })
       // 组合键 altKey ctrlKey shiftKey metaKey
       window.addEventListener('keydown', e => {
@@ -123,6 +128,7 @@ export default {
         e.preventDefault()
         event.returnValue = ''
         if (this.canPlay) {
+          const keyMap = this.keyMap
           const { code, key } = e
           if (lastCode === code) return false
           // 指示器
@@ -141,12 +147,11 @@ export default {
               pitch
             })
             this.$set(this.pressedCodes, code, true)
-            console.log(code, note, pitch)
+            console.log(code, note, pitch, this.pressedCodes)
           }
           return false
         }
       })
-
       // 无法禁止的事件 [Shift] Ctrl (Q|N|W|T|Tab)
       window.addEventListener('beforeunload', e => {
         event.preventDefault()
@@ -168,14 +173,32 @@ export default {
   .key {
     flex-grow: 1;
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
     background-color: #f3e9be;
     padding-bottom: 20px;
     border: 1px solid #000;
     border-right: 0;
     &:last-of-type {
       border-right: 1px solid #000;
+    }
+    .code {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      color: #fff;
+      background-color: #5a5d5a;
+    }
+    .label {
+      display: flex;
+      align-items: flex-end;
+      height: 40px;
+      font-size: 12px;
+      color: #856823;
     }
   }
   .key-pressed {

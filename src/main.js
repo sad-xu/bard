@@ -5,11 +5,18 @@ import store from './store'
 
 import '@/styles/index.scss'
 
+import * as filter from '@/utils/filter.js'
+
 import components from './components'
 
 components.forEach(component => {
   Vue.component(component.name, component)
 })
+
+for (const key in filter) {
+  Vue.filter(key, filter[key])
+  Vue.prototype[key] = filter[key]
+}
 
 const IS_DEV = process.env.NODE_ENV !== 'production'
 Vue.config.devtools = IS_DEV
@@ -19,6 +26,7 @@ Vue.config.errorHandler = (err, vm, info) => console.log(err, info)
 window.addEventListener('error', e => console.log('window err:', e))
 window.addEventListener('unhandledrejection', e => console.log('reject', e))
 
+// 移除默认右键菜单
 window.addEventListener('contextmenu', e => e.preventDefault())
 
 new Vue({

@@ -50,6 +50,16 @@ export default {
       visible: false
     }
   },
+  watch: {
+    value(newV) {
+      const options = this.options
+      for (let i = 0; i < options.length; i++) {
+        if (options[i].value === newV) {
+          this.selectedLabel = options[i].label
+        }
+      }
+    }
+  },
   created() {
     const selecteditem = this.options.find(item => item.value === this.value)
     if (selecteditem) {

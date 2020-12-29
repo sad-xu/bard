@@ -17,13 +17,15 @@
           <div class="panel-item">
             <key-bind
               v-for="item in keyConfig[1]" :key="item.note"
-              :note="item.note" :label="item.label">
+              :note="item.note" :label="item.label"
+              @changeBind="changeBind(item, $event)">
             </key-bind>
           </div>
           <div class="panel-item">
             <key-bind
               v-for="item in keyConfig[2]" :key="item.note"
-              :note="item.note" :label="item.label">
+              :note="item.note" :label="item.label"
+              @changeBind="changeBind(item, $event)">
             </key-bind>
           </div>
         </div>
@@ -42,12 +44,31 @@
         <div class="panel-item">
           <div>
             <span>高半音</span>
-            <div class="input"></div>
+            <div></div>
           </div>
           <div>
             <span>低半音</span>
-            <div class="input"></div>
+            <div></div>
           </div>
+        </div>
+      </div>
+    </div>
+    <!-- footer -->
+    <div class="footer">
+      <p class="footer-tip">
+        请选择要设定的音阶，鼠标右键单击可解除设定
+      </p>
+      <div class="footer-buttons">
+        <ff-button @click="reset">
+          恢复初期设置
+        </ff-button>
+        <div>
+          <ff-button @click="applySetting">
+            应用
+          </ff-button>
+          <ff-button @click="closeMenu">
+            关闭
+          </ff-button>
         </div>
       </div>
     </div>
@@ -101,21 +122,59 @@ export default {
     this.higherKey = higher
     this.lowerKey = lower
     const obj = {}
-    const regExp = /Digit|Key/
     for (const code in common) {
       obj[common[code]] = code
     }
     this.keyConfig.forEach(panel => {
       panel.forEach(item => {
         const code = obj[item.note] || ''
-        item.label = regExp.test(code) ? code.slice(-1) : code
+        item.label = this.toggleKeycode(code)
         item.key = code
       })
     })
   },
   methods: {
-    changeBind(item, code) {
-      console.log(item, code)
+    // 绑定按键
+    changeBind(bindItem, bindCode) {
+      bindItem.label = this.toggleKeycode(bindCode)
+      bindItem.key = bindCode
+      // 重复处理
+      this.keyConfig.forEach(panel => {
+        panel.forEach(item => {
+          if (item !== bindItem && item.key === bindCode) {
+            item.label = ''
+            item.key = ''
+          }
+        })
+      })
+    },
+    // 应用
+    applySetting() {
+      const common = {}
+      this.keyConfig.forEach(panel => {
+        panel.forEach(item => {
+          if (item.key) {
+            common[item.key] = item.note
+          }
+        })
+      })
+      this.$store.dispatch('keyboard/setKeyMap', {
+        higher: this.higherKey,
+        lower: this.lowerKey,
+        common
+      })
+      this.closeMenu()
+    },
+    // 关闭
+    closeMenu() {
+      this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
+    },
+    // 恢复默认
+    reset() {
+      // TODO 默认设置
+      this.higherKey = 'shiftKey'
+      this.lowerKey = 'ctrlKey'
+      // this.keyConfig =
     }
   }
 }
@@ -156,6 +215,20 @@ export default {
   flex-direction: column;
   .panel-item {
     width: 200px;
+    margin-bottom: 15px;
+  }
+}
+
+.footer {
+  margin-top: 40px;
+  border-top: 2px solid #4e4a4e;
+  .footer-tip {
+    font-size: 13px;
+    margin: 6px 0 6px 10px;
+  }
+  .footer-buttons {
+    display: flex;
+    justify-content: space-between;
   }
 }
 

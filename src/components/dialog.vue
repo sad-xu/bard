@@ -84,7 +84,7 @@ export default {
   right: 0;
   margin: 0 auto;
   width: 710px;
-  height: 430px;
+  // height: 430px;
   z-index: 10;
   padding: 6px;
   background-color: #383838;

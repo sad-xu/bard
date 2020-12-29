@@ -1,14 +1,15 @@
 <template>
-  <!-- v-clickoutside="handleClickoutside" -->
-  <div
-    class="key-bind"
-    @mousedown="handleMousedown"
-    @keydown="handleKeydown">
+  <div class="key-bind">
     <span>{{ note }}</span>
-    <span class="input" :class="isSelected ? 'selected' : ''">
+    <span
+      class="input"
+      :class="isSelected ? 'selected' : ''"
+      @click="handleLeftclick"
+      @contextmenu="handleRightclick">
       {{ label }}
-      <!-- TODO:  -->
-      <!-- <input > -->
+      <input
+        ref="Input" type="password"
+        @keydown="handleKeydown" @blur="handleBlur">
     </span>
   </div>
 </template>
@@ -46,22 +47,31 @@ export default {
     //   console.log('clickoutside')
     //   this.isSelected = false
     // },
-    handleMousedown(e) {
-      if (e.button === 0) {
-        // 左键
+    // 鼠标左键
+    handleLeftclick(e) {
+      if (!this.isSelected) {
+        this.$refs.Input.focus()
         this.isSelected = true
-      } else if (e.button === 2) {
-        // 右键
-        this.$emit('changeBind', '')
       }
     },
+    // 鼠标右键
+    handleRightclick() {
+      if (this.isSelected) {
+        this.$emit('changeBind', '')
+      }
+      // this.isSelected = false
+    },
     handleKeydown(e) {
-      console.log('2', e)
       if (this.isSelected) {
         this.$emit('changeBind', e.code)
         e.preventDefault()
         event.returnValue = ''
       }
+    },
+    handleBlur(e) {
+      setTimeout(() => {
+        this.isSelected = false
+      }, 100)
     }
   }
 }
@@ -80,6 +90,14 @@ export default {
     height: 20px;
     background-color: #c7c7c7;
     color: #3a3a3a;
+    user-select: none;
+    input {
+      width: 0;
+      height: 0;
+      opacity: 0;
+      // visibility: hidden;
+      z-index: -1;
+    }
   }
   .selected {
     box-shadow: 3px 3px red;

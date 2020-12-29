@@ -10,7 +10,7 @@ const state = {
       Digit5: '5',
       Digit6: '6',
       Digit7: '7',
-      Digit8: 'i'
+      Digit8: ''
     }
   },
   showKeyboardMenu: false
@@ -28,6 +28,7 @@ const mutations = {
 const actions = {
   // 设置快捷键
   setKeyMap({ commit }, keyMap) {
+    console.log(keyMap)
     commit('SET_KEYMAP', keyMap)
   },
   // 切换菜单
