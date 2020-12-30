@@ -1,10 +1,13 @@
 <template>
   <div class="menu-bottoms">
     <div class="bottoms">
-      <div @click="openKeyboardMenu">
-        menu1
+      <div class="bottom" @click="openKeyboardMenu">
+        按键设置
       </div>
-      <div>menu2</div>
+      <!-- TODO: timbre -->
+      <div class="bottom">
+        音色设置
+      </div>
     </div>
     <!--  -->
     <div class="tip">
@@ -95,6 +98,8 @@ export default {
   }
 }
 .bottoms {
-
+  .bottom {
+    cursor: pointer;
+  }
 }
 </style>

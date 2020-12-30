@@ -48,11 +48,13 @@ class Sound {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
+    analyser.fftSize = 1024
     totalGainNode.connect(analyser)
     analyser.connect(context.destination)
     this.context = context
     this.totalGainNode = totalGainNode
     this.analyser = analyser
+    this.singingNum = 0 // 正在发声的发声器数量
   }
 
   // 听个响
@@ -60,6 +62,7 @@ class Sound {
   // 高 低 平 higher lower ''
   // https://blog.szynalski.com/2014/04/web-audio-api/
   sing(note, pitch) {
+    this.singingNum++
     const context = this.context
     const oscillator = context.createOscillator()
     const gainNode = context.createGain()
@@ -81,6 +84,9 @@ class Sound {
     gainNode.gain.exponentialRampToValueAtTime(1, currentTime + 0.1)
     gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + 1.5)
     oscillator.stop(currentTime + 1.5)
+    setTimeout(() => {
+      this.singingNum--
+    }, 2000)
   }
 
   // 设置总音量

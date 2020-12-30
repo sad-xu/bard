@@ -119,7 +119,7 @@ export default {
           } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
             this.lowerPressed = false
           }
-          this.pressedCodes[code] = false
+          this.$set(this.pressedCodes, code, false)
         }
       })
       // 组合键 altKey ctrlKey shiftKey metaKey
