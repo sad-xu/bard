@@ -4,8 +4,7 @@
       <div class="bottom" @click="openKeyboardMenu">
         按键设置
       </div>
-      <!-- TODO: timbre -->
-      <div class="bottom">
+      <div class="bottom" @click="openTimbreMenu">
         音色设置
       </div>
     </div>
@@ -61,6 +60,9 @@ export default {
   methods: {
     openKeyboardMenu() {
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
+    },
+    openTimbreMenu() {
+      this.$store.dispatch('timbre/toggleShowTimbreMenu')
     }
   }
 }

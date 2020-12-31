@@ -1,5 +1,5 @@
 <template>
-  <ff-dialog title="乐器演奏操作设置">
+  <ff-dialog title="乐器演奏操作设置" append-to-body @close="closeMenu">
     <ff-checkbox v-model="showFullScale">
       全音阶一同显示、设置按键
     </ff-checkbox>

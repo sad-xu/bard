@@ -2,6 +2,7 @@
   <div>
     <canvas id="Screen" ref="Screen"></canvas>
     <keyboard-menu v-if="showKeyboardMenu"></keyboard-menu>
+    <timbre-menu v-if="showTimbreMenu"></timbre-menu>
     <keyboard @sing="sing"></keyboard>
   </div>
 </template>
@@ -10,13 +11,15 @@
 import sounder from '@/utils/Sound'
 import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
+import TimbreMenu from './timbreMenu/TimbreMenu'
 import { debounce } from '@/utils'
 
 export default {
   name: 'Home',
   components: {
     Keyboard,
-    KeyboardMenu
+    KeyboardMenu,
+    TimbreMenu
   },
   data() {
     return {
@@ -26,6 +29,9 @@ export default {
   computed: {
     showKeyboardMenu() {
       return this.$store.getters.showKeyboardMenu
+    },
+    showTimbreMenu() {
+      return this.$store.getters.showTimbreMenu
     }
   },
   mounted() {
@@ -43,7 +49,6 @@ export default {
       height = screenDom.height
     }))
     const draw = () => {
-      // TODO: 空闲判定
       if (!sounder.singingNum) {
         // 空闲
       } else {

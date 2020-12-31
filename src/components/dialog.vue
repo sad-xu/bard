@@ -1,6 +1,7 @@
 <template>
-  <div class="menu-model">
-    <div class="menu" :style="`transform:translate(${x}px, ${y}px);`">
+  <div>
+    <div class="menu-model"></div>
+    <div class="menu" :style="styleObj">
       <div
         class="menu-header"
         @mousedown="handleMouseDown"
@@ -10,7 +11,7 @@
         <div class="menu-title">
           {{ title }}
         </div>
-        <div class="menu-close" @click="closeKeyboardMenu">
+        <div class="menu-close" @click="close">
           x
         </div>
       </div>
@@ -22,10 +23,39 @@
 </template>
 
 <script>
+// TODO: model唯一
 export default {
   name: 'FfDialog',
   props: {
     title: {
+      type: String,
+      default: ''
+    },
+    // dom 添加到body子级
+    appendToBody: {
+      type: Boolean,
+      default: false
+    },
+    // 相对顶部 10px
+    defaultTop: {
+      type: String,
+      default: ''
+    },
+    defaultRight: {
+      type: String,
+      default: ''
+    },
+    defaultbottom: {
+      type: String,
+      default: ''
+    },
+    // 相对中点
+    defaultLeft: {
+      type: String,
+      default: ''
+    },
+    // 默认宽度
+    width: {
       type: String,
       default: ''
     }
@@ -42,9 +72,33 @@ export default {
       y: 0
     }
   },
+  computed: {
+    styleObj() {
+      const obj = {}
+      if (this.defaultTop) obj.top = this.defaultTop
+      if (this.defaultRight) obj.right = this.defaultRight
+      if (this.defaultbottom) obj.bottom = this.defaultbottom
+      if (this.defaultLeft) obj.left = this.defaultLeft
+      return {
+        transform: `translate(${this.x}px, ${this.y}px)`,
+        width: this.width,
+        ...obj
+      }
+    }
+  },
+  mounted() {
+    if (this.appendToBody) {
+      document.body.appendChild(this.$el)
+    }
+  },
+  destroyed() {
+    if (this.appendToBody) {
+      this.$el.parentNode.removeChild(this.$el)
+    }
+  },
   methods: {
-    closeKeyboardMenu() {
-      this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
+    close() {
+      this.$emit('close')
     },
     handleMouseDown(e) {
       this.isMoving = true
@@ -104,6 +158,7 @@ export default {
     }
   }
   .menu-body {
+    position: relative;
     padding: 10px;
   }
   .menu-footer {
