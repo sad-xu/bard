@@ -48,6 +48,7 @@ class Sound {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
+    // totalGainNode.gain.setValueAtTime(0.5, context.currentTime)
     analyser.fftSize = 1024
     totalGainNode.connect(analyser)
     analyser.connect(context.destination)

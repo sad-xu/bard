@@ -104,14 +104,11 @@ export default {
   methods: {
     // 绑定键盘按键
     bindMusicKeys() {
-      // 按住重复触发处理
-      let lastCode = ''
       window.addEventListener('keyup', e => {
         e.preventDefault()
         event.returnValue = ''
         if (this.canPlay) {
           const keyMap = this.keyMap
-          lastCode = ''
           // 指示器
           const { code, key } = e
           if (key === COMPOSITE_KEYS[keyMap.higher]) {
@@ -130,7 +127,7 @@ export default {
         if (this.canPlay) {
           const keyMap = this.keyMap
           const { code, key } = e
-          if (lastCode === code) return false
+          if (this.pressedCodes[code]) return false
           // 指示器
           if (key === COMPOSITE_KEYS[keyMap.higher]) {
             this.higherPressed = true
@@ -138,7 +135,6 @@ export default {
             this.lowerPressed = true
           }
           //
-          lastCode = code
           const note = keyMap.common[code] // 物理按键
           if (note) {
             const pitch = e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : '')
@@ -147,7 +143,7 @@ export default {
               pitch
             })
             this.$set(this.pressedCodes, code, true)
-            console.log(code, note, pitch, this.pressedCodes)
+            console.log(code, note, pitch)
           }
           return false
         }
