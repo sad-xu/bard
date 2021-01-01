@@ -43,12 +43,13 @@ const LOWER_NOTE_MAP = {
   7: 493.883
 }
 
+// (oscillator --> gainNode) --> totalGainNode --> ( filter ) --> analyser --> destination
 class Sound {
   constructor() {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
-    // totalGainNode.gain.setValueAtTime(0.5, context.currentTime)
+    totalGainNode.gain.setValueAtTime(0.4, context.currentTime)
     analyser.fftSize = 1024
     totalGainNode.connect(analyser)
     analyser.connect(context.destination)
@@ -93,6 +94,18 @@ class Sound {
   // 设置总音量
   setVolume(percentage) {
     this.totalGainNode.gain.setValueAtTime(3.4 * percentage, this.context.currentTime)
+  }
+
+  // 设置音色
+  setTimbre() {
+    var biquadFilter = this.context.createBiquadFilter()
+    const currentTime = this.context.currentTime
+    biquadFilter.type = 'lowshelf'
+    biquadFilter.frequency.setValueAtTime(1000, currentTime)
+    biquadFilter.gain.setValueAtTime(25, currentTime)
+    this.totalGainNode.disconnect(this.analyser)
+    this.totalGainNode.connect(biquadFilter)
+    biquadFilter.connect(this.analyser)
   }
 }
 

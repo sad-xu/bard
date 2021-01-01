@@ -13,21 +13,26 @@
         +
       </div>
     </div>
-    <div class="tuner" @click="showTunerMenu = true">
+    <div class="tuner" @click="showTunerMenu = !showTunerMenu">
       打开调音器
     </div>
-    <ff-dialog
-      v-if="showTunerMenu" append-to-body
-      default-right="-60%" default-top="30%"
-      width="200px" @close="showTunerMenu = false">
-      调音器
-    </ff-dialog>
+    <!--  -->
+    <timbre
+      v-if="showTunerMenu"
+      :timbre-id="timbreList[selectedIndex].id"
+      @close="showTunerMenu = false">
+    </timbre>
   </ff-dialog>
 </template>
 
 <script>
+import Timbre from './Timbre'
+
 export default {
   name: 'TimbreMenu',
+  components: {
+    Timbre
+  },
   data() {
     return {
       selectedIndex: 0,
@@ -48,6 +53,8 @@ export default {
   },
   methods: {
     closeTimbreMenu() {
+      this.showTunerMenu = false
+      console.log(this.showTunerMenu)
       this.$store.dispatch('timbre/toggleShowTimbreMenu')
     }
   }

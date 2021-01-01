@@ -1,5 +1,10 @@
 const state = {
-  showTimbreMenu: false
+  showTimbreMenu: false,
+  timbreMap: {
+    1: [
+      // { type: 'BiquadFilterNode', params: {} }
+    ]
+  }
 }
 
 const mutations = {

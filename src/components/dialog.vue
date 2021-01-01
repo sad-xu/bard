@@ -92,7 +92,7 @@ export default {
     }
   },
   destroyed() {
-    if (this.appendToBody) {
+    if (this.appendToBody && this.$el && this.$el.parentNode) {
       this.$el.parentNode.removeChild(this.$el)
     }
   },
