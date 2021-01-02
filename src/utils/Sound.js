@@ -43,7 +43,7 @@ const LOWER_NOTE_MAP = {
   7: 493.883
 }
 
-// (oscillator --> gainNode) --> totalGainNode --> ( filter ) --> analyser --> destination
+// (oscillator --> gainNode) --> totalGainNode --> ( filter... ) --> analyser --> destination
 class Sound {
   constructor() {
     const context = new (window.AudioContext || window.webkitAudioContext)()
@@ -57,6 +57,9 @@ class Sound {
     this.totalGainNode = totalGainNode
     this.analyser = analyser
     this.singingNum = 0 // 正在发声的发声器数量
+    //
+    this.wave = 'sine' // 声源波形
+    this.linkedList = [totalGainNode, analyser] // 维护当前节点链
   }
 
   // 听个响
@@ -68,6 +71,7 @@ class Sound {
     const context = this.context
     const oscillator = context.createOscillator()
     const gainNode = context.createGain()
+    oscillator.type = this.wave
     oscillator.connect(gainNode)
     gainNode.connect(this.totalGainNode)
     // 试图结束后手动断开连接，结果内存没变，每次调用反而多了一个事件监听 --> gainNode 也会自动断开并回收
@@ -96,16 +100,43 @@ class Sound {
     this.totalGainNode.gain.setValueAtTime(3.4 * percentage, this.context.currentTime)
   }
 
-  // 设置音色
-  setTimbre() {
-    var biquadFilter = this.context.createBiquadFilter()
-    const currentTime = this.context.currentTime
-    biquadFilter.type = 'lowshelf'
-    biquadFilter.frequency.setValueAtTime(1000, currentTime)
-    biquadFilter.gain.setValueAtTime(25, currentTime)
-    this.totalGainNode.disconnect(this.analyser)
-    this.totalGainNode.connect(biquadFilter)
-    biquadFilter.connect(this.analyser)
+  // 设置音色 [{ type, params }]
+  setTimbre(configList) {
+    const nodeList = []
+    configList.forEach(({ type, params }) => {
+      switch (type) {
+        case 'OscillatorNode': { // 音源
+          if (params.type === 'custom') {
+            // TODO: 自定义波形
+          } else {
+            this.wave = params.type
+          }
+          break
+        }
+        case 'BiquadFilterNode': { // 过滤器
+          const biquadFilter = this.context.createBiquadFilter()
+          const currentTime = this.context.currentTime
+          const { type, frequency, gain } = params
+          biquadFilter.type = type
+          biquadFilter.frequency.setValueAtTime(frequency, currentTime)
+          biquadFilter.gain.setValueAtTime(gain, currentTime)
+          nodeList.push(biquadFilter)
+          break
+        }
+      }
+    })
+    const linkedList = this.linkedList
+    const len = linkedList.length
+    if (linkedList.length > 2) {
+      // 断开已有链接
+      linkedList[0].disconnect(linkedList[1])
+      linkedList[len - 2].disconnect(linkedList[len - 1])
+    }
+    // 添加新链接
+    linkedList.splice(1, len - 2, ...nodeList)
+    for (let i = 0; i < linkedList.length - 1; i++) {
+      linkedList[i].connect(linkedList[i + 1])
+    }
   }
 }
 

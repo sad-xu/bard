@@ -6,7 +6,7 @@
       <div
         v-for="(item, index) in timbreList" :key="item.id"
         :class="selectedIndex === index ? 'selected-timbre' : ''"
-        class="timbre" @click="selectedIndex = index">
+        class="timbre" @click="handleSelectTimber(index)">
         {{ item.name }}
       </div>
       <div class="timbre">
@@ -18,8 +18,8 @@
     </div>
     <!--  -->
     <timbre
-      v-if="showTunerMenu"
-      :timbre-id="timbreList[selectedIndex].id"
+      v-show="showTunerMenu"
+      ref="Timbre"
       @close="showTunerMenu = false">
     </timbre>
   </ff-dialog>
@@ -35,26 +35,23 @@ export default {
   },
   data() {
     return {
-      selectedIndex: 0,
-      timbreList: [
-        { name: 'xxxx', id: 'piano' },
-        { name: 'aaaa', id: '1' },
-        { name: 'bbbb', id: '2' },
-        { name: 'cccc', id: '3' },
-        { name: 'dddd', id: '4' },
-        { name: 'eeee', id: '5' },
-        { name: 'ffff', id: '6' },
-        { name: 'gggg', id: '7' },
-        { name: 'hhhh', id: '8' }
-      ],
+      selectedIndex: -1,
       //
       showTunerMenu: false
     }
   },
+  computed: {
+    timbreList() {
+      return this.$store.getters.timbreList
+    }
+  },
   methods: {
+    handleSelectTimber(index) {
+      this.selectedIndex = index
+      this.$refs.Timbre.setTimbre(this.timbreList[index])
+    },
     closeTimbreMenu() {
       this.showTunerMenu = false
-      console.log(this.showTunerMenu)
       this.$store.dispatch('timbre/toggleShowTimbreMenu')
     }
   }
