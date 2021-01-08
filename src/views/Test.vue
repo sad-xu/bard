@@ -20,6 +20,9 @@
 </template>
 
 <script>
+import axios from 'axios'
+const MIDI = require('midi-player-js')
+
 export default {
   name: 'Test',
   data() {
@@ -40,12 +43,74 @@ export default {
   methods: {
     handleClickButton() {
       console.log('button')
+      const service = axios.create({
+        baseURL: '',
+        responseType: 'arraybuffer'
+      })
+      service({
+        url: '植物大战僵尸.mid'
+      }).then(res => {
+        this.customInitMIDI(res.data)
+        // this.initMIDI(res.data)
+      })
     },
     handleSelectChange(item) {
       console.log('select', item)
     },
     handleSilderChange(value) {
       console.log('silder', value)
+    },
+    initMIDI(arrayBuffer) {
+      const Player = new MIDI.Player(function(event) {
+        console.log(event)
+      })
+      // Player.on('midiEvent', tick => {
+      //   console.log('tick', tick)
+      // })
+      Player.loadArrayBuffer(arrayBuffer)
+      // Player.play()
+      // setTimeout(() => {
+      //   Player.pause()
+      // }, 3000)
+    },
+    customInitMIDI(arrayBuffer) {
+      const buffer = new Uint8Array(arrayBuffer)
+      // tempto = 120
+      // 文件头块 <标志符串>(4字节) + <头块数据区长度>(4字节) + <头块数据区>(6字节) ff ff nn nn dd dd
+      // MIDI 文件格式 00 单音轨 01 多个同步音轨 10 多个独立音轨
+      const format = this.bytesToNumber(buffer.subarray(8, 10))
+      // 一个四分音符的ticks
+      const division = this.bytesToNumber(buffer.subarray(12, 14))
+      // 音轨 <标志符串>(4字节) + <音轨块数据区长度>(4字节) + <音轨块数据区>(多个MIDI事件构成)
+      const tracks = []
+      let i = 14
+      while (i < buffer.length) {
+        const trackLen = this.bytesToNumber(buffer.subarray(i + 4, i + 8))
+        if (buffer.subarray(i, i + 4).join('') === '7784114107') { // MTrk
+          const track = buffer.subarray(i + 8, i + 8 + trackLen)
+          const len = track.length
+          // <delta time> + <MIDI 消息>
+          if (!(track[len - 3] === 0xff && track[len - 2] === 0x2f && track[len - 1] === 0x00)) {
+            throw new Error('track 结尾格式错误')
+          } else tracks.push(track)
+        }
+        i += trackLen + 8
+      }
+      let midiChunksByteLength = 14
+      tracks.forEach(track => {
+        midiChunksByteLength += 8 + track.length
+      })
+      console.log(tracks, midiChunksByteLength)
+    },
+    bytesToNumber(byteArray) {
+      return parseInt(this.bytesToHex(byteArray), 16)
+    },
+    bytesToHex(byteArray) {
+      const hex = []
+      byteArray.forEach(byte => {
+        hex.push(('0' + byte.toString(16)).slice(-2))
+      })
+      return hex.join('')
     }
   }
 }

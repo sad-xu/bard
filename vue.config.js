@@ -19,7 +19,7 @@ module.exports = {
     open: true,
     overlay: {
       warnings: false,
-      errors: true
+      errors: false
     },
     contentBase: resolve('/static')
     // proxy: {

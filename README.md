@@ -32,3 +32,22 @@ ff-button 按钮
 
 dialog 唯一背景蒙层
 
+卷积 添加环境音效 
+https://github.com/GoogleChromeLabs/web-audio-samples/tree/gh-pages/samples/audio/impulse-responses
+
+混音器 createDynamicsCompressor
+多个音源合并防止爆音
+
+## 资源
+
+https://googlechromelabs.github.io/web-audio-samples/
+
+https://googlechromelabs.github.io/web-audio-samples/archive/demos/samples.html
+
+https://xsound.app/
+
+## MIDI
+
+https://www.jianshu.com/p/31d02765e1ec
+
+https://github.com/grimmdude/MidiPlayerJS/blob/9c3bc8ddd1f0eed026d6be6e9d4f73bcdd0d637f/src/player.js
