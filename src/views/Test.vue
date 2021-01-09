@@ -101,6 +101,12 @@ export default {
         midiChunksByteLength += 8 + track.length
       })
       console.log(tracks, midiChunksByteLength)
+      // 解析音轨
+      // webworker 计时tick
+      // https://aiyou.life/post/kokne79MF/
+      tracks.forEach(track => {
+
+      })
     },
     bytesToNumber(byteArray) {
       return parseInt(this.bytesToHex(byteArray), 16)
