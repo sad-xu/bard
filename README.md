@@ -51,3 +51,6 @@ https://xsound.app/
 https://www.jianshu.com/p/31d02765e1ec
 
 https://github.com/grimmdude/MidiPlayerJS/blob/9c3bc8ddd1f0eed026d6be6e9d4f73bcdd0d637f/src/player.js
+
+http://read.pudn.com/downloads64/doc/fileformat/227082/midi_information_and_standard_midi_file_format_anatomy.pdf
+
