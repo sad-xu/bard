@@ -21,6 +21,7 @@
 
 <script>
 import axios from 'axios'
+import { parseMIDI } from '@/utils/MIDI'
 // const MIDI = require('midi-player-js')
 
 export default {
@@ -50,7 +51,8 @@ export default {
       service({
         url: '植物大战僵尸.mid'
       }).then(res => {
-        this.customInitMIDI(res.data)
+        console.log(parseMIDI(res.data))
+        // this.customInitMIDI(res.data)
         // this.initMIDI(res.data)
       })
     },
