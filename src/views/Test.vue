@@ -22,7 +22,7 @@
 <script>
 import axios from 'axios'
 import { parseMIDI } from '@/utils/MIDI'
-// const MIDI = require('midi-player-js')
+// import sounder from '@/utils/Sound'
 
 export default {
   name: 'Test',
@@ -51,9 +51,25 @@ export default {
       service({
         url: '植物大战僵尸.mid'
       }).then(res => {
-        console.log(parseMIDI(res.data))
-        // this.customInitMIDI(res.data)
-        // this.initMIDI(res.data)
+        const { headerChunk, trackChunk } = parseMIDI(res.data)
+        console.log(headerChunk, trackChunk)
+        // if (headerChunk.timingType === 0) {
+        //   const piece = 1 // 1000 / headerChunk.tick
+        //   trackChunk.forEach(track => {
+        //     let t = 0
+        //     let lastT = 0
+        //     for (let i = 0; i < track.length; i++) {
+        //       t += piece * track[i][0]
+        //       if (track[i][2] === '声音开启') {
+        //         console.log(t - lastT)
+        //         lastT = t
+        //         setTimeout(() => {
+        //           sounder.sing(4)
+        //         }, t)
+        //       }
+        //     }
+        //   })
+        // }
       })
     },
     handleSelectChange(item) {
@@ -61,135 +77,10 @@ export default {
     },
     handleSilderChange(value) {
       console.log('silder', value)
-    },
-    initMIDI(arrayBuffer) {
-      const Player = new MIDI.Player(function(event) {
-        console.log(event)
-      })
-      // Player.on('midiEvent', tick => {
-      //   console.log('tick', tick)
-      // })
-      Player.loadArrayBuffer(arrayBuffer)
-      // Player.play()
-      // setTimeout(() => {
-      //   Player.pause()
-      // }, 3000)
-    },
-    customInitMIDI(arrayBuffer) {
-      const buffer = new Uint8Array(arrayBuffer)
-      // tempto = 120
-      // 文件头块 <标志符串>(4字节) + <头块数据区长度>(4字节) + <头块数据区>(6字节) ff ff nn nn dd dd
-      // MIDI 文件格式 00 单音轨 01 多个同步音轨 10 多个独立音轨
-      const format = this.bytesToNumber(buffer.subarray(8, 10))
-      // 一个四分音符的ticks
-      const division = this.bytesToNumber(buffer.subarray(12, 14))
-      // 音轨 <标志符串>(4字节) + <音轨块数据区长度>(4字节) + <音轨块数据区>(多个MIDI事件构成)
-      let tracks = []
-      let i = 14
-      while (i < buffer.length) {
-        const trackLen = this.bytesToNumber(buffer.subarray(i + 4, i + 8))
-        if (buffer.subarray(i, i + 4).join('') === '7784114107') { // MTrk
-          const track = buffer.subarray(i + 8, i + 8 + trackLen)
-          const len = track.length
-          // <delta time> + <MIDI 消息>
-          if (!(track[len - 3] === 0xff && track[len - 2] === 0x2f && track[len - 1] === 0x00)) {
-            throw new Error('track 结尾格式错误')
-          } else tracks.push(track)
-        }
-        i += trackLen + 8
-      }
-      let midiChunksByteLength = 14
-      tracks.forEach(track => {
-        midiChunksByteLength += 8 + track.length
-      })
-      console.log(tracks, midiChunksByteLength)
-      tracks = this.parseTricks(tracks)
-      console.log(tracks)
-    },
+    }
     // 解析音轨
     // webworker 计时tick
     // https://aiyou.life/post/kokne79MF/
-    parseTricks(tracks) {
-      const list = []
-      tracks.forEach(track => {
-        const arr = []
-        const len = track.length
-        for (let i = 0; i < len; i++) {
-          const start = i
-          while (track[i] >= 128) {
-            i++
-          }
-          i++
-          const item = [track.subarray(start, i)]
-          const stat = track[i]
-
-          if (stat === 0xff) {
-            console.log('0xff', track[i + 1])
-            if (track[i + 1] === 0x00) {
-              item.push(track.subarray(i + 2, i + 4))
-              item.push('设置轨道音序')
-              i += 4
-            } else {
-              i += 2
-              const j = i
-              while (track[i] >= 128) {
-                i++
-              }
-              i++
-              item.push(track.subarray(j, i))
-              item.push('其他信息')
-            }
-          } else if (stat === 0xf0) {
-            // Sysex
-            console.log('0xf0')
-          } else if (stat === 0xf7) {
-            // Sysex escape
-            console.log('0xf7')
-          } else if (stat <= 0x8f) {
-            item.push(track.subarray(i + 1, i + 3))
-            item.push('松开音符')
-            i += 3
-          } else if (stat <= 0x9f) {
-            item.push(track.subarray(i + 1, i + 3))
-            item.push('按下音符')
-            i += 3
-          } else if (stat <= 0xAf) {
-            item.push(track.subarray(i + 1, i + 3))
-            item.push('触后音符')
-            i += 3
-          } else if (stat <= 0xBf) {
-            item.push(track.subarray(i + 1, i + 3))
-            item.push('控制器')
-            i += 3
-          } else if (stat <= 0xCf) {
-            item.push(track.subarray(i + 1, i + 2))
-            item.push('改变乐器')
-            i += 2
-          } else if (stat <= 0xDf) {
-            item.push(track.subarray(i + 1, i + 2))
-            item.push('触后通道')
-            i += 2
-          } else if (stat <= 0xEf) {
-            item.push(track.subarray(i + 1, i + 3))
-            item.push('滑音')
-            i += 3
-          }
-          arr.push(item)
-        }
-        list.push(arr)
-      })
-      return list
-    },
-    bytesToNumber(byteArray) {
-      return parseInt(this.bytesToHex(byteArray), 16)
-    },
-    bytesToHex(byteArray) {
-      const hex = []
-      byteArray.forEach(byte => {
-        hex.push(('0' + byte.toString(16)).slice(-2))
-      })
-      return hex.join('')
-    }
   }
 }
 </script>

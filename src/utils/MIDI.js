@@ -22,6 +22,18 @@ function bytesToLetters(byteArray) {
   return letters
 }
 
+// 计算动态字节值
+function getTruthNum(byteArray) {
+  let sum = 0
+  byteArray.forEach(byte => {
+    if (byte & 0x80) {
+      sum += (byte & 0x7f)
+      sum <<= 7
+    } else sum += byte
+  })
+  return sum
+}
+
 /*
   头块 + 音轨块 * n
 
@@ -32,6 +44,17 @@ function bytesToLetters(byteArray) {
   MIDI消息 <状态字节> + <数据字节> * n
   状态字节 最高位为1 128 ~ 255
   数据字节 最高位为0 0 ~ 127
+
+  Example: 植物大战僵尸.mid
+    0, 255, 88, 4, 4, 2, 8, 82 // 0 FF 58 节拍 一个四分音符包含的32分音符的个数
+    0, 255, 81, 3, 8, 82, 174  // 0 FF 51 速度  0x852ae = 545454微秒
+    0, 255, 3, 1, 49 // 0 FF 歌曲/音轨名 0x31
+    0, 193, 0 // 0 C1 改变乐器 0
+    0, 192, 0 // 0 C0 改变乐器 0
+    143, 0, 177, 95, 0 // 1920 B1 控制器编号 值
+    0, 177, 92, 0,
+    0, 176, 100, 0,
+    129, 85, 128, 73, 0, // 213 0x80 松开音符
 */
 export function parseMIDI(arrayBuffer) {
   const buffer = new Uint8Array(arrayBuffer)
@@ -41,7 +64,9 @@ export function parseMIDI(arrayBuffer) {
       length: bytesToNumber(buffer.subarray(4, 8)),
       ffff: buffer.subarray(8, 10), // 00 单音轨 01 多个同步音轨 10 多个独立音轨
       tttt: bytesToNumber(buffer.subarray(10, 12)), // 音轨块数
-      dddd: buffer.subarray(12, 14) // 0 ticks计时 1 SMPTE计时
+      dddd: buffer.subarray(12, 14),
+      timingType: (buffer.subarray(12, 13) & 0b1000) >> 3, //  0 ticks计时 1 SMPTE计时
+      tick: buffer.subarray(13, 14) & 0b01111111
     },
     trackChunk: []
   }
@@ -67,7 +92,7 @@ export function parseMIDI(arrayBuffer) {
         i++
       }
       i++
-      const time = bytesToNumber(track.subarray(start, i)) // delta time
+      const time = getTruthNum(track.subarray(start, i)) // delta time
       const stat = track[i] // 状态字节
       const item = [time]
       switch (true) {
@@ -123,7 +148,7 @@ export function parseMIDI(arrayBuffer) {
             i++
           }
           i++
-          const len = bytesToNumber(track.subarray(start, i))
+          const len = getTruthNum(track.subarray(start, i))
           item.push(track.subarray(i, i + len))
           i += len
           break
@@ -136,7 +161,7 @@ export function parseMIDI(arrayBuffer) {
             i++
           }
           i++
-          const len = bytesToNumber(track.subarray(start, i))
+          const len = getTruthNum(track.subarray(start, i))
           item.push(type)
           item.push(track.subarray(i, i + len))
           i += len
