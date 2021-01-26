@@ -16,6 +16,13 @@
     <div>
       <ff-silder v-model="silderNum" @change="handleSilderChange"></ff-silder>
     </div>
+    <div class="music-box">
+      <span
+        v-for="item in musicScore" :key="item[0]"
+        class="notes" :style="`margin-left: ${item[1]}px;`">
+        {{ item[2] }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -35,7 +42,8 @@ export default {
         { label: 'Ctrl', value: 'CtrlKey' }
       ],
       checked: false,
-      silderNum: 9
+      silderNum: 9,
+      musicScore: []
     }
   },
   created() {
@@ -53,6 +61,20 @@ export default {
       }).then(res => {
         const { headerChunk, trackChunk } = parseMIDI(res.data)
         console.log(headerChunk, trackChunk)
+        const musicScore = []
+        trackChunk.forEach(chunk => {
+          let t = 0
+          let lastT = 0
+          chunk.forEach(track => {
+            lastT = t
+            t += track[0] / 1000
+            if (track[2] === '声音开启') {
+              musicScore.push([Number(t.toFixed(2)), Number((t - lastT).toFixed(2)) * 100, track[1][0]])
+            }
+          })
+        })
+        this.musicScore = musicScore
+        console.log(musicScore)
         // if (headerChunk.timingType === 0) {
         //   const piece = 1 // 1000 / headerChunk.tick
         //   trackChunk.forEach(track => {
@@ -90,6 +112,15 @@ export default {
   padding: 20px;
   > div {
     margin: 20px;
+  }
+}
+
+.music-box {
+  .notes {
+    display: inline-block;
+    padding: 2px;
+    margin: 2px 0;
+    background-color: #4db6ac;
   }
 }
 </style>

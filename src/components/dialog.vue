@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="menu-model"></div>
+    <div v-if="showModel" class="menu-model"></div>
     <div class="menu" :style="styleObj">
       <div
         class="menu-header"
@@ -23,7 +23,9 @@
 </template>
 
 <script>
-// TODO: model唯一
+// model唯一
+let dialogNum = 0
+
 export default {
   name: 'FfDialog',
   props: {
@@ -62,6 +64,7 @@ export default {
   },
   data() {
     return {
+      showModel: !dialogNum,
       // 拖拽相关
       isMoving: false,
       startX: 0,
@@ -86,12 +89,16 @@ export default {
       }
     }
   },
+  created() {
+    dialogNum++
+  },
   mounted() {
     if (this.appendToBody) {
       document.body.appendChild(this.$el)
     }
   },
   destroyed() {
+    dialogNum--
     if (this.appendToBody && this.$el && this.$el.parentNode) {
       this.$el.parentNode.removeChild(this.$el)
     }

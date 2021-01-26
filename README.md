@@ -30,8 +30,6 @@ ff-button 按钮
 
 ## TODO
 
-dialog 唯一背景蒙层
-
 卷积 添加环境音效 
 https://github.com/GoogleChromeLabs/web-audio-samples/tree/gh-pages/samples/audio/impulse-responses
 
