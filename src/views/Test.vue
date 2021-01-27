@@ -69,7 +69,14 @@ export default {
             lastT = t
             t += track[0] / 1000
             if (track[2] === '声音开启') {
-              musicScore.push([Number(t.toFixed(2)), Number((t - lastT).toFixed(2)) * 100, track[1][0]])
+              // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
+              const B = track[1][0]
+              const N = ['C', '#C', 'D', '#D', 'E', 'F', '#F', 'G', '#G', 'A', '#A', 'B'][B % 12]
+              let O = Math.floor(B / 12) - 1
+              if (O <= 4) O = '↓'
+              else if (O >= 6) O = '↑'
+              else O = ''
+              musicScore.push([Number(t.toFixed(2)), Number((t - lastT).toFixed(2)) * 100, `${N}${O}`])
             }
           })
         })

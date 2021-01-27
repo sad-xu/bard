@@ -1,3 +1,4 @@
+// c6 - b6
 const HIGHER_NOTE_MAP = {
   1: 1046.502,
   '1#': 1108.731,
@@ -13,6 +14,7 @@ const HIGHER_NOTE_MAP = {
   7: 1975.533
 }
 
+// c5 - b5
 const NOTE_MAP = {
   1: 523.251,
   '1#': 554.365,
@@ -28,6 +30,7 @@ const NOTE_MAP = {
   7: 987.767
 }
 
+// c4 - b4
 const LOWER_NOTE_MAP = {
   1: 261.626,
   '1#': 277.183,
