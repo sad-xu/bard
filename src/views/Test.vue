@@ -2,7 +2,10 @@
   <div class="test-wrapper">
     <div>
       <ff-button @click="handleClickButton">
-        按钮
+        解析 MIDI
+      </ff-button>
+      <ff-button @click="toggleWorker">
+        stop / start
       </ff-button>
     </div>
     <div>
@@ -29,6 +32,7 @@
 <script>
 import axios from 'axios'
 import { parseMIDI } from '@/utils/MIDI'
+import Timer from '@/utils/Timer'
 // import sounder from '@/utils/Sound'
 
 export default {
@@ -51,15 +55,17 @@ export default {
   },
   methods: {
     handleClickButton() {
-      console.log('button')
       const service = axios.create({
         baseURL: '',
         responseType: 'arraybuffer'
       })
       service({
-        url: '植物大战僵尸.mid'
+        // url: '植物大战僵尸.mid'
+        url: '陆行鸟之歌.mid'
       }).then(res => {
+        const now = window.performance.now()
         const { headerChunk, trackChunk } = parseMIDI(res.data)
+        console.log('耗时：', window.performance.now() - now)
         console.log(headerChunk, trackChunk)
         const musicScore = []
         trackChunk.forEach(chunk => {
@@ -71,17 +77,34 @@ export default {
             if (track[2] === '声音开启') {
               // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
               const B = track[1][0]
-              const N = ['C', '#C', 'D', '#D', 'E', 'F', '#F', 'G', '#G', 'A', '#A', 'B'][B % 12]
+              const N = ['1', '1#', '2', '3b', '3', '4', '4#', '5', '5#', '6', '7b', '7'][B % 12]
               let O = Math.floor(B / 12) - 1
               if (O <= 4) O = '↓'
               else if (O >= 6) O = '↑'
               else O = ''
-              musicScore.push([Number(t.toFixed(2)), Number((t - lastT).toFixed(2)) * 100, `${N}${O}`])
+              if (t - lastT) {
+                musicScore.push([Number(t.toFixed(2) * 1000 / 40), Number((t - lastT).toFixed(2)) * 100, `${N}${O}`])
+              }
             }
           })
         })
         this.musicScore = musicScore
         console.log(musicScore)
+        // let t = 0
+        // let tickIndex = 0
+        // const len = musicScore.length - 1
+        // Timer.init(function() {
+        //   t++
+        //   if (t >= musicScore[tickIndex][0]) {
+        //     console.log(musicScore[tickIndex])
+        //     // sing
+        //     tickIndex++
+        //     if (tickIndex > len) {
+        //       Timer.end()
+        //     }
+        //   }
+        // })
+
         // if (headerChunk.timingType === 0) {
         //   const piece = 1 // 1000 / headerChunk.tick
         //   trackChunk.forEach(track => {
@@ -100,6 +123,13 @@ export default {
         //   })
         // }
       })
+    },
+    toggleWorker() {
+      if (Timer.status === 'running') {
+        Timer.stop()
+      } else if (Timer.status === 'stop') {
+        Timer.start()
+      }
     },
     handleSelectChange(item) {
       console.log('select', item)

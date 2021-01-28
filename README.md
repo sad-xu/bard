@@ -53,3 +53,5 @@ https://github.com/grimmdude/MidiPlayerJS/blob/9c3bc8ddd1f0eed026d6be6e9d4f73bcd
 http://read.pudn.com/downloads64/doc/fileformat/227082/midi_information_and_standard_midi_file_format_anatomy.pdf
 
 https://www.jianshu.com/p/6c495b51a40c
+
+歌曲资源网站 - `https://www.midishow.com/search/result?q=ff14&sort=marks`
