@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import sounder from '@/utils/Sound'
+// import sounder from '@/utils/Sound'
 
 export default {
   name: 'Timbre',
@@ -21,7 +21,7 @@ export default {
     setTimbre({ id, name, config }) {
       console.log('设置过滤器')
       this.timbreName = name
-      sounder.setTimbre(config)
+      // sounder.setTimbre(config)
     }
   }
 }

@@ -193,7 +193,7 @@ export function parseMIDI(arrayBuffer) {
             desc = '设定速度-微秒' // FF 51 03 tt tt tt  MicroTempo
           } else if (type === 0x58) desc = '节拍'
           item.push(desc)
-          console.log('!!', type, track.subarray(i, i + len), desc)
+          // console.log('!!', type, track.subarray(i, i + len), desc)
           i += len
           break
         }

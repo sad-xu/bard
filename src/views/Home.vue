@@ -1,25 +1,35 @@
 <template>
   <div>
+    <!-- bg -->
     <canvas id="Screen" ref="Screen"></canvas>
+    <!-- 按键设置 -->
     <keyboard-menu v-if="showKeyboardMenu"></keyboard-menu>
+    <!-- 音色设置 -->
     <timbre-menu v-if="showTimbreMenu"></timbre-menu>
+    <!-- 乐谱选择 -->
+    <music-score></music-score>
+    <!-- 键盘 -->
     <keyboard @sing="sing"></keyboard>
   </div>
 </template>
 
 <script>
-import sounder from '@/utils/Sound'
+import Sound from '@/utils/Sound'
 import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 import TimbreMenu from './timbreMenu/TimbreMenu'
+import MusicScore from './musicScore/MusicScore'
 import { debounce } from '@/utils'
+
+const sounder = new Sound()
 
 export default {
   name: 'Home',
   components: {
     Keyboard,
     KeyboardMenu,
-    TimbreMenu
+    TimbreMenu,
+    MusicScore
   },
   data() {
     return {

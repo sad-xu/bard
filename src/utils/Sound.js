@@ -143,4 +143,4 @@ class Sound {
   }
 }
 
-export default new Sound()
+export default Sound

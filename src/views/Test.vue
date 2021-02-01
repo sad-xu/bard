@@ -23,7 +23,7 @@
       <span
         v-for="item in musicScore" :key="item[0]"
         class="notes" :style="`margin-left: ${item[1]}px;`">
-        {{ item[2] }}
+        {{ item[2] + item[3] }}
       </span>
     </div>
   </div>
@@ -33,7 +33,9 @@
 import axios from 'axios'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
-// import sounder from '@/utils/Sound'
+import Sound from '@/utils/Sound'
+
+const sounder = new Sound()
 
 export default {
   name: 'Test',
@@ -60,8 +62,8 @@ export default {
         responseType: 'arraybuffer'
       })
       service({
-        // url: '植物大战僵尸.mid'
-        url: '陆行鸟之歌.mid'
+        url: '植物大战僵尸.mid'
+        // url: '陆行鸟之歌.mid'
       }).then(res => {
         const now = window.performance.now()
         const { headerChunk, trackChunk } = parseMIDI(res.data)
@@ -73,7 +75,7 @@ export default {
           let lastT = 0
           chunk.forEach(track => {
             lastT = t
-            t += track[0] / 1000
+            t += track[0] / 500
             if (track[2] === '声音开启') {
               // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
               const B = track[1][0]
@@ -83,7 +85,7 @@ export default {
               else if (O >= 6) O = '↑'
               else O = ''
               if (t - lastT) {
-                musicScore.push([Number(t.toFixed(2) * 1000 / 40), Number((t - lastT).toFixed(2)) * 100, `${N}${O}`])
+                musicScore.push([Number(t.toFixed(2) * 1000 / 40), Number((t - lastT).toFixed(2)) * 100, N, O])
               }
             }
           })
@@ -96,15 +98,19 @@ export default {
         // const len = musicScore.length - 1
         // Timer.init(function() {
         //   t++
-        //   if (t >= musicScore[tickIndex][0]) {
-        //     console.log(musicScore[tickIndex])
+        //   const item = musicScore[tickIndex]
+        //   if (t >= item[0]) {
         //     // sing
+        //     let pitch = ''
+        //     if (item[3] === '↑') pitch = 'higher'
+        //     else if (item[3] === '↓') pitch = 'lower'
+        //     sounder.sing(item[2], pitch)
         //     tickIndex++
         //     if (tickIndex > len) {
         //       Timer.end()
         //     }
         //   }
-        // })
+        // }, headerChunk.tempo / headerChunk.tick / 1000 * 4) // ??
 
         // if (headerChunk.timingType === 0) {
         //   const piece = 1 // 1000 / headerChunk.tick
