@@ -64,9 +64,10 @@ export function parseMIDI(arrayBuffer) {
       length: bytesToNumber(buffer.subarray(4, 8)),
       ffff: buffer.subarray(8, 10), // 00 单音轨 01 多个同步音轨 10 多个独立音轨
       tttt: bytesToNumber(buffer.subarray(10, 12)), // 音轨块数
-      dddd: buffer.subarray(12, 14),
-      timingType: (buffer.subarray(12, 13) & 0b1000) >> 3, //  0 ticks计时 1 SMPTE计时
-      tick: buffer.subarray(13, 14) & 0b01111111
+      dddd: buffer.subarray(12, 14), // 时间类型
+      timingType: (buffer.subarray(12, 13) & 0b1000) >> 3, //  0 TPQN计时-每四分音符中所包含的Tick数量 48-480  1 SMPTE计时
+      tick: buffer.subarray(13, 14) & 0b01111111,
+      tempo: 545454 // 四分音符的时长 微秒
     },
     trackChunk: []
   }
@@ -101,11 +102,18 @@ export function parseMIDI(arrayBuffer) {
           item.push('声音关闭')
           i += 3
           break
-        case stat >= 0x90 && stat <= 0x9f:
-          item.push(track.subarray(i + 1, i + 3))
-          item.push('声音开启')
+        case stat >= 0x90 && stat <= 0x9f: {
+          // 按下且力度为0 === 声音关闭
+          const note = track.subarray(i + 1, i + 3)
+          item.push(note)
+          if (note[1] === 0) {
+            item.push('声音关闭')
+          } else {
+            item.push('声音开启')
+          }
           i += 3
           break
+        }
         case stat >= 0xa0 && stat <= 0xaf:
           item.push(track.subarray(i + 1, i + 3))
           item.push('音键压力')
@@ -164,6 +172,28 @@ export function parseMIDI(arrayBuffer) {
           const len = getTruthNum(track.subarray(start, i))
           item.push(type)
           item.push(track.subarray(i, i + len))
+          let desc = ''
+          if (type === 0x00) desc = '设置轨道音序'
+          else if (type === 0x01) desc = '文本信息'
+          else if (type === 0x02) desc = '版权信息'
+          else if (type === 0x03) desc = '歌曲名称'
+          else if (type === 0x04) desc = '乐器名称'
+          else if (type === 0x05) desc = '歌词'
+          else if (type === 0x06) desc = '标记'
+          else if (type === 0x07) desc = '注释'
+          else if (type === 0x2f) desc = '音轨结束标志'
+          else if (type === 0x51) {
+            const arr = track.subarray(i, i + len)
+            const arrLen = arr.length
+            let tempo = 0
+            for (let j = 0; j < arrLen; j++) {
+              tempo += arr[j] * Math.pow(16, (arrLen - j - 1) * 2)
+            }
+            midiInfo.headerChunk.tempo = tempo
+            desc = '设定速度-微秒' // FF 51 03 tt tt tt  MicroTempo
+          } else if (type === 0x58) desc = '节拍'
+          item.push(desc)
+          console.log('!!', type, track.subarray(i, i + len), desc)
           i += len
           break
         }

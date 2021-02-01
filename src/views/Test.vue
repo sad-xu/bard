@@ -90,6 +90,7 @@ export default {
         })
         this.musicScore = musicScore
         console.log(musicScore)
+        console.log('tick time: ', headerChunk.tempo / headerChunk.tick / 1000)
         // let t = 0
         // let tickIndex = 0
         // const len = musicScore.length - 1
