@@ -2,19 +2,32 @@
 
 ## FF14 演奏 <s>（吟游诗人）</s> 模拟器
 
-## 组成
+## 功能
 
-键盘 13 / 39
+键盘 13键
 
-键盘配置菜单 按键映射 切换键盘显示 浏览器按键限制及提示
+键盘配置菜单 按键映射 浏览器按键限制及提示
 
-节拍器 metronome 节拍器菜单
+音色选择 Timbre 内置多个乐器选项 滤波器参数手动调节 环境音、波形等
 
-音色选择 Timbre 内置选项 滤波器手动调节 声音时长
+canvas 波形图  当前播放曲目 + 键盘演奏响应
+（如果感觉到卡顿，请更换浏览器或换台电脑或者用妙哈种子家的电脑(推荐，我家的床还蛮大的)，或者关闭该功能(不推荐)）
 
-动态背景 切换
+MIDI 相关 解析mid文件生成谱子并播放
 
-MIDI 相关
+歌曲列表随机、顺序、重播功能 歌曲暂停、倍速、上下一首功能 
+
+进度条显示、拖拽功能
+
+设备尺寸自适应 -- 媒体查询 √  vw单位 ×
+
+## 需求变更记录
+
+39键键盘及切换功能 -- 取消
+
+节拍器 metronome 节拍器菜单 -- 优先级低
+
+整体风格 -- 不再模仿 FF14 UI
 
 ## 公共组件
 
@@ -36,7 +49,7 @@ https://github.com/GoogleChromeLabs/web-audio-samples/tree/gh-pages/samples/audi
 混音器 createDynamicsCompressor
 多个音源合并防止爆音
 
-## 资源
+## 参考
 
 https://googlechromelabs.github.io/web-audio-samples/
 

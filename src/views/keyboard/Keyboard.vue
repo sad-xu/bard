@@ -106,7 +106,7 @@ export default {
     bindMusicKeys() {
       window.addEventListener('keyup', e => {
         e.preventDefault()
-        event.returnValue = ''
+        e.returnValue = ''
         if (this.canPlay) {
           const keyMap = this.keyMap
           // 指示器
@@ -123,7 +123,7 @@ export default {
       window.addEventListener('keydown', e => {
         if (e.code === 'F12') return
         e.preventDefault()
-        event.returnValue = ''
+        e.returnValue = ''
         if (this.canPlay) {
           const keyMap = this.keyMap
           const { code, key } = e
@@ -150,8 +150,8 @@ export default {
       })
       // 无法禁止的事件 [Shift] Ctrl (Q|N|W|T|Tab)
       window.addEventListener('beforeunload', e => {
-        event.preventDefault()
-        event.returnValue = null
+        e.preventDefault()
+        e.returnValue = null
       })
     }
   }
@@ -165,7 +165,7 @@ export default {
   left: 5%;
   right: 5%;
   display: flex;
-  height: 200px;
+  height: 160px;
   .key {
     flex-grow: 1;
     display: flex;

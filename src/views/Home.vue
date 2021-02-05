@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="home">
     <!-- bg -->
     <canvas id="Screen" ref="Screen"></canvas>
     <!-- 按键设置 -->
@@ -47,16 +47,20 @@ export default {
   mounted() {
     const screenDom = this.$refs.Screen
     const ctx = screenDom.getContext('2d')
-    let width = screenDom.width
-    let height = screenDom.height
+    let width = screenDom.clientWidth
+    let height = screenDom.clientHeight
+    screenDom.width = width
+    screenDom.height = height
     const analyser = sounder.analyser
     const timeArray = new Uint8Array(analyser.frequencyBinCount)
     const freqArray = new Uint8Array(analyser.frequencyBinCount)
     const barWidth = width / analyser.frequencyBinCount * 2
     // 窗口改变适应
     window.addEventListener('resize', debounce(function() {
-      width = screenDom.width
-      height = screenDom.height
+      width = screenDom.clientWidth
+      height = screenDom.clientHeight
+      screenDom.width = width
+      screenDom.height = height
     }))
     const draw = () => {
       if (!sounder.singingNum) {
@@ -102,12 +106,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.home {
+  min-height: 100vh;
+}
 #Screen {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 600px;
-  height: 400px;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  bottom: 180px;
+  // transform: translate(-50%, -50%);
 }
 </style>
