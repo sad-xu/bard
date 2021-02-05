@@ -1,15 +1,17 @@
 <template>
   <div class="home">
-    <!-- bg -->
-    <canvas id="Screen" ref="Screen"></canvas>
+    <div class="content" :class="{'content-pressed': showMusicScore}">
+      <!-- bg -->
+      <canvas id="Screen" ref="Screen"></canvas>
+      <!-- 键盘 -->
+      <keyboard @sing="sing"></keyboard>
+    </div>
     <!-- 按键设置 -->
     <keyboard-menu v-if="showKeyboardMenu"></keyboard-menu>
     <!-- 音色设置 -->
     <timbre-menu v-if="showTimbreMenu"></timbre-menu>
     <!-- 乐谱选择 -->
     <music-score></music-score>
-    <!-- 键盘 -->
-    <keyboard @sing="sing"></keyboard>
   </div>
 </template>
 
@@ -42,6 +44,9 @@ export default {
     },
     showTimbreMenu() {
       return this.$store.getters.showTimbreMenu
+    },
+    showMusicScore() {
+      return this.$store.getters.showMusicScore
     }
   },
   mounted() {
@@ -107,12 +112,20 @@ export default {
 
 <style lang="scss" scoped>
 .home {
-  min-height: 100vh;
+  height: 100%;
+  .content {
+    height: 100%;
+    transition: transform 0.5s;
+  }
+  .content-pressed {
+    filter: blur(5px);
+    transform: scale(0.9, 0.9);
+  }
 }
+
 #Screen {
   position: absolute;
   width: 100%;
   bottom: 180px;
-  // transform: translate(-50%, -50%);
 }
 </style>

@@ -6,7 +6,7 @@
 
 <style lang="scss" scoped>
   #app {
-    min-height: 100vh;
+    height: 100vh;
     width: 100%;
     background-color: #eff3f5;
   }

@@ -33,9 +33,9 @@
 import axios from 'axios'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
-import Sound from '@/utils/Sound'
+// import Sound from '@/utils/Sound'
 
-const sounder = new Sound()
+// const sounder = new Sound()
 
 export default {
   name: 'Test',

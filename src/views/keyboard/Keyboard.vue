@@ -111,6 +111,7 @@ export default {
           const keyMap = this.keyMap
           // 指示器
           const { code, key } = e
+          // console.log(code, key)
           if (key === COMPOSITE_KEYS[keyMap.higher]) {
             this.higherPressed = false
           } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
@@ -143,7 +144,7 @@ export default {
               pitch
             })
             this.$set(this.pressedCodes, code, true)
-            console.log(code, note, pitch)
+            // console.log(code, note, pitch)
           }
           return false
         }
@@ -162,10 +163,11 @@ export default {
 .keyboard {
   position: fixed;
   bottom: 20px;
-  left: 5%;
-  right: 5%;
+  left: 0;
+  right: 0;
   display: flex;
   height: 160px;
+  padding: 0 30px;
   .key {
     flex-grow: 1;
     display: flex;
@@ -241,10 +243,10 @@ export default {
 }
 .indicator-left {
   left: 0;
-  transform: translateX(-100%);
+  transform: translateX(100%);
 }
 .indicator-right {
   right: 0;
-  transform: translateX(100%);
+  transform: translateX(-100%);
 }
 </style>

@@ -4,13 +4,18 @@ const state = {
     lower: 'ctrlKey',
     common: { // 物理按键 -> 音符
       Digit1: '1',
+      KeyZ: '1#',
+      KeyX: '3b',
       Digit2: '2',
       Digit3: '3',
       Digit4: '4',
+      KeyC: '4#',
       Digit5: '5',
+      KeyV: '5#',
       Digit6: '6',
-      Digit7: '7',
-      Digit8: ''
+      KeyB: '7b',
+      Digit7: '7'
+      // Backslash: ''
     }
   },
   showKeyboardMenu: false
