@@ -3,7 +3,7 @@
     <!-- 当前曲目 -->
     <div class="score-header">
       <span class="current-music" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
-      <span class="" @click="showPaper = !showPaper">打开乐谱</span>
+      <span v-show="musicScore.length" class="music-paper" @click="showPaper = !showPaper">📄</span>
     </div>
     <!-- 曲目列表 -->
     <transition name="list-fade">
@@ -19,7 +19,7 @@
       <div v-show="showMusicScore" class="model" @click="toggleMusicScore"></div>
     </transition>
     <!-- 乐谱 -->
-    <div v-show="showPaper" class="notes-wrapper">
+    <div v-show="showPaper && musicScore.length" class="notes-wrapper">
       <span
         v-for="item in musicScore" :key="item[0]"
         :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
@@ -65,6 +65,7 @@ export default {
       console.log(item, i)
       this.toggleMusicScore()
       this.selectedIndex = i
+      this.showPaper = true
       const service = axios.create({
         baseURL: '',
         responseType: 'arraybuffer'
@@ -143,8 +144,17 @@ export default {
   left: 5%;
   .current-music {
     padding: 4px 10px;
-    background-color: #4db6ac;
     margin-right: 10px;
+    border-radius: 20px;
+    color: #fff;
+    background-color: #4db6ac;
+    cursor: pointer;
+    &:hover {
+
+    }
+  }
+  .music-paper {
+    cursor: pointer;
   }
 }
 
@@ -180,7 +190,7 @@ export default {
   top: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 5px 10px #aca8a8;
+  box-shadow: inset 0 0 20px 0 #505050;
   z-index: 9;
 }
 
@@ -189,21 +199,23 @@ export default {
   top: 10%;
   left: 7%;
   right: 7%;
+  padding-top: 10px;
   max-height: calc(90vh - 220px);
   overflow-y: auto;
   .notes {
     display: inline-block;
     padding: 2px;
+    border-radius: 10px;
     margin-bottom: 10px;
     background-color: #b2b2b2;
     color: #333;
   }
   .notes-up {
-    background-color: #e0651d;
+    background-image: linear-gradient(#f3ea91, #e0651d);
     color: #eee;
   }
   .notes-down {
-    background-color: #7a82be;
+    background-image: linear-gradient(#7a82be, #85e9e1);
     color: #eee;
   }
 }

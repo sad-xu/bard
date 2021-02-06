@@ -5,6 +5,15 @@
       <canvas id="Screen" ref="Screen"></canvas>
       <!-- 键盘 -->
       <keyboard @sing="sing"></keyboard>
+      <!--  -->
+      <footer class="footer">
+        <p class="footer-left">
+          Produced by <span style="color: #c7a2e8;">妙蛤种子@琥珀原</span>
+        </p>
+        <p class="footer-right">
+          Made with <span style="color: #e91e63;">❤</span>
+        </p>
+      </footer>
     </div>
     <!-- 按键设置 -->
     <keyboard-menu v-if="showKeyboardMenu"></keyboard-menu>
@@ -127,5 +136,24 @@ export default {
   position: absolute;
   width: 100%;
   bottom: 180px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 12px;
+  line-height: 12px;
+  color: #ccc;
+  .footer-left {
+  }
+  .footer-right {
+
+  }
 }
 </style>

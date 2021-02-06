@@ -29,7 +29,8 @@
     <!-- 按键  -->
     <div
       v-for="item in keyboard" :key="item.label"
-      class="key" :class="{ 'key-pressed': pressedCodes[item.code] }">
+      class="key" :class="{ 'key-pressed': pressedCodes[item.code], 'black-key': item.type }"
+      :style="item.type ? `left: ${12.5 * item.type}%` : ''">
       <span class="code">{{ item.code | toggleKeycode }}</span>
       <span class="label">{{ item.label }}</span>
     </div>
@@ -56,11 +57,16 @@ export default {
       // [ label 音符, code 物理按键 ]
       keyboard: [
         { label: '1', code: '' },
+        { label: '1#', code: '', type: 1 },
         { label: '2', code: '' },
+        { label: '3b', code: '', type: 2 },
         { label: '3', code: '' },
         { label: '4', code: '' },
+        { label: '4#', code: '', type: 4 },
         { label: '5', code: '' },
+        { label: '5#', code: '', type: 5 },
         { label: '6', code: '' },
+        { label: '7b', code: '', type: 6 },
         { label: '7', code: '' },
         { label: 'i', code: '' }
       ],
@@ -89,7 +95,7 @@ export default {
         const keyboard = []
         this.keyboard.forEach(item => {
           keyboard.push({
-            label: item.label,
+            ...item,
             code: obj[item.label]
           })
         })
@@ -150,10 +156,10 @@ export default {
         }
       })
       // 无法禁止的事件 [Shift] Ctrl (Q|N|W|T|Tab)
-      window.addEventListener('beforeunload', e => {
-        e.preventDefault()
-        e.returnValue = null
-      })
+      // window.addEventListener('beforeunload', e => {
+      //   e.preventDefault()
+      //   e.returnValue = null
+      // })
     }
   }
 }
@@ -167,14 +173,14 @@ export default {
   right: 0;
   display: flex;
   height: 160px;
-  padding: 0 30px;
+  margin: 0 30px;
   .key {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    background-color: #f3e9be;
+    background-color: #e0e3da;
     padding-bottom: 20px;
     border: 1px solid #000;
     border-right: 0;
@@ -199,8 +205,16 @@ export default {
       color: #856823;
     }
   }
+  .black-key {
+    height: 90px;
+    position: absolute;
+    top: 0;
+    background-color: #333;
+    width: 8%;
+    transform: translateX(-50%);
+  }
   .key-pressed {
-    background-color: #ffd;
+    background-color: #fffff3;
   }
 }
 
@@ -243,10 +257,10 @@ export default {
 }
 .indicator-left {
   left: 0;
-  transform: translateX(100%);
+  transform: translateX(-200%);
 }
 .indicator-right {
   right: 0;
-  transform: translateX(-100%);
+  transform: translateX(200%);
 }
 </style>

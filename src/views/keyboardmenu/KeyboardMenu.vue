@@ -1,8 +1,7 @@
 <template>
-  <ff-dialog title="乐器演奏操作设置" append-to-body @close="closeMenu">
-    <ff-checkbox v-model="showFullScale">
-      全音阶一同显示、设置按键
-    </ff-checkbox>
+  <ff-dialog
+    title="乐器演奏操作设置" append-to-body
+    default-top="5%" @close="closeMenu">
     <!--  -->
     <div class="panel-wrapper">
       <div class="left-panel">
@@ -41,16 +40,6 @@
             <ff-select v-model="lowerKey" :options="compositeOption"></ff-select>
           </div>
         </div>
-        <div class="panel-item">
-          <div>
-            <span>高半音</span>
-            <div></div>
-          </div>
-          <div>
-            <span>低半音</span>
-            <div></div>
-          </div>
-        </div>
       </div>
     </div>
     <!-- footer -->
@@ -85,7 +74,6 @@ export default {
   },
   data() {
     return {
-      showFullScale: false,
       // note 音符 label 显示按键 key 物理按键
       keyConfig: [
         [
@@ -105,7 +93,7 @@ export default {
         [
           { note: '4#', label: '', key: '' },
           { note: '5#', label: '', key: '' },
-          { note: '6b', label: '', key: '' }
+          { note: '7b', label: '', key: '' }
         ]
       ],
       higherKey: 'shiftKey',
