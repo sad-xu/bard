@@ -21,6 +21,10 @@ MIDI 相关 解析mid文件生成谱子并播放
 
 设备尺寸自适应 -- 媒体查询 √  vw单位 ×
 
+PWA
+
+虚拟平滑惯性滚动
+
 ## 需求变更记录
 
 39键键盘及切换功能 -- 取消
@@ -68,3 +72,13 @@ http://read.pudn.com/downloads64/doc/fileformat/227082/midi_information_and_stan
 https://www.jianshu.com/p/6c495b51a40c
 
 歌曲资源网站 - `https://www.midishow.com/search/result?q=ff14&sort=marks`
+
+## virtual-scroll
+
+http://www.everyday3d.com/blog/index.php/2014/08/18/smooth-scrolling-with-virtualscroll/
+
+https://github.com/ayamflow/virtual-scroll
+
+https://github.com/baptistebriel/smooth-scrolling
+
+https://github.com/locomotivemtl/locomotive-scroll

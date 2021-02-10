@@ -37,6 +37,36 @@ import { parseMIDI } from '@/utils/MIDI'
 // import Timer from '@/utils/Timer'
 // const sounder = new Sound()
 
+/* 滚动效果demo
+#app > div {
+  height: 100px;
+  width: 400px;
+  background-color: pink;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 5px 4px grey;
+}
+
+const el = document.getElementById('app')
+const offsetHeight = app.offsetHeight
+const children = app.children
+const itemHeight = 110
+app.addEventListener('scroll', function(e) {
+  const scrollTop = app.scrollTop
+  const startIndex = Math.floor(scrollTop / itemHeight)
+  const endIndex = Math.floor((scrollTop + offsetHeight) / itemHeight)
+  const midIndex = (endIndex - startIndex) / 2
+  for (let i = startIndex; i <= endIndex; i++) {
+    const child = children[i]
+    if (child) {
+      let n = 1 - Math.abs((child.offsetTop - scrollTop) / offsetHeight - 0.5)
+      child.style.transform = `scale3d(${n}, ${n}, 1)`
+    }
+  }
+})
+*/
+
 export default {
   data() {
     return {
