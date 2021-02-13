@@ -1,7 +1,19 @@
 <template>
   <div class="home">
-    <div class="content" :class="{'content-pressed': showMusicScore}">
+    <div
+      class="content"
+      :class="{
+        'filter': showMusicScore || showKeyboardMenu || showTimbreMenu,
+        'transform-scale': showMusicScore
+      }">
+      <!-- menu -->
+      <div class="menu-wrapper">
+        <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
+        <i class="iconfont icon-music" title="音色设置" @click="openTimbreMenu"></i>
+        <i class="iconfont icon-question" title="使用须知"></i>
+      </div>
       <!-- bg -->
+      <div id="bg-img"></div>
       <canvas id="Screen" ref="Screen"></canvas>
       <!-- 键盘 -->
       <keyboard @sing="sing"></keyboard>
@@ -10,6 +22,7 @@
         <p class="footer-left">
           Produced by <span style="color: #c7a2e8;">妙蛤种子@琥珀原</span>
         </p>
+        <span style="color: #fff;">此版本为 DEMO 版，不代表最终效果</span>
         <p class="footer-right">
           Made with <span style="color: #e91e63;">❤</span>
         </p>
@@ -20,7 +33,7 @@
     <!-- 音色设置 -->
     <timbre-menu v-if="showTimbreMenu"></timbre-menu>
     <!-- 乐谱选择 -->
-    <music-score></music-score>
+    <music-score :filter="showKeyboardMenu || showTimbreMenu"></music-score>
   </div>
 </template>
 
@@ -114,6 +127,12 @@ export default {
   methods: {
     sing({ note, pitch }) {
       sounder.sing(note, pitch)
+    },
+    openKeyboardMenu() {
+      this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
+    },
+    openTimbreMenu() {
+      this.$store.dispatch('timbre/toggleShowTimbreMenu')
     }
   }
 }
@@ -124,11 +143,32 @@ export default {
   height: 100%;
   .content {
     height: 100%;
-    transition: transform 0.5s;
+    transition: transform 0.5s, filter 0.5s;
   }
-  .content-pressed {
+  .filter {
     filter: blur(5px);
+  }
+  .transform-scale {
     transform: scale(0.9, 0.9);
+  }
+}
+
+.menu-wrapper {
+  position: absolute;
+  right: 2%;
+  top: 4%;
+  display: flex;
+  z-index: 9;
+  .iconfont {
+    font-size: 24px;
+    color: #ccc;
+    margin-right: 10px;
+    transition: all 0.3s;
+    cursor: pointer;
+    &:hover {
+      color: #fff;
+      transform: scale(1.2);
+    }
   }
 }
 
@@ -136,6 +176,17 @@ export default {
   position: absolute;
   width: 100%;
   bottom: 180px;
+}
+#bg-img {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 180px;
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(https://static.web.sdo.com/jijiamobile/pic/ff14/191010shismages/M3aprHHlg5_hV72kWPhGQLv4eM.png);
+  opacity: 0.7;
 }
 
 .footer {

@@ -1,16 +1,17 @@
 <template>
   <div>
     <!-- 当前曲目 -->
-    <div class="score-header">
+    <div class="score-header" :class="{ filter: filter }">
       <span class="current-music" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
       <span v-show="musicScore.length" class="music-paper" @click="showPaper = !showPaper">📄</span>
     </div>
     <!-- 曲目列表 -->
     <transition name="list-fade">
-      <div v-show="showMusicScore" class="score-body">
+      <div v-show="showMusicScore" class="score-body" @scroll="handleScroll">
         <div
           v-for="(item, i) in musicList" :key="i"
-          class="song" @click="handleMusicSelect(item, i)">
+          class="song" :class="{ 'selected-song': selectedIndex === i }"
+          @click="handleMusicSelect(item, i)">
           {{ item.name }}
         </div>
       </div>
@@ -19,14 +20,16 @@
       <div v-show="showMusicScore" class="model" @click="toggleMusicScore"></div>
     </transition>
     <!-- 乐谱 -->
-    <div v-show="showPaper && musicScore.length" class="notes-wrapper">
-      <span
-        v-for="item in musicScore" :key="item[0]"
-        :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
-        class="notes" :style="`margin-left: ${item[1]}px;`">
-        {{ item[2] + item[3] }}
-      </span>
-    </div>
+    <transition name="paper-fade">
+      <div v-show="showPaper && musicScore.length" class="notes-wrapper" :class="{ filter: filter }">
+        <span
+          v-for="item in musicScore" :key="item[0]"
+          :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
+          class="notes" :style="`margin-left: ${item[1]}px;`">
+          {{ item[2] + item[3] }}
+        </span>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -37,37 +40,18 @@ import { parseMIDI } from '@/utils/MIDI'
 // import Timer from '@/utils/Timer'
 // const sounder = new Sound()
 
-/* 滚动效果demo
-#app > div {
-  height: 100px;
-  width: 400px;
-  background-color: pink;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 0 5px 4px grey;
-}
-
-const el = document.getElementById('app')
-const offsetHeight = app.offsetHeight
-const children = app.children
-const itemHeight = 110
-app.addEventListener('scroll', function(e) {
-  const scrollTop = app.scrollTop
-  const startIndex = Math.floor(scrollTop / itemHeight)
-  const endIndex = Math.floor((scrollTop + offsetHeight) / itemHeight)
-  const midIndex = (endIndex - startIndex) / 2
-  for (let i = startIndex; i <= endIndex; i++) {
-    const child = children[i]
-    if (child) {
-      let n = 1 - Math.abs((child.offsetTop - scrollTop) / offsetHeight - 0.5)
-      child.style.transform = `scale3d(${n}, ${n}, 1)`
-    }
-  }
-})
-*/
+let scrollBodyDom = null
+let childrenDoms = []
+const itemHeight = 64
 
 export default {
+  // 虚化
+  props: {
+    filter: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       selectedIndex: -1,
@@ -86,6 +70,20 @@ export default {
     showMusicScore() {
       return this.$store.getters.showMusicScore
     }
+  },
+  watch: {
+    showMusicScore() {
+      this.$nextTick(() => {
+        scrollBodyDom.scrollTo({
+          top: this.selectedIndex === -1 ? 1 * itemHeight : this.selectedIndex * itemHeight - scrollBodyDom.offsetHeight / 2,
+          behavior: 'smooth'
+        })
+      })
+    }
+  },
+  mounted() {
+    scrollBodyDom = this.$el.querySelector('.score-body')
+    childrenDoms = scrollBodyDom.children
   },
   methods: {
     toggleMusicScore() {
@@ -147,6 +145,19 @@ export default {
         //   }
         // }, headerChunk.tempo / headerChunk.tick / 1000 * 4) // ??
       })
+    },
+    handleScroll() {
+      const scrollTop = scrollBodyDom.scrollTop
+      const offsetHeight = scrollBodyDom.offsetHeight
+      const startIndex = Math.floor(scrollTop / itemHeight)
+      const endIndex = Math.floor((scrollTop + offsetHeight) / itemHeight)
+      for (let i = startIndex; i <= endIndex; i++) {
+        const child = childrenDoms[i]
+        if (child) {
+          const n = 1 - Math.abs((child.offsetTop - scrollTop) / offsetHeight - 0.5) * 0.5
+          child.style.transform = `scale3d(${n}, ${n}, 1)`
+        }
+      }
     }
   }
 }
@@ -167,17 +178,22 @@ export default {
   transform: translateX(-100%);
 }
 
+.filter {
+  filter: blur(5px);
+}
+
 //
 .score-header {
   position: absolute;
-  top: 5%;
-  left: 5%;
+  top: 4%;
+  left: 2%;
+  transition: filter 0.5s;
   .current-music {
     padding: 4px 10px;
     margin-right: 10px;
-    border-radius: 20px;
+    border-radius: 10px;
     color: #fff;
-    background-color: #4db6ac;
+    background-color: #716ac3;
     cursor: pointer;
     &:hover {
 
@@ -193,7 +209,8 @@ export default {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 150px;
+  width: 200px;
+  padding: 0 20px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -204,12 +221,24 @@ export default {
     height: 0;
   }
   .song {
+    flex-shrink: 0;
+    height: 60px;
     padding: 15px 4px;
+    margin: 2px 0;
     background-color: pink;
     border-bottom: 1px solid #eee;
+    border-radius: 10px;
+    transition: box-shadow 0.3s;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 0 0 20px 0 #03a9f4;
+    }
     &:last-of-type {
       border-bottom: 0;
     }
+  }
+  .selected-song {
+    box-shadow: 0 0 20px 0 #03a9f4;
   }
 }
 
@@ -230,7 +259,12 @@ export default {
   left: 7%;
   right: 7%;
   padding-top: 10px;
+  margin-top: 20px;
   max-height: calc(90vh - 220px);
+  background-color: rgba(3, 3, 3, 0.3);
+  box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  transition: filter 0.5s;
   overflow-y: auto;
   .notes {
     display: inline-block;
@@ -248,5 +282,14 @@ export default {
     background-image: linear-gradient(#7a82be, #85e9e1);
     color: #eee;
   }
+}
+
+.paper-fade-enter-active,
+.paper-fade-leave-active {
+  transition: opacity 0.5s;
+}
+.paper-fade-enter,
+.paper-fade-leave-to {
+  opacity: 0;
 }
 </style>

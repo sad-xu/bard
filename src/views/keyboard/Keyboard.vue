@@ -1,10 +1,5 @@
 <template>
-  <div class="keyboard">
-    <menu-bottoms
-      class="menu-bottoms"
-      :higher-pressed="higherPressed"
-      :lower-pressed="lowerPressed">
-    </menu-bottoms>
+  <div class="keyboard-wrapper">
     <!-- 指示灯 -->
     <div class="indicator indicator-left">
       <div
@@ -26,20 +21,20 @@
         :class="{ 'show-indicator-mask': lowerPressed }">
       </div>
     </div>
-    <!-- 按键  -->
-    <div
-      v-for="item in keyboard" :key="item.label"
-      class="key" :class="{ 'key-pressed': pressedCodes[item.code], 'black-key': item.type }"
-      :style="item.type ? `left: ${12.5 * item.type}%` : ''">
-      <span class="code">{{ item.code | toggleKeycode }}</span>
-      <span class="label">{{ item.label }}</span>
+    <div class="keyboard">
+      <!-- 按键  -->
+      <div
+        v-for="item in keyboard" :key="item.label"
+        class="key" :class="{ 'key-pressed': pressedCodes[item.code], 'black-key': item.type }"
+        :style="item.type ? `left: ${12.5 * item.type}%` : ''">
+        <span class="code">{{ item.code | toggleKeycode }}</span>
+        <span class="label">{{ item.label }}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import MenuBottoms from './MenuBottoms'
-
 // ctrl shift alt
 const COMPOSITE_KEYS = {
   altKey: 'Alt',
@@ -49,9 +44,6 @@ const COMPOSITE_KEYS = {
 
 export default {
   name: 'Keyboard',
-  components: {
-    MenuBottoms
-  },
   data() {
     return {
       // [ label 音符, code 物理按键 ]
@@ -166,14 +158,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.keyboard {
+.keyboard-wrapper {
   position: fixed;
+  height: 160px;
   bottom: 20px;
   left: 0;
   right: 0;
+}
+
+.keyboard {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  height: 100%;
   display: flex;
-  height: 160px;
-  margin: 0 30px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  overflow: hidden;
   .key {
     flex-grow: 1;
     display: flex;
@@ -181,11 +182,11 @@ export default {
     align-items: center;
     justify-content: flex-end;
     background-color: #e0e3da;
-    padding-bottom: 20px;
-    border: 1px solid #000;
-    border-right: 0;
+    padding-bottom: 10px;
+    box-shadow: inset 0 0 2px 0 #333;
+    transition: background-color 0.3s;
     &:last-of-type {
-      border-right: 1px solid #000;
+      border-right: 0;
     }
     .code {
       display: flex;
@@ -196,14 +197,19 @@ export default {
       font-size: 12px;
       color: #fff;
       background-color: #5a5d5a;
+      border-radius: 3px;
+      box-shadow: 0 0 2px 1px #5a5d5a;
     }
     .label {
       display: flex;
       align-items: flex-end;
-      height: 40px;
-      font-size: 12px;
+      font-size: 14px;
+      margin-top: 10px;
       color: #856823;
     }
+  }
+  .key-pressed {
+    background-color: #fff;
   }
   .black-key {
     height: 90px;
@@ -212,17 +218,19 @@ export default {
     background-color: #333;
     width: 8%;
     transform: translateX(-50%);
-  }
-  .key-pressed {
-    background-color: #fffff3;
-  }
-}
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 0 0 10px 1px #656060;
+    .code {
 
-.menu-bottoms {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: translateY(-100%);
+    }
+    .label {
+      color: #e0e3da;
+    }
+    &.key-pressed {
+      background-color: #7a7a7a;
+    }
+  }
 }
 
 .indicator {
@@ -257,10 +265,10 @@ export default {
 }
 .indicator-left {
   left: 0;
-  transform: translateX(-200%);
+  transform: translateX(100%);
 }
 .indicator-right {
   right: 0;
-  transform: translateX(200%);
+  transform: translateX(-100%);
 }
 </style>
