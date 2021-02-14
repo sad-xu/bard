@@ -11,7 +11,7 @@ class Timer {
     this.interval = interval
     this.worker = new Worker('/worker.js')
     this.worker.onmessage = cb
-    this.start()
+    // this.start()
   }
 
   start() {
@@ -35,7 +35,9 @@ class Timer {
 
   end() {
     this.status = 'free'
-    this.worker.terminate()
+    if (this.worker) {
+      this.worker.terminate()
+    }
   }
 }
 

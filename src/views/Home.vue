@@ -9,7 +9,7 @@
       <!-- menu -->
       <div class="menu-wrapper">
         <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
-        <i class="iconfont icon-music" title="音色设置" @click="openTimbreMenu"></i>
+        <i class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
         <i class="iconfont icon-question" title="使用须知"></i>
       </div>
       <!-- bg -->
@@ -72,57 +72,7 @@ export default {
     }
   },
   mounted() {
-    const screenDom = this.$refs.Screen
-    const ctx = screenDom.getContext('2d')
-    let width = screenDom.clientWidth
-    let height = screenDom.clientHeight
-    screenDom.width = width
-    screenDom.height = height
-    const analyser = sounder.analyser
-    const timeArray = new Uint8Array(analyser.frequencyBinCount)
-    const freqArray = new Uint8Array(analyser.frequencyBinCount)
-    const barWidth = width / analyser.frequencyBinCount * 2
-    // 窗口改变适应
-    window.addEventListener('resize', debounce(function() {
-      width = screenDom.clientWidth
-      height = screenDom.clientHeight
-      screenDom.width = width
-      screenDom.height = height
-    }))
-    const draw = () => {
-      if (!sounder.singingNum) {
-        // 空闲
-      } else {
-        ctx.fillStyle = '#eff3f5'
-        // ctx.fillRect(0, 0, width, height)
-        ctx.clearRect(0, 0, width, height)
-        ctx.lineWidth = 1
-        ctx.strokeStyle = '#f00'
-        analyser.getByteFrequencyData(freqArray)
-        analyser.getByteTimeDomainData(timeArray)
-        let x = 0
-        let y = 0
-        ctx.beginPath()
-        freqArray.forEach((v, i) => {
-          // 频域
-          const barHeight = v / 255 * height
-          ctx.fillStyle = '#606162'
-          ctx.fillRect(x, height - barHeight, barWidth, barHeight)
-          // 时域
-          y = timeArray[i] / 128 * height / 2
-          if (i === 0) {
-            ctx.moveTo(x, y)
-          } else {
-            ctx.lineTo(x, y)
-          }
-          x += barWidth
-        })
-        ctx.lineTo(width, height / 2)
-        ctx.stroke()
-      }
-      requestAnimationFrame(draw)
-    }
-    draw()
+
   },
   methods: {
     sing({ note, pitch }) {
@@ -133,6 +83,59 @@ export default {
     },
     openTimbreMenu() {
       this.$store.dispatch('timbre/toggleShowTimbreMenu')
+    },
+    initCanvas() {
+      const screenDom = this.$refs.Screen
+      const ctx = screenDom.getContext('2d')
+      let width = screenDom.clientWidth
+      let height = screenDom.clientHeight
+      screenDom.width = width
+      screenDom.height = height
+      const analyser = sounder.analyser
+      const timeArray = new Uint8Array(analyser.frequencyBinCount)
+      const freqArray = new Uint8Array(analyser.frequencyBinCount)
+      const barWidth = width / analyser.frequencyBinCount * 2
+      // 窗口改变适应
+      window.addEventListener('resize', debounce(function() {
+        width = screenDom.clientWidth
+        height = screenDom.clientHeight
+        screenDom.width = width
+        screenDom.height = height
+      }))
+      const draw = () => {
+        if (!sounder.singingNum) {
+          // 空闲
+        } else {
+          ctx.fillStyle = '#eff3f5'
+          // ctx.fillRect(0, 0, width, height)
+          ctx.clearRect(0, 0, width, height)
+          ctx.lineWidth = 1
+          ctx.strokeStyle = '#f00'
+          analyser.getByteFrequencyData(freqArray)
+          analyser.getByteTimeDomainData(timeArray)
+          let x = 0
+          let y = 0
+          ctx.beginPath()
+          freqArray.forEach((v, i) => {
+            // 频域
+            const barHeight = v / 255 * height
+            ctx.fillStyle = '#606162'
+            ctx.fillRect(x, height - barHeight, barWidth, barHeight)
+            // 时域
+            y = timeArray[i] / 128 * height / 2
+            if (i === 0) {
+              ctx.moveTo(x, y)
+            } else {
+              ctx.lineTo(x, y)
+            }
+            x += barWidth
+          })
+          ctx.lineTo(width, height / 2)
+          ctx.stroke()
+        }
+        requestAnimationFrame(draw)
+      }
+      draw()
     }
   }
 }
@@ -144,6 +147,7 @@ export default {
   .content {
     height: 100%;
     transition: transform 0.5s, filter 0.5s;
+    will-change: transform, filter;
   }
   .filter {
     filter: blur(5px);
@@ -162,7 +166,7 @@ export default {
   .iconfont {
     font-size: 24px;
     color: #ccc;
-    margin-right: 10px;
+    margin-left: 10px;
     transition: all 0.3s;
     cursor: pointer;
     &:hover {

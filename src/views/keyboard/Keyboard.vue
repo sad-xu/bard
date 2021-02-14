@@ -181,7 +181,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    background-color: #e0e3da;
+    background-color: #e2e1e4;
     padding-bottom: 10px;
     box-shadow: inset 0 0 2px 0 #333;
     transition: background-color 0.3s;
@@ -212,7 +212,7 @@ export default {
     background-color: #fff;
   }
   .black-key {
-    height: 90px;
+    height: 100px;
     position: absolute;
     top: 0;
     background-color: #333;
@@ -221,14 +221,11 @@ export default {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     box-shadow: 0 0 10px 1px #656060;
-    .code {
-
-    }
     .label {
       color: #e0e3da;
     }
     &.key-pressed {
-      background-color: #7a7a7a;
+      background-color: #515151;
     }
   }
 }
@@ -241,6 +238,7 @@ export default {
   border-radius: 10px;
   background-color: #b2b2b2;
   overflow: hidden;
+  box-shadow: 0 0 10px 0 #b2b2b2;
   > div {
     position: absolute;
     top: 0;

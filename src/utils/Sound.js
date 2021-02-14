@@ -55,10 +55,17 @@ class Sound {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const analyser = context.createAnalyser()
     const totalGainNode = context.createGain()
+    const compressor = context.createDynamicsCompressor()
+    // compressor.threshold.setValueAtTime(-50, context.currentTime)
+    // compressor.knee.setValueAtTime(40, context.currentTime)
+    // compressor.ratio.setValueAtTime(12, context.currentTime)
+    // compressor.attack.setValueAtTime(0, context.currentTime)
+    // compressor.release.setValueAtTime(0.25, context.currentTime)
     totalGainNode.gain.setValueAtTime(0.4, context.currentTime)
     analyser.fftSize = 1024
     totalGainNode.connect(analyser)
-    analyser.connect(context.destination)
+    analyser.connect(compressor)
+    compressor.connect(context.destination)
     this.context = context
     this.totalGainNode = totalGainNode
     this.analyser = analyser

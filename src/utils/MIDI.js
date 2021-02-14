@@ -6,7 +6,7 @@ function bytesToNumber(byteArray) {
 
 //
 function bytesToHex(byteArray) {
-  let hex = ''
+  let hex = '0x'
   byteArray.forEach(byte => {
     hex += ('0' + byte.toString(16)).slice(-2)
   })
@@ -66,7 +66,7 @@ export function parseMIDI(arrayBuffer) {
       tttt: bytesToNumber(buffer.subarray(10, 12)), // 音轨块数
       dddd: buffer.subarray(12, 14), // 时间类型
       timingType: (buffer.subarray(12, 13) & 0b1000) >> 3, //  0 TPQN计时-每四分音符中所包含的Tick数量 48-480  1 SMPTE计时
-      tick: buffer.subarray(13, 14) & 0b01111111,
+      tick: bytesToHex(buffer.subarray(12, 14)) & 0b111111111111,
       tempo: 545454 // 四分音符的时长 微秒
     },
     trackChunk: []
@@ -82,7 +82,6 @@ export function parseMIDI(arrayBuffer) {
     } else i += 8
   }
   //
-  console.log(trackChunk)
   const tracks = []
   trackChunk.forEach(track => {
     const list = []
@@ -191,7 +190,9 @@ export function parseMIDI(arrayBuffer) {
             }
             midiInfo.headerChunk.tempo = tempo
             desc = '设定速度-微秒' // FF 51 03 tt tt tt  MicroTempo
-          } else if (type === 0x58) desc = '节拍'
+          } else if (type === 0x58) {
+            desc = '节拍'
+          }
           item.push(desc)
           // console.log('!!', type, track.subarray(i, i + len), desc)
           i += len

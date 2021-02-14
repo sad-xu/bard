@@ -8,7 +8,6 @@ function setTimer(interval) {
 
 // { cmd, option }
 onmessage = function(e) {
-  console.log('worker received: ', e)
   const { cmd, option } = e.data
   if (cmd === 'start') {
     setTimer(option.interval)
