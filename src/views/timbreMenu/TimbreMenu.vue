@@ -1,5 +1,6 @@
 <template>
   <ff-dialog
+    :visible="showTimbreMenu"
     title="音色设置" append-to-body
     default-left="-30%" default-top="5%" @close="closeTimbreMenu">
     <div class="timbre-wrapper">
@@ -41,6 +42,9 @@ export default {
     }
   },
   computed: {
+    showTimbreMenu() {
+      return this.$store.getters.showTimbreMenu
+    },
     timbreList() {
       return this.$store.getters.timbreList
     }

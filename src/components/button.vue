@@ -27,22 +27,25 @@ export default {
 <style lang="scss" scoped>
 .ff-button {
   display: inline-block;
+  font-size: 14px;
+  padding: 6px 10px;
+  text-align: center;
   line-height: 1;
   color: #fff;
   background-color: #403b3b;
-  font-size: 14px;
-  text-align: center;
-  transition: 0.1s;
-  padding: 12px 20px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  border-radius: 50px;
+  box-shadow: 1px 1px 2px 0 #202020;
+  border: 2px solid #212121;
+  border-top-color: #767676;
+  border-left-color: #767676;
+  transition: background-color 0.3s;
   white-space: nowrap;
   outline: none;
   user-select: none;
   cursor: pointer;
   &:focus,
   &:hover {
-    background-color: #6f6a6a;
+    background-color: #4d4b4b;
   }
   &:active {
     background-color: #191818;

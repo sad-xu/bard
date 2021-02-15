@@ -3,14 +3,14 @@
     <div
       class="content"
       :class="{
-        'filter': showMusicScore || showKeyboardMenu || showTimbreMenu,
+        'filter': showMusicScore || hasDialogOpended,
         'transform-scale': showMusicScore
       }">
       <!-- menu -->
       <div class="menu-wrapper">
         <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
         <i class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
-        <i class="iconfont icon-question" title="使用须知"></i>
+        <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
       <!-- bg -->
       <div id="bg-img"></div>
@@ -29,11 +29,13 @@
       </footer>
     </div>
     <!-- 按键设置 -->
-    <keyboard-menu v-if="showKeyboardMenu"></keyboard-menu>
+    <keyboard-menu></keyboard-menu>
     <!-- 音色设置 -->
-    <timbre-menu v-if="showTimbreMenu"></timbre-menu>
+    <timbre-menu></timbre-menu>
+    <!-- 使用须知 -->
+    <about-use></about-use>
     <!-- 乐谱选择 -->
-    <music-score :filter="showKeyboardMenu || showTimbreMenu"></music-score>
+    <music-score :filter="hasDialogOpended"></music-score>
   </div>
 </template>
 
@@ -43,6 +45,7 @@ import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 import TimbreMenu from './timbreMenu/TimbreMenu'
 import MusicScore from './musicScore/MusicScore'
+import AboutUse from './aboutUse/AboutUse'
 import { debounce } from '@/utils'
 
 const sounder = new Sound()
@@ -53,26 +56,18 @@ export default {
     Keyboard,
     KeyboardMenu,
     TimbreMenu,
-    MusicScore
-  },
-  data() {
-    return {
-
-    }
+    MusicScore,
+    AboutUse
   },
   computed: {
-    showKeyboardMenu() {
-      return this.$store.getters.showKeyboardMenu
-    },
-    showTimbreMenu() {
-      return this.$store.getters.showTimbreMenu
-    },
     showMusicScore() {
       return this.$store.getters.showMusicScore
+    },
+    hasDialogOpended() {
+      return this.$store.getters.showKeyboardMenu ||
+        this.$store.getters.showTimbreMenu ||
+        this.$store.getters.showAboutUse
     }
-  },
-  mounted() {
-
   },
   methods: {
     sing({ note, pitch }) {
@@ -83,6 +78,9 @@ export default {
     },
     openTimbreMenu() {
       this.$store.dispatch('timbre/toggleShowTimbreMenu')
+    },
+    openAboutUse() {
+      this.$store.dispatch('app/toggleAboutUse')
     },
     initCanvas() {
       const screenDom = this.$refs.Screen

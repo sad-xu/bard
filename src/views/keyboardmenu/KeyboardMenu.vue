@@ -1,7 +1,8 @@
 <template>
   <ff-dialog
+    :visible="showKeyboardMenu"
     title="乐器演奏操作设置" append-to-body
-    default-top="5%" @close="closeMenu">
+    default-top="10%" @close="closeMenu">
     <!--  -->
     <div class="panel-wrapper">
       <div class="left-panel">
@@ -13,17 +14,17 @@
           </key-bind>
         </div>
         <div>
-          <div class="panel-item">
+          <div class="panel-item" style="margin-bottom: 28px;">
             <key-bind
               v-for="item in keyConfig[1]" :key="item.note"
-              :note="item.note" :label="item.label"
+              :note="item.note" :truth-note="item.truthNote" :label="item.label"
               @changeBind="changeBind(item, $event)">
             </key-bind>
           </div>
           <div class="panel-item">
             <key-bind
               v-for="item in keyConfig[2]" :key="item.note"
-              :note="item.note" :label="item.label"
+              :note="item.note" :truth-note="item.truthNote" :label="item.label"
               @changeBind="changeBind(item, $event)">
             </key-bind>
           </div>
@@ -31,11 +32,11 @@
       </div>
       <div class="right-panel">
         <div class="panel-item">
-          <div>
+          <div class="composite">
             <span>高八度</span>
             <ff-select v-model="higherKey" :options="compositeOption"></ff-select>
           </div>
-          <div>
+          <div class="composite">
             <span>低八度</span>
             <ff-select v-model="lowerKey" :options="compositeOption"></ff-select>
           </div>
@@ -52,7 +53,7 @@
           恢复初期设置
         </ff-button>
         <div>
-          <ff-button @click="applySetting">
+          <ff-button class="apply-button" @click="applySetting">
             应用
           </ff-button>
           <ff-button @click="closeMenu">
@@ -87,13 +88,13 @@ export default {
           { note: 'i', label: '', key: '' }
         ],
         [
-          { note: '1#', label: '', key: '' },
-          { note: '3b', label: '', key: '' }
+          { note: '1#', truthNote: '1 ♯', label: '', key: '' },
+          { note: '3b', truthNote: '3 ♭', label: '', key: '' }
         ],
         [
-          { note: '4#', label: '', key: '' },
-          { note: '5#', label: '', key: '' },
-          { note: '7b', label: '', key: '' }
+          { note: '4#', truthNote: '4 ♯', label: '', key: '' },
+          { note: '5#', truthNote: '5 ♯', label: '', key: '' },
+          { note: '7b', truthNote: '7 ♭', label: '', key: '' }
         ]
       ],
       higherKey: 'shiftKey',
@@ -105,23 +106,31 @@ export default {
       ]
     }
   },
-  created() {
-    const { higher, lower, common } = this.$store.getters.keyMap
-    this.higherKey = higher
-    this.lowerKey = lower
-    const obj = {}
-    for (const code in common) {
-      obj[common[code]] = code
+  computed: {
+    showKeyboardMenu() {
+      return this.$store.getters.showKeyboardMenu
     }
-    this.keyConfig.forEach(panel => {
-      panel.forEach(item => {
-        const code = obj[item.note] || ''
-        item.label = this.toggleKeycode(code)
-        item.key = code
-      })
-    })
+  },
+  created() {
+    this.initKeyConfig()
   },
   methods: {
+    initKeyConfig() {
+      const { higher, lower, common } = this.$store.getters.keyMap
+      this.higherKey = higher
+      this.lowerKey = lower
+      const obj = {}
+      for (const code in common) {
+        obj[common[code]] = code
+      }
+      this.keyConfig.forEach(panel => {
+        panel.forEach(item => {
+          const code = obj[item.note] || ''
+          item.label = this.toggleKeycode(code)
+          item.key = code
+        })
+      })
+    },
     // 绑定按键
     changeBind(bindItem, bindCode) {
       bindItem.label = this.toggleKeycode(bindCode)
@@ -155,6 +164,7 @@ export default {
     },
     // 关闭
     closeMenu() {
+      this.initKeyConfig()
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
     },
     // 恢复默认
@@ -184,17 +194,18 @@ export default {
 .left-panel,
 .right-panel {
   background-color: #2e302e;
-  box-shadow: 1px 1px #000;
-  padding: 18px;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px 0 #151414;
+  padding: 20px;
 }
 
 .left-panel {
   display: flex;
   margin-right: 20px;
-  width: 350px;
+  width: 340px;
   justify-content: space-between;
   > div {
-    width: 130px;
+    width: 120px;
   }
 }
 
@@ -205,18 +216,27 @@ export default {
     width: 200px;
     margin-bottom: 15px;
   }
+  .composite {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
 }
 
 .footer {
-  margin-top: 40px;
+  margin-top: 25px;
   border-top: 2px solid #4e4a4e;
   .footer-tip {
     font-size: 13px;
-    margin: 6px 0 6px 10px;
+    margin: 10px 0 10px 10px;
   }
   .footer-buttons {
     display: flex;
     justify-content: space-between;
+    .apply-button {
+      margin-right: 20px;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="key-bind">
-    <span>{{ note }}</span>
+    <span>{{ truthNote || note }}</span>
     <span
       class="input"
       :class="isSelected ? 'selected' : ''"
@@ -18,6 +18,7 @@
 /**
  * 按键绑定
  * note 音符
+ * truthNote 真实音符显示
  * label 绑定按键名
  *
  * @changeBind
@@ -31,6 +32,10 @@ export default {
     note: {
       type: String,
       required: true
+    },
+    truthNote: {
+      type: String,
+      default: ''
     },
     label: {
       type: String,
@@ -65,7 +70,7 @@ export default {
       if (this.isSelected) {
         this.$emit('changeBind', e.code)
         e.preventDefault()
-        event.returnValue = ''
+        e.returnValue = ''
       }
     },
     handleBlur(e) {
@@ -82,25 +87,32 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 4px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
   .input {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 50px;
     height: 20px;
+    color: #000;
+    border-radius: 6px;
     background-color: #c7c7c7;
-    color: #3a3a3a;
+    box-shadow: inset 0 0 4px 0 #171717;
+    transition: box-shadow 0.3s;
+    cursor: pointer;
     user-select: none;
     input {
       width: 0;
       height: 0;
       opacity: 0;
-      // visibility: hidden;
       z-index: -1;
     }
   }
   .selected {
-    box-shadow: 3px 3px red;
+    box-shadow: inset 0 0 10px 4px #f3f3f3;
   }
 }
 </style>

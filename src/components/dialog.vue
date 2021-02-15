@@ -1,25 +1,27 @@
 <template>
-  <div>
-    <div v-if="showModel" class="menu-model"></div>
-    <div class="menu" :style="styleObj">
-      <div
-        class="menu-header"
-        @mousedown="handleMouseDown"
-        @mousemove="handleMouseMove"
-        @mouseup="handleMouseUp"
-        @mouseout="handleMouseUp">
-        <div class="menu-title">
-          {{ title }}
+  <transition name="dialog-fade">
+    <div v-if="visible">
+      <div v-if="showModel" class="menu-model"></div>
+      <div class="menu" :style="styleObj">
+        <div
+          class="menu-header"
+          @mousedown="handleMouseDown"
+          @mousemove="handleMouseMove"
+          @mouseup="handleMouseUp"
+          @mouseout="handleMouseUp">
+          <div class="menu-title">
+            {{ title }}
+          </div>
+          <div class="menu-close" @click="close">
+            x
+          </div>
         </div>
-        <div class="menu-close" @click="close">
-          x
+        <div class="menu-body">
+          <slot></slot>
         </div>
-      </div>
-      <div class="menu-body">
-        <slot></slot>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -29,6 +31,10 @@ let dialogNum = 0
 export default {
   name: 'FfDialog',
   props: {
+    visible: {
+      type: Boolean,
+      default: false
+    },
     title: {
       type: String,
       default: ''
@@ -128,13 +134,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.dialog-fade-enter-active { transition: opacity 0.5s; }
+.dialog-fade-leave-active { transition: opacity 0.2s; }
+.dialog-fade-enter,
+.dialog-fade-leave-to {
+  opacity: 0;
+}
+
 .menu-model {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.1);
   z-index: 9;
 }
 
@@ -143,19 +155,19 @@ export default {
   top: 10px;
   left: 0;
   right: 0;
-  margin: 0 auto;
   width: 710px;
-  // height: 430px;
-  z-index: 10;
-  padding: 6px;
+  padding: 12px;
+  margin: 0 auto;
+  box-shadow: 1px 1px 5px 0 #222;
   background-color: #383838;
   color: #fff;
   border-radius: 10px;
+  z-index: 10;
   .menu-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #bfbfbf;
+    color: #fff;
     cursor: move;
     .menu-title {
       cursor: default;
