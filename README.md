@@ -2,6 +2,10 @@
 
 ## FF14 演奏 <s>（吟游诗人）</s> 模拟器
 
+```bash
+tcb hosting:deploy -e ff14-3gaz7i4cedb8328b
+```
+
 ## 功能
 
 键盘 13键

@@ -6,11 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <title>光之演奏家</title>
+    <% if (NODE_ENV === 'production') { %>
+      <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?a72a528e3ac2fbdaa1b7f8a7525f06ee";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      </script>
+    <% } %>
   </head>
   <body>
     <div id="app"></div>
     <% for (let i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
-      <link href="<%= htmlWebpackPlugin.options.cdn.js[i] %>" rel="preload" as="script">
+      <script src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
     <% } %>
   </body>
 </html>

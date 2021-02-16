@@ -122,7 +122,7 @@ export default {
       this.selectedIndex = i
 
       const request = new XMLHttpRequest()
-      request.open('GET', `${item.source}.mid`, true)
+      request.open('GET', `/mids/${item.source}.mid`, true)
       request.responseType = 'arraybuffer'
       request.onload = () => {
         const { headerChunk, trackChunk } = parseMIDI(request.response)
