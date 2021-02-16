@@ -3,7 +3,7 @@ const state = {
   timbreList: [
     {
       id: 1,
-      name: '111',
+      name: '没做呢',
       config: [
         { type: 'OscillatorNode', params: { type: 'square' } },
         {
@@ -18,7 +18,7 @@ const state = {
     },
     {
       id: 2,
-      name: '222',
+      name: '嘻嘻',
       config: [
         { type: 'OscillatorNode', params: { type: 'sine' } }
       ]

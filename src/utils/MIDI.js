@@ -98,7 +98,7 @@ export function parseMIDI(arrayBuffer) {
       switch (true) {
         case stat >= 0x80 && stat <= 0x8f:
           item.push(track.subarray(i + 1, i + 3))
-          item.push('声音关闭')
+          item.push('up')
           i += 3
           break
         case stat >= 0x90 && stat <= 0x9f: {
@@ -106,9 +106,9 @@ export function parseMIDI(arrayBuffer) {
           const note = track.subarray(i + 1, i + 3)
           item.push(note)
           if (note[1] === 0) {
-            item.push('声音关闭')
+            item.push('up')
           } else {
-            item.push('声音开启')
+            item.push('down')
           }
           i += 3
           break

@@ -12,9 +12,7 @@
           <div class="menu-title">
             {{ title }}
           </div>
-          <div class="menu-close" @click="close">
-            x
-          </div>
+          <i class="iconfont icon-close" @click="close"></i>
         </div>
         <div class="menu-body">
           <slot></slot>
@@ -172,8 +170,8 @@ export default {
     .menu-title {
       cursor: default;
     }
-    .menu-close {
-      cursor: default;
+    .icon-close {
+      cursor: pointer;
     }
   }
   .menu-body {

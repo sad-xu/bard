@@ -28,7 +28,7 @@
         class="key" :class="{ 'key-pressed': pressedCodes[item.code], 'black-key': item.type }"
         :style="item.type ? `left: ${12.5 * item.type}%` : ''">
         <span class="code">{{ item.code | toggleKeycode }}</span>
-        <span class="label">{{ item.label }}</span>
+        <span class="label">{{ item.truthLabel || item.label }}</span>
       </div>
     </div>
   </div>
@@ -49,16 +49,16 @@ export default {
       // [ label 音符, code 物理按键 ]
       keyboard: [
         { label: '1', code: '' },
-        { label: '1#', code: '', type: 1 },
+        { label: '1#', truthLabel: '1 ♯', code: '', type: 1 },
         { label: '2', code: '' },
-        { label: '3b', code: '', type: 2 },
+        { label: '3b', truthLabel: '3 ♭', code: '', type: 2 },
         { label: '3', code: '' },
         { label: '4', code: '' },
-        { label: '4#', code: '', type: 4 },
+        { label: '4#', truthLabel: '4 ♯', code: '', type: 4 },
         { label: '5', code: '' },
-        { label: '5#', code: '', type: 5 },
+        { label: '5#', truthLabel: '5 ♯', code: '', type: 5 },
         { label: '6', code: '' },
-        { label: '7b', code: '', type: 6 },
+        { label: '7b', truthLabel: '7 ♭', code: '', type: 6 },
         { label: '7', code: '' },
         { label: 'i', code: '' }
       ],
@@ -148,10 +148,10 @@ export default {
         }
       })
       // 无法禁止的事件 [Shift] Ctrl (Q|N|W|T|Tab)
-      // window.addEventListener('beforeunload', e => {
-      //   e.preventDefault()
-      //   e.returnValue = null
-      // })
+      window.addEventListener('beforeunload', e => {
+        e.preventDefault()
+        e.returnValue = null
+      })
     }
   }
 }

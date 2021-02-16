@@ -68,6 +68,11 @@ module.exports = {
         // 打包分析
         // new BundleAnalyzerPlugin()
       ]
+      config.externals = {
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+        vuex: 'Vuex'
+      }
     }
     config.plugins = [
       ...config.plugins,
@@ -81,6 +86,20 @@ module.exports = {
     config.resolve.alias
       .set('@', resolve('src'))
       .set('views', resolve('srv/views'))
+
+    if (!isDev) {
+      config.plugin('html')
+        .tap(args => {
+          args[0].cdn = {
+            js: [
+              'https://cdn.jsdelivr.net/npm/vue@2.6.11',
+              'https://cdn.jsdelivr.net/npm/vue-router@3.2.0',
+              'https://cdn.jsdelivr.net/npm/vuex@3.6.0'
+            ]
+          }
+          return args
+        })
+    }
 
     // 去除 console
     config.optimization.minimizer('terser').tap(args => {

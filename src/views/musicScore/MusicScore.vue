@@ -3,7 +3,7 @@
     <!-- 当前曲目 -->
     <div class="score-header" :class="{ filter: filter || showMusicScore }">
       <span class="current-music" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
-      <i v-show="musicScore.length" class="iconfont icon-changpian" title="显示乐谱" @click="showPaper = !showPaper"></i>
+      <i v-show="musicScore.length" class="iconfont icon-music-setting" title="显示乐谱" @click="showPaper = !showPaper"></i>
     </div>
     <!-- 播放 / 暂停 / 重播  -->
     <div
@@ -15,7 +15,7 @@
         :class="isPlay ? 'icon-stop' : 'icon-start'"
         :title="isPlay ? '暂停' : '播放'" @click="toggleTheSong">
       </i>
-      <i class="reload-icon iconfont icon-music" title="重播" @click="reloadTheSong"></i>
+      <i class="reload-icon iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
     </div>
     <!-- 曲目列表 -->
     <transition name="list-fade">
@@ -38,7 +38,7 @@
           v-for="item in musicScore" :key="item[0]"
           :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
           class="notes" :style="`margin-left: ${item[1]}px;`">
-          {{ item[2] }}
+          {{ item[4] }}
         </span>
       </div>
     </transition>
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import Sound from '@/utils/Sound'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
@@ -57,6 +56,9 @@ sounder.setVolume(0.05)
 let scrollBodyDom = null
 let childrenDoms = []
 const itemHeight = 64
+
+const N_ARR = ['1', '1#', '2', '3b', '3', '4', '4#', '5', '5#', '6', '7b', '7']
+const NN_ARR = ['1', '1♯', '2', '3♭', '3', '4', '4♯', '5', '5♯', '6', '7♭', '7']
 
 export default {
   // 虚化
@@ -70,7 +72,12 @@ export default {
     return {
       selectedIndex: -1,
       // 陆行鸟之歌 植物大战僵尸
-      musicList: Array.from({ length: 40 }).map((v, i) => ({ name: `陆行鸟之歌-${i}` })),
+      musicList: Array.from({ length: 40 }).map((v, i) => {
+        let name = ''
+        if (i % 2) name = '陆行鸟之歌'
+        else name = '植物大战僵尸'
+        return { name: `${name}-${i}`, source: name }
+      }),
       // 乐谱显示
       showPaper: false,
       // 乐谱音符
@@ -113,47 +120,49 @@ export default {
       console.log(item, i)
       this.toggleMusicScore()
       this.selectedIndex = i
-      const service = axios.create({
-        baseURL: '',
-        responseType: 'arraybuffer'
-      })
-      service({
-        url: '陆行鸟之歌.mid'
-        // url: `${item.name}.mid`
-      }).then(res => {
-        const { headerChunk, trackChunk } = parseMIDI(res.data)
+
+      const request = new XMLHttpRequest()
+      request.open('GET', `${item.source}.mid`, true)
+      request.responseType = 'arraybuffer'
+      request.onload = () => {
+        const { headerChunk, trackChunk } = parseMIDI(request.response)
         const musicScore = []
+        // Tip: 每个 tick 约为 1.6ms，但定时器最短间隔为4ms，实际表现会慢好几倍
+        // 所以将间隔时间 = tick * 10, 并且将tick数 / 10
+        // 将 tick 时间缩放为20ms左右
+        const tickTime = headerChunk.tempo / headerChunk.tick / 1000
+        const mult = 20 / tickTime
         trackChunk.forEach(chunk => {
           let t = 0
           let lastT = 0
           chunk.forEach(track => {
-            lastT = t
-            t += track[0]
-            if (track[2] === '声音开启') {
+            t += track[0] / mult
+            if (track[2] === 'down') {
               // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
               const B = track[1][0]
-              const N = ['1', '1#', '2', '3b', '3', '4', '4#', '5', '5#', '6', '7b', '7'][B % 12]
+              const N = N_ARR[B % 12]
+              const NN = NN_ARR[B % 12]
               let O = Math.floor(B / 12) - 1
               if (O <= 4) O = '↓'
               else if (O >= 6) O = '↑'
               else O = ''
               if (t - lastT) {
-                musicScore.push([t / 10, Number(((t - lastT) / 3).toFixed(2)), N, O])
+                musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN])
+                lastT = t
               }
             }
           })
         })
+        musicScore.sort((a, b) => a[0] - b[0])
         this.musicScore = musicScore
-        // 歌曲时长 = 最后一个音符的时刻 + 3s
-        console.log(musicScore[musicScore.length - 1][0] * headerChunk.tempo / headerChunk.tick / 1000 * 10 / 1000 + 3)
-        // Tip: 每个 tick 约为 1.6ms，但定时器最短间隔为4ms，实际表现会慢好几倍
-        // 所以将间隔时间 = tick * 10, 并且将tick数 / 10
-        const tickTime = headerChunk.tempo / headerChunk.tick / 1000 * 10
-        this.tickTime = tickTime
+        // console.log(headerChunk, trackChunk, musicScore)
+        // console.log(tickTime, mult, tickTime * mult)
+        this.tickTime = tickTime * mult
         this.initTheSong()
         this.hideMenu = false
         this.showPaper = true
-      })
+      }
+      request.send(null)
     },
     initTheSong() {
       let t = 0
@@ -201,6 +210,7 @@ export default {
         if (child) {
           const n = 1 - Math.abs((child.offsetTop - scrollTop) / offsetHeight - 0.5) * 0.5
           child.style.transform = `scale3d(${n}, ${n}, 1)`
+          child.style.opacity = n
         }
       }
     }
@@ -242,17 +252,13 @@ export default {
     color: #fff;
     background-color: #716ac3;
     cursor: pointer;
-    &:hover {
-
-    }
   }
-  .icon-changpian {
+  .icon-music-setting {
     font-size: 24px;
-    color: #ccc;
+    color: #fff;
     transition: all 0.3s;
     cursor: pointer;
     &:hover {
-      color: #fff;
       transform: scale(1.2);
     }
   }
@@ -304,16 +310,20 @@ export default {
   overflow-y: auto;
   transform-origin: left;
   z-index: 99;
+  scrollbar-width: none;
   &::-webkit-scrollbar {
     width: 0;
     height: 0;
   }
   .song {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex-shrink: 0;
     height: 60px;
     padding: 15px 4px;
     margin: 2px 0;
-    background-color: pink;
+    background-color: #ecf0ff;
     border-bottom: 1px solid #eee;
     border-radius: 10px;
     transition: box-shadow 0.3s;

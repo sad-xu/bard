@@ -1,7 +1,8 @@
 <template>
   <div class="ff-select" @click.stop="toggleMenu">
     <div class="ff-select-label">
-      <span class="ff-arrow" :class="{ 'ff-arrow-rotate': visible }">▶</span>
+      <i class="iconfont icon-arrow-fill ff-arrow" :class="{ 'ff-arrow-rotate': visible }"></i>
+      <!-- <span class="ff-arrow" :class="{ 'ff-arrow-rotate': visible }">▶</span> -->
       <div>{{ selectedLabel }}</div>
     </div>
     <transition name="ff-zome-in-top">
@@ -102,6 +103,7 @@ export default {
   border-radius: 20px;
   cursor: pointer;
   .ff-arrow {
+    font-size: 12px;
     transition: transform 0.3s;
   }
   .ff-arrow-rotate {
@@ -116,6 +118,8 @@ export default {
   margin-top: 4px;
   background-color: #6b6d6b;
   color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
   z-index: 9;
   .ff-select-dropdown__item {
     font-size: 14px;
@@ -124,7 +128,7 @@ export default {
     // line-height: 34px;
     cursor: pointer;
     &:hover {
-      background-color: #f5f7fa;
+      background-color: #555;
     }
   }
 }

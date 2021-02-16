@@ -19,8 +19,8 @@
     </div>
     <!--  -->
     <timbre
-      v-show="showTunerMenu"
       ref="Timbre"
+      :visible="showTunerMenu"
       @close="showTunerMenu = false">
     </timbre>
   </ff-dialog>
