@@ -1,5 +1,5 @@
 {
-  "name": "audio-test",
+  "name": "ff14-bard",
   "version": "0.1.0",
   "private": true,
   "author": {
@@ -7,18 +7,15 @@
     "email": "1031568754@qq.com",
     "url": "https://github.com/sad-xu"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sad-xu/bard.git"
-  },
   "scripts": {
-    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev": "vue-cli-service serve"
   },
   "dependencies": {
     "core-js": "^3.6.5",
     "normalize.css": "^8.0.1",
+    "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.6.0"
@@ -26,6 +23,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-pwa": "^4.5.11",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
@@ -51,5 +49,9 @@
   "engines": {
     "node": ">=8.9",
     "npm": ">=3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sad-xu/bard.git"
   }
 }

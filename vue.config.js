@@ -22,15 +22,6 @@ module.exports = {
       errors: false
     },
     contentBase: resolve('/static')
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://r2.dsjcj.cc:10170',
-    //     changeOrigin: true
-    //     // cookieDomainRewrite: {
-    //     //   '': null
-    //     // }
-    //   }
-    // }
   },
   css: {
     loaderOptions: {
@@ -39,6 +30,26 @@ module.exports = {
         prependData: '@import "~@/styles/variables.scss";'
       }
     }
+  },
+  pwa: {
+    // workboxPluginMode: {}
+    // workboxOptions
+    name: '光之演奏家',
+    themeColor: '#f00',
+    msTileColor: '#0f0',
+    iconPaths: {
+      favicon32: 'favicon.png',
+      favicon16: 'favicon.png',
+      appleTouchIcon: 'favicon.png',
+      // maskIcon: 'favicon.svg',
+      msTileImage: 'favicon.png'
+    },
+    appleMobileWebAppCapable: 'yes',
+    appleMobileWebAppStatusBarStyle: 'black'
+    // assetsVersion
+    // manifestPath
+    // manifestOptions
+    // manifestCrossorigin
   },
   configureWebpack: config => {
     let plugins = []

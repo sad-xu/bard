@@ -3,7 +3,7 @@
  * @desc 点击元素外面才会触发的事件
  * @example
  * ```vue
- * <div v-element-clickoutside="handleClose">
+ * <div v-clickoutside="handleClose">
  * ```
  */
 
@@ -26,9 +26,20 @@ window.addEventListener('mouseup', e => {
 function createDocumentHandler(el, binding, vnode) {
   return function(mouseup, mousedown) {
     if (
-      !vnode || !vnode.context || !mouseup.target || !mousedown.target ||
-      el.contains(mouseup.target) || el.contains(mousedown.target) ||
-      el === mouseup.target
+      !vnode ||
+      !vnode.context ||
+      !mouseup.target ||
+      !mousedown.target ||
+      el.contains(mouseup.target) ||
+      el.contains(mousedown.target) ||
+      el === mouseup.target ||
+      ( // 自身不触发
+        vnode.context.isPopperElm &&
+        (
+          vnode.context.$el.contains(mouseup.target) ||
+          vnode.context.$el.contains(mousedown.target)
+        )
+      )
     ) return
     if (binding.expression && el[ctx].methodName && vnode.context[el[ctx].methodName]) {
       vnode.context[el[ctx].methodName]()

@@ -9,6 +9,7 @@ import '@/styles/index.scss'
 import * as filter from '@/utils/filter.js'
 
 import components from './components'
+import './registerServiceWorker'
 
 components.forEach(component => {
   Vue.component(component.name, component)

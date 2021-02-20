@@ -77,12 +77,35 @@ https://www.jianshu.com/p/6c495b51a40c
 
 歌曲资源网站 - `https://www.midishow.com/search/result?q=ff14&sort=marks`
 
-## virtual-scroll
+## 快捷键禁用
 
-http://www.everyday3d.com/blog/index.php/2014/08/18/smooth-scrolling-with-virtualscroll/
+* Chrome Edge  Opera
 
-https://github.com/ayamflow/virtual-scroll
+  方案一：
 
-https://github.com/baptistebriel/smooth-scrolling
+  https://web.dev/keyboard-lock/
 
-https://github.com/locomotivemtl/locomotive-scroll
+  https://garykac.github.io/system-keyboard-lock/
+
+  先通过代码进入全屏模式（F11无效）
+  调用 lock
+
+  ```js
+  await document.documentElement.requestFullscreen()
+  await navigator.keyboard.lock()
+  ```
+
+  `chrome://flags/#system-keyboard-lock = Default / Enabled` 
+
+  方案二：
+
+  安装能设置快捷键的浏览器插件
+
+* Firefox
+
+  安装能设置快捷键的浏览器插件，如 `shortkeys`
+
+  `about:config permissions.default.shortcuts = 2`
+
+## PWA
+

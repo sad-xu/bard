@@ -2,11 +2,10 @@
   <div class="ff-select" @click.stop="toggleMenu">
     <div class="ff-select-label">
       <i class="iconfont icon-arrow-fill ff-arrow" :class="{ 'ff-arrow-rotate': visible }"></i>
-      <!-- <span class="ff-arrow" :class="{ 'ff-arrow-rotate': visible }">▶</span> -->
       <div>{{ selectedLabel }}</div>
     </div>
     <transition name="ff-zome-in-top">
-      <ul v-show="visible" class="ff-select-dropdown__list">
+      <ul v-show="visible" v-clickoutside="handleClickoutside" class="ff-select-dropdown__list">
         <li
           v-for="item in options"
           :key="item.value" class="ff-select-dropdown__item"
@@ -28,8 +27,11 @@
  *
  */
 
+import Clickoutside from '@/directives/clickoutside'
+
 export default {
   name: 'FfSelect',
+  directives: { Clickoutside },
   model: {
     prop: 'value',
     event: 'select'
@@ -47,6 +49,8 @@ export default {
   },
   data() {
     return {
+      // clickoutside 标识
+      isPopperElm: true,
       selectedLabel: '',
       visible: false
     }
@@ -68,6 +72,9 @@ export default {
     }
   },
   methods: {
+    handleClickoutside() {
+      this.visible = false
+    },
     toggleMenu() {
       this.visible = !this.visible
     },

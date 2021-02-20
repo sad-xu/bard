@@ -144,7 +144,7 @@ export default {
   height: 100%;
   .content {
     height: 100%;
-    transition: transform 0.5s, filter 0.5s;
+    transition: transform 0.2s, filter 0.3s ease 0.25s;
     will-change: transform, filter;
   }
   .filter {
