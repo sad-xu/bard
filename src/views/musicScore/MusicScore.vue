@@ -34,14 +34,25 @@
     <!-- 乐谱 -->
     <transition name="paper-fade">
       <div
-        v-show="showPaper && musicScore.length" class="notes-wrapper"
+        v-show="showPaper && musicScore.length" class="paper"
         :class="{ filter: filter || showMusicScore, 'notes-wrapper__mobile': isMobile }">
-        <span
-          v-for="item in musicScore" :key="item[0]"
-          :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
-          class="notes" :style="`margin-left: ${item[1]}px;`">
-          {{ item[4] }}
-        </span>
+        <div class="notes-wrapper">
+          <span
+            v-for="item in musicScore" :key="item[0]"
+            :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
+            class="notes" :style="`margin-left: ${item[1]}px;`">
+            {{ showKeycode ? item[5] : item[4] }}
+          </span>
+        </div>
+        <div class="tip">
+          <span @click="showKeycode = !showKeycode">切换按键显示</span>
+          <div class="key-tip">
+            <span>高八度</span>
+            <span class="notes-up">{{ compositeMap[keyMap.higher] }}</span>
+            <span>低八度</span>
+            <span class="notes-down">{{ compositeMap[keyMap.lower] }}</span>
+          </div>
+        </div>
       </div>
     </transition>
   </div>
@@ -76,8 +87,8 @@ export default {
       // 陆行鸟之歌 植物大战僵尸
       musicList: Array.from({ length: 40 }).map((v, i) => {
         let name = ''
-        if (i % 2) name = '陆行鸟之歌'
-        else name = '植物大战僵尸'
+        const index = i % 3
+        name = ['陆行鸟之歌', '植物大战僵尸', 'il vento doro'][index]
         return { name: `${name}-${i}`, source: name }
       }),
       // 乐谱显示
@@ -89,7 +100,14 @@ export default {
       // 播放状态
       isPlay: false,
       // 播放按钮显隐
-      hideMenu: true
+      hideMenu: true,
+      // 切换按键显示 音符 / 按键
+      showKeycode: true,
+      compositeMap: {
+        altKey: 'Alt',
+        ctrlKey: 'Ctrl',
+        shiftKey: 'Shift'
+      }
     }
   },
   computed: {
@@ -101,6 +119,17 @@ export default {
     },
     showMusicScore() {
       return this.$store.getters.showMusicScore
+    },
+    keyMap() {
+      return this.$store.getters.keyMap
+    },
+    commonKeyMap() {
+      const obj = {}
+      const common = this.$store.getters.keyMap.common
+      for (const key in common) {
+        obj[common[key]] = this.toggleKeycode(key)
+      }
+      return obj
     }
   },
   watch: {
@@ -127,6 +156,7 @@ export default {
       this.selectedIndex = i
 
       const request = new XMLHttpRequest()
+      // request.open('GET', '/mids/il vento doro.mid', true)
       request.open('GET', `/mids/${item.source}.mid`, true)
       request.responseType = 'arraybuffer'
       request.onload = () => {
@@ -152,7 +182,7 @@ export default {
               else if (O >= 6) O = '↑'
               else O = ''
               if (t - lastT) {
-                musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN])
+                musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN, this.commonKeyMap[N] || '--'])
                 lastT = t
               }
             }
@@ -358,18 +388,28 @@ export default {
   z-index: 9;
 }
 
-.notes-wrapper {
+.paper {
+  height: calc(90vh - 180px);
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 10%;
   left: 7%;
   right: 7%;
+  transition: filter 0.5s;
+}
+.notes-wrapper {
+  // position: absolute;
+  // top: 10%;
+  // left: 7%;
+  // right: 7%;
   padding-top: 10px;
   margin-top: 20px;
-  max-height: calc(90vh - 240px);
+  // max-height: calc(90vh - 240px);
+  height: 100%;
   background-color: rgba(3, 3, 3, 0.3);
   box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
-  transition: filter 0.5s;
   overflow-y: auto;
   // -webkit-backface-visibility: hidden;
   &::-webkit-scrollbar {
@@ -384,13 +424,42 @@ export default {
     background-color: #b2b2b2;
     color: #333;
   }
-  .notes-up {
-    background-image: linear-gradient(#f3ea91, #e0651d);
-    color: #eee;
+}
+.notes-up {
+  background-image: linear-gradient(#f3ea91, #e0651d);
+  color: #eee;
+}
+.notes-down {
+  background-image: linear-gradient(#7a82be, #85e9e1);
+  color: #eee;
+}
+
+.tip {
+  padding-top: 8px;
+  margin: 0 -5%;
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #eee;
+  .key-tip {
+    display: flex;
+    align-items: center;
+  }
+  .notes-up,
+  .notes-down {
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+    padding: 2px 4px;
+    border-radius: 10px;
+    margin: 0 14px 0 6px;
+    color: #474747;
   }
   .notes-down {
-    background-image: linear-gradient(#7a82be, #85e9e1);
-    color: #eee;
+    margin-right: 0;
   }
 }
 
@@ -407,10 +476,13 @@ export default {
 .notes-wrapper__mobile {
   left: 2%;
   right: 2%;
-  max-height: calc(90vh - 60px);
+  height: calc(90vh - 50px);
   .notes {
     padding: 2px 6px;
     margin-bottom: 6px;
+  }
+  .tip {
+    margin: 0;
   }
 }
 </style>

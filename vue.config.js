@@ -35,20 +35,38 @@ module.exports = {
     // workboxPluginMode: {}
     // workboxOptions
     name: '光之演奏家',
-    themeColor: '#f00',
-    msTileColor: '#0f0',
+    themeColor: '#343838',
+    msTileColor: '#343838',
     iconPaths: {
       favicon32: 'favicon.png',
       favicon16: 'favicon.png',
       appleTouchIcon: 'favicon.png',
-      // maskIcon: 'favicon.svg',
+      maskIcon: null,
       msTileImage: 'favicon.png'
     },
     appleMobileWebAppCapable: 'yes',
-    appleMobileWebAppStatusBarStyle: 'black'
+    appleMobileWebAppStatusBarStyle: 'black',
     // assetsVersion
     // manifestPath
-    // manifestOptions
+    manifestOptions: {
+      background_color: '#343838',
+      description: '让你在游戏外也能练习 FF14 演奏',
+      display: 'fullscreen', // standalone fullscreen
+      lang: 'zh-CN',
+      start_url: './?from=pwa',
+      icons: [
+        {
+          src: 'favicon.png',
+          sizes: '40x40',
+          type: 'image/png'
+        },
+        {
+          src: 'favicon-144.png',
+          sizes: '144x144',
+          type: 'image/png'
+        }
+      ]
+    }
     // manifestCrossorigin
   },
   configureWebpack: config => {
