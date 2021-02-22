@@ -51,7 +51,7 @@ export default {
       type: String,
       default: ''
     },
-    defaultbottom: {
+    defaultBottom: {
       type: String,
       default: ''
     },
@@ -84,7 +84,7 @@ export default {
       const obj = {}
       if (this.defaultTop) obj.top = this.defaultTop
       if (this.defaultRight) obj.right = this.defaultRight
-      if (this.defaultbottom) obj.bottom = this.defaultbottom
+      if (this.defaultBottom) obj.bottom = this.defaultBottom
       if (this.defaultLeft) obj.left = this.defaultLeft
       return {
         transform: `translate(${this.x}px, ${this.y}px)`,
@@ -154,6 +154,7 @@ export default {
   left: 0;
   right: 0;
   width: 710px;
+  max-width: 85%;
   padding: 12px;
   margin: 0 auto;
   box-shadow: 1px 1px 5px 0 #222;

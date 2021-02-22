@@ -1,4 +1,5 @@
 const state = {
+  isMobile: /Android|webOS|iPhone|iPod|BlackBerry/i.test(window.navigator.userAgent),
   showMusicScore: false,
   showAboutUse: false
 }

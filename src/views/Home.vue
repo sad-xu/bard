@@ -8,22 +8,22 @@
       }">
       <!-- menu -->
       <div class="menu-wrapper">
-        <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
-        <i class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
+        <i v-show="!isMobile" class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
+        <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
       <!-- bg -->
-      <div id="bg-img"></div>
-      <canvas id="Screen" ref="Screen"></canvas>
+      <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
+      <!-- <canvas id="Screen" ref="Screen"></canvas> -->
       <!-- 键盘 -->
-      <keyboard @sing="sing"></keyboard>
-      <!--  -->
+      <keyboard v-show="!isMobile" @sing="sing"></keyboard>
+      <!-- 页脚 -->
       <footer class="footer">
-        <p class="footer-left">
+        <p>
           Produced by <span style="color: #c7a2e8;">妙蛤种子@琥珀原</span>
         </p>
-        <span style="color: #fff;">此版本为 DEMO 版，不代表最终效果</span>
-        <p class="footer-right">
+        <span :class="{'version-tip__mobile': isMobile}" style="color: #fff;">此版本为 DEMO 版，不代表最终效果</span>
+        <p>
           Made with <span style="color: #e91e63;">❤</span>
         </p>
       </footer>
@@ -60,6 +60,9 @@ export default {
     AboutUse
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
     showMusicScore() {
       return this.$store.getters.showMusicScore
     },
@@ -146,6 +149,7 @@ export default {
     height: 100%;
     transition: transform 0.2s, filter 0.3s ease 0.25s;
     will-change: transform, filter;
+    // -webkit-backface-visibility: hidden;
   }
   .filter {
     filter: blur(5px);
@@ -174,12 +178,12 @@ export default {
   }
 }
 
-#Screen {
-  position: absolute;
-  width: 100%;
-  bottom: 180px;
-}
-#bg-img {
+// #Screen {
+//   position: absolute;
+//   width: 100%;
+//   bottom: 180px;
+// }
+.bg-img {
   position: absolute;
   width: 100%;
   top: 0;
@@ -203,10 +207,16 @@ export default {
   font-size: 12px;
   line-height: 12px;
   color: #ccc;
-  .footer-left {
-  }
-  .footer-right {
+}
 
-  }
+/* mobile */
+.bg-img__mobile {
+  bottom: 0;
+  background-size: 100% auto;
+}
+.version-tip__mobile {
+  position: absolute;
+  bottom: 100%;
+  right: 10px;
 }
 </style>

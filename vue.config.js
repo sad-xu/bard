@@ -60,7 +60,7 @@ module.exports = {
           function PrintText() {}
           PrintText.prototype.apply = compiler => {
             compiler.plugin('done', () => {
-              console.log(`  ${chalk.bgWhiteBright.blue.bold(' bard ')}`)
+              console.log(`  ${chalk.bgWhiteBright.blue.bold(' 光之演奏家 ')}`)
             })
           }
           return new PrintText()
@@ -98,6 +98,7 @@ module.exports = {
       .set('@', resolve('src'))
       .set('views', resolve('srv/views'))
 
+    // 打包时使用cdn替换依赖
     if (!isDev) {
       config.plugin('html')
         .tap(args => {

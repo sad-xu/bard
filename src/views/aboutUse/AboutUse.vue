@@ -2,7 +2,7 @@
   <ff-dialog
     :visible="showAboutUse"
     title="使用须知" append-to-body
-    default-top="5%" @close="handleClose">
+    default-top="5%" default-bottom="5%" @close="handleClose">
     <div class="content">
       <section class="part">
         <h3>简介</h3>
@@ -29,6 +29,7 @@
         <p>PWA功能</p>
         <p>倍速</p>
         <p>根据实时频谱丰富背景</p>
+        <p>控制台打印彩蛋</p>
         <p>体验优化</p>
       </section>
       <section class="part">

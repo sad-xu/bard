@@ -3,7 +3,7 @@
     <!-- 当前曲目 -->
     <div class="score-header" :class="{ filter: filter || showMusicScore }">
       <span class="current-music" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
-      <i v-show="musicScore.length" class="iconfont icon-music-setting" title="显示乐谱" @click="showPaper = !showPaper"></i>
+      <i v-show="musicScore.length && !isMobile" class="iconfont icon-music-setting" title="显示乐谱" @click="showPaper = !showPaper"></i>
     </div>
     <!-- 播放 / 暂停 / 重播  -->
     <div
@@ -33,7 +33,9 @@
     </transition>
     <!-- 乐谱 -->
     <transition name="paper-fade">
-      <div v-show="showPaper && musicScore.length" class="notes-wrapper" :class="{ filter: filter || showMusicScore }">
+      <div
+        v-show="showPaper && musicScore.length" class="notes-wrapper"
+        :class="{ filter: filter || showMusicScore, 'notes-wrapper__mobile': isMobile }">
         <span
           v-for="item in musicScore" :key="item[0]"
           :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
@@ -91,6 +93,9 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return this.$store.getters.isMobile
+    },
     selectedMusicName() {
       return this.selectedIndex === -1 ? '' : this.musicList[this.selectedIndex].name
     },
@@ -209,7 +214,8 @@ export default {
         const child = childrenDoms[i]
         if (child) {
           const n = 1 - Math.abs((child.offsetTop - scrollTop) / offsetHeight - 0.5) * 0.5
-          child.style.transform = `scale3d(${n}, ${n}, 1)`
+          // 不设置 scaleZ, 避免过多合成层
+          child.style.transform = `scaleX(${n}) scaleY(${n})` // `scale3d(${n}, ${n}, 1)`
           child.style.opacity = n
         }
       }
@@ -309,6 +315,7 @@ export default {
   flex-direction: column;
   overflow-y: auto;
   transform-origin: left;
+  // transform: translateZ(0);
   z-index: 99;
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -364,6 +371,7 @@ export default {
   border-radius: 5px;
   transition: filter 0.5s;
   overflow-y: auto;
+  // -webkit-backface-visibility: hidden;
   &::-webkit-scrollbar {
     width: 0;
     height: 0;
@@ -393,5 +401,16 @@ export default {
 .paper-fade-enter,
 .paper-fade-leave-to {
   opacity: 0;
+}
+
+/* mobile */
+.notes-wrapper__mobile {
+  left: 2%;
+  right: 2%;
+  max-height: calc(90vh - 60px);
+  .notes {
+    padding: 2px 6px;
+    margin-bottom: 6px;
+  }
 }
 </style>
