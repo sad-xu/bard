@@ -1,52 +1,55 @@
-// c6 - b6
-const HIGHER_NOTE_MAP = {
-  1: 1046.502,
-  '1#': 1108.731,
-  2: 1174.659,
-  '3b': 1244.508,
-  3: 1318.510,
-  4: 1396.913,
-  '4#': 1479.978,
-  5: 1567.982,
-  '5#': 1661.219,
-  6: 1760.000,
-  '7b': 1864.655,
-  7: 1975.533,
-  i: 2093
-}
 
 // c5 - b5
 const NOTE_MAP = {
+  '1-h': 1046.502,
   1: 523.251,
-  '1#': 554.365,
-  2: 587.330,
-  '3b': 622.254,
-  3: 659.255,
-  4: 698.456,
-  '4#': 739.989,
-  5: 783.991,
-  '5#': 830.609,
-  6: 880.000,
-  '7b': 932.328,
-  7: 987.767,
-  i: 1046.502
-}
+  '1-l': 261.626,
 
-// c4 - b4
-const LOWER_NOTE_MAP = {
-  1: 261.626,
-  '1#': 277.183,
-  2: 293.665,
-  '3b': 311.127,
-  3: 329.628,
-  4: 349.228,
-  '4#': 369.994,
-  5: 391.995,
-  '5#': 415.305,
-  6: 440.000,
-  '7b': 466.164,
-  7: 493.883,
-  i: 523.251
+  '1#-h': 1108.731,
+  '1#': 554.365,
+  '1#-l': 277.183,
+
+  '2-h': 1174.659,
+  2: 587.330,
+  '2-l': 293.665,
+
+  '3b-h': 1244.508,
+  '3b': 622.254,
+  '3b-l': 311.127,
+
+  '3-h': 1318.510,
+  3: 659.255,
+  '3-l': 329.628,
+
+  '4-h': 1396.913,
+  4: 698.456,
+  '4-l': 349.228,
+
+  '4#-h': 1479.978,
+  '4#': 739.989,
+  '4#-l': 369.994,
+
+  '5-h': 1567.982,
+  5: 783.991,
+  '5-l': 391.995,
+
+  '5#-h': 1661.219,
+  '5#': 830.609,
+  '5#-l': 415.305,
+
+  '6-h': 1760.000,
+  6: 880.000,
+  '6-l': 440.000,
+
+  '7b-h': 1864.655,
+  '7b': 932.328,
+  '7b-l': 493.883,
+
+  '7-h': 1975.533,
+  7: 987.767,
+  '7-l': 493.883,
+
+  i: 2093
 }
 
 // (oscillator --> gainNode) --> totalGainNode --> ( filter... ) --> analyser --> destination
@@ -91,13 +94,11 @@ class Sound {
     // oscillator.onended = () => {
     //   gainNode.disconnect(this.totalGainNode)
     // }
-    if (pitch === 'higher') {
-      oscillator.frequency.value = HIGHER_NOTE_MAP[note]
-    } else if (pitch === 'lower') {
-      oscillator.frequency.value = LOWER_NOTE_MAP[note]
-    } else {
-      oscillator.frequency.value = NOTE_MAP[note]
-    }
+    let mul = 1 // 高频 * 2  低频 / 2
+    if (pitch === 'higher') mul = 2
+    else if (pitch === 'lower') mul = 0.5
+    oscillator.frequency.value = NOTE_MAP[note] * mul
+    //
     const currentTime = this.context.currentTime
     oscillator.start()
     gainNode.gain.exponentialRampToValueAtTime(1, currentTime + 0.1)

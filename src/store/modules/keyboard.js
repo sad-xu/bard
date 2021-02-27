@@ -1,5 +1,7 @@
 const state = {
-  keyMap: {
+  // 是否是全音阶
+  isFullScale: Boolean(localStorage.getItem('isFullScale')), // false,
+  keyMap: JSON.parse(localStorage.getItem('keyMap')) || {
     higher: 'shiftKey',
     lower: 'ctrlKey',
     common: { // 物理按键 -> 音符
@@ -22,6 +24,9 @@ const state = {
 }
 
 const mutations = {
+  SET_FULL_SCALE: (state, status) => {
+    state.isFullScale = status
+  },
   SET_KEYMAP: (state, keyMap) => {
     state.keyMap = keyMap
   },
@@ -31,10 +36,15 @@ const mutations = {
 }
 
 const actions = {
+  // 切换键盘 全音阶
+  setFullScale({ commit }, status) {
+    commit('SET_FULL_SCALE', status)
+    localStorage.setItem('isFullScale', Number(status))
+  },
   // 设置快捷键
   setKeyMap({ commit }, keyMap) {
-    console.log(keyMap)
     commit('SET_KEYMAP', keyMap)
+    localStorage.setItem('keyMap', JSON.stringify(keyMap))
   },
   // 切换菜单
   toggleShowKeyboardMenu({ commit, state }) {

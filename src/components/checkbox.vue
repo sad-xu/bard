@@ -5,7 +5,9 @@
       v-model="value"
       class="ff-checkbox__input" type="checkbox"
       @change="handleChange">
-    <span class="ff-checkbox__label"><slot></slot></span>
+    <span class="ff-checkbox__label">
+      <slot></slot>
+    </span>
   </label>
 </template>
 
@@ -20,15 +22,14 @@
 
 export default {
   name: 'FfCheckbox',
+  model: {
+    prop: 'value',
+    event: 'change'
+  },
   props: {
     value: {
       type: Boolean,
       required: true
-    }
-  },
-  data() {
-    return {
-
     }
   },
   methods: {
@@ -49,7 +50,7 @@ export default {
     width: 14px;
     height: 14px;
     position: relative;
-    border: 1px solid #333;
+    border: 1px solid #777;
     border-radius: 2px;
     margin-right: 4px;
     &::after {
@@ -70,7 +71,7 @@ export default {
     z-index: -1;
   }
   .ff-checkbox__label {
-    // color: #e3d8bf;
+    color: #dcd2ba;
     font-size: 14px;
   }
 }

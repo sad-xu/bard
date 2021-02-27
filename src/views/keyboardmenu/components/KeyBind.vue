@@ -1,6 +1,6 @@
 <template>
   <div class="key-bind">
-    <span>{{ truthNote || note }}</span>
+    <span v-show="note">{{ note }}</span>
     <span
       class="input"
       :class="isSelected ? 'selected' : ''"
@@ -18,7 +18,6 @@
 /**
  * 按键绑定
  * note 音符
- * truthNote 真实音符显示
  * label 绑定按键名
  *
  * @changeBind
@@ -30,10 +29,6 @@ export default {
   // directives: { Clickoutside },
   props: {
     note: {
-      type: String,
-      required: true
-    },
-    truthNote: {
       type: String,
       default: ''
     },
@@ -53,7 +48,7 @@ export default {
     //   this.isSelected = false
     // },
     // 鼠标左键
-    handleLeftclick(e) {
+    handleLeftclick() {
       if (!this.isSelected) {
         this.$refs.Input.focus()
         this.isSelected = true
@@ -61,13 +56,13 @@ export default {
     },
     // 鼠标右键
     handleRightclick() {
-      if (this.isSelected) {
-        this.$emit('changeBind', '')
-      }
-      // this.isSelected = false
+      // if (this.isSelected) {
+      this.$emit('changeBind', '')
+      // }
     },
     handleKeydown(e) {
       if (this.isSelected) {
+        console.log(e.code, e.key)
         this.$emit('changeBind', e.code)
         e.preventDefault()
         e.returnValue = ''
@@ -87,7 +82,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   &:last-of-type {
     margin-bottom: 0;
   }

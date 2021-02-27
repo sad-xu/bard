@@ -24,10 +24,17 @@
     <div class="keyboard">
       <!-- 按键  -->
       <div
-        v-for="item in keyboard" :key="item.label"
-        class="key" :class="{ 'key-pressed': pressedCodes[item.code], 'black-key': item.type }"
-        :style="item.type ? `left: ${12.5 * item.type}%` : ''">
-        <span class="code">{{ item.code | toggleKeycode }}</span>
+        v-for="item in keyboard" :key="item.label" class="key"
+        :class="{
+          'key-pressed': pressedCodes[item.code],
+          'black-key': item.type,
+          'full-black-key': item.type && isFullScale
+        }"
+        :style="item.type ? `left: ${ 100 / (isFullScale ? 22 : 8) * item.type}%` : ''"
+        @click.stop="handleKeyClick(item)">
+        <span class="code" :class="{'hidden-code': !item.code}">
+          {{ item.code | toggleKeycode }}
+        </span>
         <span class="label">{{ item.truthLabel || item.label }}</span>
       </div>
     </div>
@@ -42,26 +49,69 @@ const COMPOSITE_KEYS = {
   shiftKey: 'Shift'
 }
 
+const partKeyboard = [
+  { label: '1', code: '' },
+  { label: '1#', truthLabel: '1 ♯', code: '', type: 1 },
+  { label: '2', code: '' },
+  { label: '3b', truthLabel: '3 ♭', code: '', type: 2 },
+  { label: '3', code: '' },
+  { label: '4', code: '' },
+  { label: '4#', truthLabel: '4 ♯', code: '', type: 4 },
+  { label: '5', code: '' },
+  { label: '5#', truthLabel: '5 ♯', code: '', type: 5 },
+  { label: '6', code: '' },
+  { label: '7b', truthLabel: '7 ♭', code: '', type: 6 },
+  { label: '7', code: '' },
+  { label: 'i', code: '' }
+]
+const fullKeyboard = [
+  { label: '1-l', truthLabel: '1', code: '' },
+  { label: '1#-l', truthLabel: '1 ♯', code: '', type: 1 },
+  { label: '2-l', truthLabel: '2', code: '' },
+  { label: '3b-l', truthLabel: '3 ♭', code: '', type: 2 },
+  { label: '3-l', truthLabel: '3', code: '' },
+  { label: '4-l', truthLabel: '4', code: '' },
+  { label: '4#-l', truthLabel: '4 ♯', code: '', type: 4 },
+  { label: '5-l', truthLabel: '5', code: '' },
+  { label: '5#-l', truthLabel: '5 ♯', code: '', type: 5 },
+  { label: '6-l', truthLabel: '6', code: '' },
+  { label: '7b-l', truthLabel: '7 ♭', code: '', type: 6 },
+  { label: '7-l', truthLabel: '7', code: '' },
+
+  { label: '1', code: '' },
+  { label: '1#', truthLabel: '1 ♯', code: '', type: 8 },
+  { label: '2', code: '' },
+  { label: '3b', truthLabel: '3 ♭', code: '', type: 9 },
+  { label: '3', code: '' },
+  { label: '4', code: '' },
+  { label: '4#', truthLabel: '4 ♯', code: '', type: 11 },
+  { label: '5', code: '' },
+  { label: '5#', truthLabel: '5 ♯', code: '', type: 12 },
+  { label: '6', code: '' },
+  { label: '7b', truthLabel: '7 ♭', code: '', type: 13 },
+  { label: '7', code: '' },
+
+  { label: '1-h', truthLabel: '1', code: '' },
+  { label: '1#-h', truthLabel: '1 ♯', code: '', type: 15 },
+  { label: '2-h', truthLabel: '2', code: '' },
+  { label: '3b-h', truthLabel: '3 ♭', code: '', type: 16 },
+  { label: '3-h', truthLabel: '3', code: '' },
+  { label: '4-h', truthLabel: '4', code: '' },
+  { label: '4#-h', truthLabel: '4 ♯', code: '', type: 18 },
+  { label: '5-h', truthLabel: '5', code: '' },
+  { label: '5#-h', truthLabel: '5 ♯', code: '', type: 19 },
+  { label: '6-h', truthLabel: '6', code: '' },
+  { label: '7b-h', truthLabel: '7 ♭', code: '', type: 20 },
+  { label: '7-h', truthLabel: '7', code: '' },
+  { label: 'i', code: '' }
+]
+
 export default {
   name: 'Keyboard',
   data() {
     return {
       // [ label 音符, code 物理按键 ]
-      keyboard: [
-        { label: '1', code: '' },
-        { label: '1#', truthLabel: '1 ♯', code: '', type: 1 },
-        { label: '2', code: '' },
-        { label: '3b', truthLabel: '3 ♭', code: '', type: 2 },
-        { label: '3', code: '' },
-        { label: '4', code: '' },
-        { label: '4#', truthLabel: '4 ♯', code: '', type: 4 },
-        { label: '5', code: '' },
-        { label: '5#', truthLabel: '5 ♯', code: '', type: 5 },
-        { label: '6', code: '' },
-        { label: '7b', truthLabel: '7 ♭', code: '', type: 6 },
-        { label: '7', code: '' },
-        { label: 'i', code: '' }
-      ],
+      keyboard: this.$store.getters.isFullScale ? fullKeyboard : partKeyboard,
       higherPressed: false,
       lowerPressed: false,
       // 当前按下的键
@@ -71,6 +121,9 @@ export default {
   computed: {
     canPlay() {
       return !this.$store.getters.showKeyboardMenu
+    },
+    isFullScale() {
+      return this.$store.getters.isFullScale
     },
     keyMap() {
       return this.$store.getters.keyMap
@@ -152,6 +205,13 @@ export default {
       //   e.preventDefault()
       //   e.returnValue = null
       // })
+    },
+    // 鼠标点击键盘
+    handleKeyClick({ label }) {
+      this.$emit('sing', {
+        note: label,
+        pitch: this.higherPressed ? 'higher' : (this.lowerPressed ? 'lower' : '')
+      })
     }
   }
 }
@@ -188,23 +248,29 @@ export default {
     &:last-of-type {
       border-right: 0;
     }
+    &:hover {
+      background-color: #fff;
+    }
     .code {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       font-size: 12px;
       color: #fff;
       background-color: #5a5d5a;
       border-radius: 3px;
       box-shadow: 0 0 2px 1px #5a5d5a;
     }
+    .hidden-code {
+      opacity: 0;
+    }
     .label {
       display: flex;
       align-items: flex-end;
       font-size: 14px;
-      margin-top: 10px;
+      margin-top: 4px;
       color: #856823;
     }
   }
@@ -221,12 +287,19 @@ export default {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     box-shadow: 0 0 10px 1px #656060;
+    z-index: 2;
+    &:hover {
+      background-color: #515151;
+    }
     .label {
       color: #e0e3da;
     }
     &.key-pressed {
       background-color: #515151;
     }
+  }
+  .full-black-key {
+    width: 4%;
   }
 }
 
@@ -246,7 +319,7 @@ export default {
     left: 0;
     right: 0;
     border-radius: 10px;
-    transition: transform 0.3s;
+    // transition: transform 0.1s;
     transform: scaleY(0);
   }
   .indicator-mask-higher {

@@ -155,7 +155,7 @@ export default {
   right: 0;
   width: 710px;
   max-width: 85%;
-  padding: 12px;
+  padding: 0 12px 12px;
   margin: 0 auto;
   box-shadow: 1px 1px 5px 0 #222;
   background-color: #383838;
@@ -167,6 +167,8 @@ export default {
     justify-content: space-between;
     align-items: center;
     color: #fff;
+    margin: 0 -12px;
+    padding: 12px 12px 0;
     cursor: move;
     .menu-title {
       cursor: default;
