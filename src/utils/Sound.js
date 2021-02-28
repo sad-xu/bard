@@ -52,6 +52,8 @@ const NOTE_MAP = {
   i: 2093
 }
 
+const instanceList = []
+
 // (oscillator --> gainNode) --> totalGainNode --> ( filter... ) --> analyser --> destination
 class Sound {
   constructor() {
@@ -64,18 +66,23 @@ class Sound {
     // compressor.ratio.setValueAtTime(12, context.currentTime)
     // compressor.attack.setValueAtTime(0, context.currentTime)
     // compressor.release.setValueAtTime(0.25, context.currentTime)
-    totalGainNode.gain.setValueAtTime(0.4, context.currentTime)
+
     analyser.fftSize = 1024
     totalGainNode.connect(analyser)
     analyser.connect(compressor)
     compressor.connect(context.destination)
     this.context = context
+    this.volume = 0 // 音量百分比
+    this.duration = 1.5 // 声音持续时间
     this.totalGainNode = totalGainNode
     this.analyser = analyser
     this.singingNum = 0 // 正在发声的发声器数量
     //
     this.wave = 'sine' // 声源波形
     this.linkedList = [totalGainNode, analyser] // 维护当前节点链
+    this.setVolume(0.5)
+    // 保存实例
+    instanceList.push(this)
   }
 
   // 听个响
@@ -102,44 +109,60 @@ class Sound {
     const currentTime = this.context.currentTime
     oscillator.start()
     gainNode.gain.exponentialRampToValueAtTime(1, currentTime + 0.1)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + 1.5)
-    oscillator.stop(currentTime + 1.5)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + this.duration)
+    oscillator.stop(currentTime + this.duration)
     setTimeout(() => {
       this.singingNum--
     }, 2000)
   }
 
-  // 设置总音量
+  // 设置自身音量
   setVolume(percentage) {
-    this.totalGainNode.gain.setValueAtTime(3.4 * percentage, this.context.currentTime)
+    if (percentage <= 0) percentage = 0.0001
+    this.volume = percentage
+    this.totalGainNode.gain.exponentialRampToValueAtTime(3.4 * percentage, this.context.currentTime + 1)
   }
+}
 
-  // 设置音色 [{ type, params }]
-  setTimbre(configList) {
+/* 针对所有实例 */
+
+// 设置总音量
+Sound.setAllVolume = function(percentage) {
+  instanceList.forEach(instance => {
+    instance.setVolume(percentage)
+  })
+}
+
+// 设置持续时间
+Sound.setAllDuration = function(duration) {
+  instanceList.forEach(instance => {
+    instance.duration = duration
+  })
+}
+
+// 设置音源波形
+Sound.setAllWave = function(wave = 'sine') {
+  instanceList.forEach(instance => {
+    instance.wave = wave
+  })
+}
+
+// 设置滤波器
+Sound.setAllFilters = function(list) {
+  instanceList.forEach(instance => {
     const nodeList = []
-    configList.forEach(({ type, params }) => {
-      switch (type) {
-        case 'OscillatorNode': { // 音源
-          if (params.type === 'custom') {
-            // TODO: 自定义波形
-          } else {
-            this.wave = params.type
-          }
-          break
-        }
-        case 'BiquadFilterNode': { // 过滤器
-          const biquadFilter = this.context.createBiquadFilter()
-          const currentTime = this.context.currentTime
-          const { type, frequency, gain } = params
-          biquadFilter.type = type
-          biquadFilter.frequency.setValueAtTime(frequency, currentTime)
-          biquadFilter.gain.setValueAtTime(gain, currentTime)
-          nodeList.push(biquadFilter)
-          break
-        }
+    list.forEach(({ checked, type, freq, Q, gain }) => {
+      if (checked) {
+        const biquadFilter = instance.context.createBiquadFilter()
+        const currentTime = instance.context.currentTime
+        biquadFilter.type = type
+        biquadFilter.frequency.setValueAtTime(freq, currentTime)
+        biquadFilter.Q.setValueAtTime(Q, currentTime)
+        biquadFilter.gain.setValueAtTime(gain, currentTime)
+        nodeList.push(biquadFilter)
       }
     })
-    const linkedList = this.linkedList
+    const linkedList = instance.linkedList
     const len = linkedList.length
     if (linkedList.length > 2) {
       // 断开已有链接
@@ -151,7 +174,7 @@ class Sound {
     for (let i = 0; i < linkedList.length - 1; i++) {
       linkedList[i].connect(linkedList[i + 1])
     }
-  }
+  })
 }
 
 export default Sound

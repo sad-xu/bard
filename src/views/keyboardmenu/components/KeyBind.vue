@@ -62,7 +62,6 @@ export default {
     },
     handleKeydown(e) {
       if (this.isSelected) {
-        console.log(e.code, e.key)
         this.$emit('changeBind', e.code)
         e.preventDefault()
         e.returnValue = ''

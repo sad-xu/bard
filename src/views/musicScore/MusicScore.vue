@@ -63,7 +63,7 @@ import Sound from '@/utils/Sound'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
 const sounder = new Sound()
-sounder.setVolume(0.05)
+// sounder.setVolume(0.05)
 // TODO: 音量调节
 
 let scrollBodyDom = null
