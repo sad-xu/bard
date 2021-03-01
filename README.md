@@ -32,8 +32,6 @@ PWA
 
 ## 需求变更记录
 
-39键键盘及切换功能 -- 取消
-
 节拍器 metronome 节拍器菜单 -- 优先级低
 
 整体风格 -- 不再模仿 FF14 UI
@@ -49,14 +47,6 @@ ff-select 选择器
 ff-silder 滑块
 
 ff-button 按钮
-
-## TODO
-
-卷积 添加环境音效 
-https://github.com/GoogleChromeLabs/web-audio-samples/tree/gh-pages/samples/audio/impulse-responses
-
-混音器 createDynamicsCompressor
-多个音源合并防止爆音
 
 ## 参考
 
@@ -110,3 +100,29 @@ https://www.jianshu.com/p/6c495b51a40c
 
 ## PWA
 
+## 音色
+
+* 滤波器 改变不大
+
+* 自定义音源波形 createPeriodicWave
+
+```js
+// https://googlechromelabs.github.io/web-audio-samples/archive/demos/wavetable-synth.html
+// https://github.com/GoogleChromeLabs/web-audio-samples/tree/gh-pages/samples/audio/wave-tables
+
+// piano
+const real = [
+  0, 0, -0.203569, 0.5, -0.401676, 0.137128, -0.104117, 0.115965,
+  -0.004413, 0.067884, -0.00888, 0.0793, -0.038756, 0.011882,
+  -0.030883, 0.027608, -0.013429, 0.00393, -0.014029, 0.00972,
+  -0.007653, 0.007866, -0.032029, 0.046127, -0.024155, 0.023095,
+  -0.005522, 0.004511, -0.003593, 0.011248, -0.004919, 0.008505
+]
+const imag = [
+  0, 0.147621, 0, 0.000007, -0.00001, 0.000005, -0.000006, 0.000009,
+  0, 0.000008, -0.000001, 0.000014, -0.000008, 0.000003,
+  -0.000009, 0.000009, -0.000005, 0.000002, -0.000007, 0.000005,
+  -0.000005, 0.000005, -0.000023, 0.000037, -0.000021, 0.000022,
+  -0.000006, 0.000005, -0.000004, 0.000014, -0.000007, 0.000012
+]
+```
