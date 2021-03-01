@@ -2,7 +2,8 @@
   <ff-dialog
     :visible="showAboutUse"
     title="使用须知" append-to-body
-    default-top="5%" default-bottom="5%" @close="handleClose">
+    default-top="5%" default-bottom="5%"
+    @close="handleClose">
     <div class="content">
       <section class="part">
         <h3>简介</h3>
@@ -71,27 +72,27 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  height: 80vh;
+  // height: 80vh;
   padding-top: 20px;
   margin-right: -10px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #686868 rgba(0, 0, 0, 0.2);
-  &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #686868;
-    border-radius: 4px;
-    &:hover {
-      background-color: rgba(144, 147, 153, 0.5);
-    }
-  }
+  // overflow-y: auto;
+  // scrollbar-width: thin;
+  // scrollbar-color: #686868 rgba(0, 0, 0, 0.2);
+  // &::-webkit-scrollbar {
+  //   width: 6px;
+  //   height: 6px;
+  // }
+  // &::-webkit-scrollbar-track {
+  //   background: rgba(0, 0, 0, 0.2);
+  //   border-radius: 4px;
+  // }
+  // &::-webkit-scrollbar-thumb {
+  //   background-color: #686868;
+  //   border-radius: 4px;
+  //   &:hover {
+  //     background-color: rgba(144, 147, 153, 0.5);
+  //   }
+  // }
   .part {
     margin-bottom: 40px;
     h3 {

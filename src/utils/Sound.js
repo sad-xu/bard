@@ -79,6 +79,8 @@ class Sound {
     this.singingNum = 0 // 正在发声的发声器数量
     //
     this.wave = 'sine' // 声源波形
+    this.real = []
+    this.imag = []
     this.linkedList = [totalGainNode, analyser] // 维护当前节点链
     this.setVolume(0.5)
     // 保存实例
@@ -94,7 +96,11 @@ class Sound {
     const context = this.context
     const oscillator = context.createOscillator()
     const gainNode = context.createGain()
-    oscillator.type = this.wave
+    if (this.wave === 'custom') {
+      oscillator.setPeriodicWave(context.createPeriodicWave(this.real, this.imag))
+    } else {
+      oscillator.type = this.wave
+    }
     oscillator.connect(gainNode)
     gainNode.connect(this.totalGainNode)
     // 试图结束后手动断开连接，结果内存没变，每次调用反而多了一个事件监听 --> gainNode 也会自动断开并回收
@@ -141,9 +147,47 @@ Sound.setAllDuration = function(duration) {
 }
 
 // 设置音源波形
-Sound.setAllWave = function(wave = 'sine') {
+const periodicWaveMap = {
+  testA: {
+    real: [
+      0, 0, -0.203569, 0.5, -0.401676, 0.137128, -0.104117, 0.115965,
+      -0.004413, 0.067884, -0.00888, 0.0793, -0.038756, 0.011882, -0.030883, 0.027608
+      // -0.013429, 0.00393, -0.014029, 0.00972, -0.007653, 0.007866, -0.032029, 0.046127,
+      // -0.024155, 0.023095, -0.005522, 0.004511, -0.003593, 0.011248, -0.004919, 0.008505
+    ],
+    imag: [
+      0, 0.147621, 0, 0.000007, -0.00001, 0.000005, -0.000006, 0.000009,
+      0, 0.000008, -0.000001, 0.000014, -0.000008, 0.000003, -0.000009, 0.000009
+      // -0.000005, 0.000002, -0.000007, 0.000005, -0.000005, 0.000005, -0.000023, 0.000037,
+      // -0.000021, 0.000022, -0.000006, 0.000005, -0.000004, 0.000014, -0.000007, 0.000012
+    ]
+  },
+  testB: {
+    real: [
+      0.000000, 0.171738, 0.131907, -0.194800, -0.129913, -0.081043, 0.049213, 0.027828,
+      -0.008357, -0.005044, 0.002145, 0.000773, -0.001392, -0.000916, -0.000012, 0.000323,
+      -0.000003, 0.000127, -0.000135, -0.000029, -0.000031, 0.000087, -0.000091, 0.000005,
+      -0.000026, 0.000027, -0.000062, -0.000017, -0.000002, 0.000002, 0.000012, -0.000024
+    ],
+    imag: [
+      0.000000, -0.090905, 0.482287, 0.259485, 0.009402, -0.125271, -0.046816, 0.007872,
+      0.001762, -0.010488, -0.002305, 0.001791, 0.001101, -0.000303, -0.000064, 0.000143,
+      0.000059, 0.000116, 0.000120, -0.000011, -0.000066, -0.000019, 0.000024, 0.000014,
+      0.000069, 0.000056, 0.000005, 0.000002, -0.000026, -0.000015, 0.000055, 0.000012
+    ]
+  }
+}
+
+Sound.setAllWave = function(waveType = 'sine', diyWave) {
   instanceList.forEach(instance => {
-    instance.wave = wave
+    const periodicWave = periodicWaveMap[waveType]
+    if (waveType === 'diy' || periodicWave) {
+      instance.wave = 'custom'
+      instance.real = periodicWave ? periodicWave.real : diyWave.real
+      instance.imag = periodicWave ? periodicWave.imag : diyWave.imag
+    } else {
+      instance.wave = waveType
+    }
   })
 }
 

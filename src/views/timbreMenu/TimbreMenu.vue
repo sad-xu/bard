@@ -1,8 +1,9 @@
 <template>
   <ff-dialog
     :visible="showTimbreMenu"
-    title="音色设置" append-to-body
-    default-left="-30%" default-top="5%" @close="closeTimbreMenu">
+    title="音色设置 - 调试版" append-to-body
+    default-left="-30%" default-top="5%"
+    max-height="70vh" @close="closeTimbreMenu">
     <!--  -->
     <div class="config">
       <p class="config-title">
@@ -15,6 +16,48 @@
             :value="wave.value" type="radio">
           <label :for="wave.value">{{ wave.label }}</label>
         </div>
+      </div>
+    </div>
+    <!--  -->
+    <div v-show="selectedWave === 'diy'" class="config">
+      <p class="config-title">
+        自定义波形
+      </p>
+      <div class="diy">
+        <div class="silder-wrapper">
+          <input
+            v-for="i in 16" :key="i" v-model.number="periodicWave.real[i - 1]"
+            class="silder" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
+            :max="1" :min="-1" :step="0.001">
+        </div>
+        <table class="number-table">
+          <tr v-for="i in 4" :key="i">
+            <td v-for="j in 4" :key="j">
+              {{ periodicWave.real[(i - 1) * 4 + j - 1] }}
+            </td>
+          </tr>
+        </table>
+        <button class="reset-buttom" @click="resetWave('real')">
+          重置
+        </button>
+      </div>
+      <div class="diy">
+        <div class="silder-wrapper">
+          <input
+            v-for="i in 16" :key="i" v-model.number="periodicWave.imag[i - 1]"
+            class="silder" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
+            :max="1" :min="-1" :step="0.001">
+        </div>
+        <table class="number-table">
+          <tr v-for="i in 4" :key="i">
+            <td v-for="j in 4" :key="j">
+              {{ periodicWave.imag[(i - 1) * 4 + j - 1] }}
+            </td>
+          </tr>
+        </table>
+        <button class="reset-buttom" @click="resetWave('imag')">
+          重置
+        </button>
       </div>
     </div>
     <!--  -->
@@ -90,6 +133,7 @@
 
 <script>
 // import Timbre from './Timbre'
+import { debounce } from '@/utils'
 import Sound from '@/utils/Sound'
 
 export default {
@@ -109,7 +153,10 @@ export default {
         { label: '正弦波', value: 'sine' },
         { label: '方波', value: 'square' },
         { label: '锯齿波', value: 'sawtooth' },
-        { label: '三角波', value: 'triangle' }
+        { label: '三角波', value: 'triangle' },
+        { label: 'testA', value: 'testA' },
+        { label: 'testB', value: 'testB' },
+        { label: '自定义', value: 'diy' }
       ],
       //
       // 滤波器 type
@@ -117,7 +164,7 @@ export default {
       // Q 0.001 ~ 1000  0.1 ~ 100
       // gain -40 ~ 40
       filterList: [{
-        checked: true,
+        checked: false,
         type: 'lowpass',
         freq: 1000,
         Q: 1,
@@ -154,6 +201,11 @@ export default {
         peaking: { haveQ: true, haveGain: true },
         notch: { haveQ: true },
         allpass: { haveQ: true }
+      },
+      // custom
+      periodicWave: {
+        real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        imag: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       }
       // selectedIndex: -1,
       // showTunerMenu: false
@@ -169,12 +221,22 @@ export default {
   },
   watch: {
     selectedWave(wave) {
-      Sound.setAllWave(wave)
+      if (wave !== 'diy') {
+        Sound.setAllWave(wave)
+      } else {
+        Sound.setAllWave('diy', this.periodicWave)
+      }
     },
     filterList: {
       handler(list) {
         Sound.setAllFilters(list)
       },
+      deep: true
+    },
+    periodicWave: {
+      handler: debounce(function(wave) {
+        Sound.setAllWave('diy', wave)
+      }, 100),
       deep: true
     }
   },
@@ -184,6 +246,9 @@ export default {
     },
     handleChangeDuration(v) {
       Sound.setAllDuration(v)
+    },
+    resetWave(key) {
+      this.periodicWave[key] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     },
     // handleSelectTimber(index) {
     //   this.selectedIndex = index
@@ -224,28 +289,62 @@ export default {
   }
 }
 
-.timbre-wrapper {
+.diy {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  .timbre {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 80px;
-    height: 80px;
-    margin: 15px;
-    background-color: pink;
-    border-radius: 10px;
-    cursor: pointer;
+  .silder-wrapper {
+    position: relative;
+    height: 120px;
+    width: 350px;
+    .silder {
+      width: 100px;
+      height: 5px;
+      position: absolute;
+      transform-origin: right;
+      transform: translateX(-100%) rotate(-90deg);
+    }
   }
-  .selected-timbre {
-    box-shadow: 0 0 6px 6px #dc5c5c;
+  .number-table {
+    flex-grow: 1;
+    border-collapse: collapse;
+    margin-top: 10px;
+    td {
+      width: 25%;
+      text-align: center;
+      border: 1px solid #696969;
+    }
+  }
+  .reset-buttom {
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    font-size: 14px;
+    padding: 0 10px;
   }
 }
 
-.tuner {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
+// .timbre-wrapper {
+//   display: flex;
+//   flex-wrap: wrap;
+//   .timbre {
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     width: 80px;
+//     height: 80px;
+//     margin: 15px;
+//     background-color: pink;
+//     border-radius: 10px;
+//     cursor: pointer;
+//   }
+//   .selected-timbre {
+//     box-shadow: 0 0 6px 6px #dc5c5c;
+//   }
+// }
+
+// .tuner {
+//   position: absolute;
+//   bottom: 0;
+//   right: 0;
+// }
 </style>

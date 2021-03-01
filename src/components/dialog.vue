@@ -14,7 +14,7 @@
           </div>
           <i class="iconfont icon-close" @click="close"></i>
         </div>
-        <div class="menu-body">
+        <div class="menu-body" :style="{ maxHeight: maxHeight }">
           <slot></slot>
         </div>
       </div>
@@ -62,6 +62,11 @@ export default {
     },
     // 默认宽度
     width: {
+      type: String,
+      default: ''
+    },
+    // 最大高度
+    maxHeight: {
       type: String,
       default: ''
     }
@@ -179,7 +184,27 @@ export default {
   }
   .menu-body {
     position: relative;
-    padding: 10px;
+    max-height: calc(100% - 40px);
+    margin-top: 10px;
+    padding: 0 10px 10px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #686868 rgba(0, 0, 0, 0.2);
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #686868;
+      border-radius: 4px;
+      &:hover {
+        background-color: rgba(144, 147, 153, 0.5);
+      }
+    }
   }
   .menu-footer {
 
