@@ -4,7 +4,13 @@
 
 ```bash
 cd dist
-tcb hosting:deploy -e ff14-3gaz7i4cedb8328b
+# 上传
+tcb hosting deploy -e ff14-3gaz7i4cedb8328b
+# 删除
+tcb hosting delete -e ff14-3gaz7i4cedb8328b
+# tcb hosting delete -d cloudPath -e ff14-3gaz7i4cedb8328b
+# 查看文件
+tcb hosting list -e ff14-3gaz7i4cedb8328b
 ```
 
 ## 功能

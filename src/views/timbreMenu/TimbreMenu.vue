@@ -2,7 +2,7 @@
   <ff-dialog
     :visible="showTimbreMenu"
     title="音色设置 - 调试版" append-to-body
-    default-left="-30%" default-top="5%"
+    default-left="-20%" default-top="5%"
     max-height="70vh" @close="closeTimbreMenu">
     <!--  -->
     <div class="config">

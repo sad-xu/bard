@@ -32,8 +32,7 @@ module.exports = {
     }
   },
   pwa: {
-    // workboxPluginMode: {}
-    // workboxOptions
+
     name: '光之演奏家',
     themeColor: '#343838',
     msTileColor: '#343838',
@@ -48,9 +47,49 @@ module.exports = {
     appleMobileWebAppStatusBarStyle: 'black',
     // assetsVersion
     // manifestPath
+    // https://segmentfault.com/a/1190000019281388?utm_source=tag-newest
+    // https://developers.google.com/web/tools/workbox/modules/workbox-webpack-plugin#full_generatesw_config
+    workboxPluginMode: 'GenerateSW',
+    workboxOptions: {
+      exclude: [/\.(?:html|mid|js|css|png|jpg|jpeg|svg|ttf)$/],
+      runtimeCaching: [{
+        urlPattern: /\.(?:html)$/,
+        handler: 'NetworkFirst'
+      }, {
+        urlPattern: /\.(?:mid)$/,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'mid',
+          expiration: {
+            maxEntries: 60,
+            maxAgeSeconds: 15 * 86400
+          }
+        }
+      }, {
+        urlPattern: /\.(?:js|css)$/,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'jscss',
+          expiration: {
+            maxEntries: 60,
+            maxAgeSeconds: 15 * 86400
+          }
+        }
+      }, {
+        urlPattern: /\.(?:png|jpg|jpeg|svg|ttf)$/,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'common',
+          expiration: {
+            maxEntries: 30,
+            maxAgeSeconds: 30 * 86400
+          }
+        }
+      }]
+    },
     manifestOptions: {
       background_color: '#343838',
-      description: '让你在游戏外也能练习 FF14 演奏',
+      description: '光之演奏家,为 FF14 而生的演奏工具',
       display: 'fullscreen', // standalone fullscreen
       lang: 'zh-CN',
       start_url: './?from=pwa',

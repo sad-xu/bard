@@ -138,7 +138,8 @@ export default {
           obj[common[code]] = code
         }
         const keyboard = []
-        this.keyboard.forEach(item => {
+        const kk = this.$store.getters.isFullScale ? fullKeyboard : partKeyboard
+        kk.forEach(item => {
           keyboard.push({
             ...item,
             code: obj[item.label]
