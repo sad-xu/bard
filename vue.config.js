@@ -76,7 +76,7 @@ module.exports = {
           }
         }
       }, {
-        urlPattern: /\.(?:png|jpg|jpeg|svg|ttf)$/,
+        urlPattern: /\.(?:png|jpg|jpeg|svg|ttf|json)$/,
         handler: 'CacheFirst',
         options: {
           cacheName: 'common',

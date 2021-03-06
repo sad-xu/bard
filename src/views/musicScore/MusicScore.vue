@@ -8,14 +8,13 @@
     <!-- 播放 / 暂停 / 重播  -->
     <div
       v-show="selectedIndex !== -1"
-      class="menu-wrapper" :class="{'menu-wrapper-hidden': hideMenu, filter: filter || showMusicScore }"
-      @mouseenter="hideMenu = false" @mouseleave="hideMenu = true">
+      class="menu-wrapper" :class="{'menu-wrapper-hidden': hideMenu, filter: filter || showMusicScore }">
       <i
-        class="iconfont audio-icon"
+        class="iconfont"
         :class="isPlay ? 'icon-stop' : 'icon-start'"
         :title="isPlay ? '暂停' : '播放'" @click="toggleTheSong">
       </i>
-      <i class="reload-icon iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
+      <i class="iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
     </div>
     <!-- 曲目列表 -->
     <transition name="list-fade">
@@ -37,12 +36,14 @@
         v-show="showPaper && musicScore.length" class="paper"
         :class="{ filter: filter || showMusicScore, 'notes-wrapper__mobile': isMobile }">
         <div class="notes-wrapper">
-          <span
-            v-for="item in musicScore" :key="item[0]"
-            :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
-            class="notes" :style="`margin-left: ${item[1]}px;`">
-            {{ showKeycode ? item[5] : item[4] }}
-          </span>
+          <div class="notes-inner-box">
+            <span
+              v-for="item in musicScore" :key="item[0]"
+              :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
+              class="notes" :style="`margin-left: ${item[1]}px;`">
+              {{ showKeycode ? item[5] : item[4] }}
+            </span>
+          </div>
         </div>
         <div class="tip">
           <span @click="showKeycode = !showKeycode">切换按键显示</span>
@@ -304,29 +305,20 @@ export default {
   position: absolute;
   top: 4%;
   left: 30%;
-  right: 30%;
-  height: 48px;
+  right: 20%;
+  height: 40px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   transition: opacity 0.5s, filter 0.5s;
-  .audio-icon {
-    font-size: 46px;
-    color: #5b5b5b;
+  .iconfont {
+    font-size: 24px;
+    color: #bbb;
     margin: 0 10px;
     transition: color 0.3s;
     cursor: pointer;
     &:hover {
-      color: #bcbcbc;
-    }
-  }
-  .reload-icon {
-    font-size: 30px;
-    color: #5b5b5b;
-    transition: color 0.3s;
-    cursor: pointer;
-    &:hover {
-      color: #bcbcbc;
+      color: #e5e5e5;
     }
   }
 }
@@ -396,6 +388,7 @@ export default {
   top: 10%;
   left: 7%;
   right: 7%;
+  padding-top: 10px;
   transition: filter 0.5s;
 }
 .notes-wrapper {
@@ -403,18 +396,33 @@ export default {
   // top: 10%;
   // left: 7%;
   // right: 7%;
-  padding-top: 10px;
-  margin-top: 20px;
+  position: relative;
+  // margin-top: 20px;
   // max-height: calc(90vh - 240px);
   height: 100%;
   background-color: rgba(3, 3, 3, 0.3);
   box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
-  overflow-y: auto;
+  overflow: hidden;
   // -webkit-backface-visibility: hidden;
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 12px 8px rgb(50, 50, 50);
+  }
+  &::before { top: 0; }
+  &::after { bottom: 0; }
+  .notes-inner-box {
+    height: 100%;
+    padding-top: 10px;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
   }
   .notes {
     display: inline-block;

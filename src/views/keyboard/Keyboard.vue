@@ -320,8 +320,9 @@ export default {
     left: 0;
     right: 0;
     border-radius: 10px;
-    // transition: transform 0.1s;
+    transition: opacity 0.3s;
     transform: scaleY(0);
+    opacity: 0;
   }
   .indicator-mask-higher {
     transform-origin: bottom;
@@ -332,6 +333,7 @@ export default {
     background-image: linear-gradient(#7a82be, #85e9e1);
   }
   .show-indicator-mask {
+    opacity: 1;
     transform: scaleY(1);
   }
 }
