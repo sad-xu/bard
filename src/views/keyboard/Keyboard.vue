@@ -202,10 +202,10 @@ export default {
         }
       })
       // 无法禁止的事件 [Shift] Ctrl (Q|N|W|T|Tab)
-      // window.addEventListener('beforeunload', e => {
-      //   e.preventDefault()
-      //   e.returnValue = null
-      // })
+      window.addEventListener('beforeunload', e => {
+        e.preventDefault()
+        e.returnValue = null
+      })
     },
     // 鼠标点击键盘
     handleKeyClick({ label }) {

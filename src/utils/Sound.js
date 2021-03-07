@@ -82,7 +82,7 @@ class Sound {
     this.real = []
     this.imag = []
     this.linkedList = [totalGainNode, analyser] // 维护当前节点链
-    this.setVolume(0.5)
+    this.setVolume(0.3)
     // 保存实例
     instanceList.push(this)
   }

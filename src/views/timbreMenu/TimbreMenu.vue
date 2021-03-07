@@ -1,7 +1,7 @@
 <template>
   <ff-dialog
     :visible="showTimbreMenu"
-    title="音色设置 - 调试版" append-to-body
+    title="音色设置 - 初始测试简陋乞丐宝宝调试版" append-to-body
     default-left="-20%" default-top="5%"
     max-height="70vh" @close="closeTimbreMenu">
     <!--  -->
@@ -26,7 +26,7 @@
       <div class="diy">
         <div class="silder-wrapper">
           <input
-            v-for="i in 16" :key="i" v-model.number="periodicWave.real[i - 1]"
+            v-for="i in 15" :key="i" v-model.number="periodicWave.real[i]"
             class="silder" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
             :max="1" :min="-1" :step="0.001">
         </div>
@@ -44,7 +44,7 @@
       <div class="diy">
         <div class="silder-wrapper">
           <input
-            v-for="i in 16" :key="i" v-model.number="periodicWave.imag[i - 1]"
+            v-for="i in 15" :key="i" v-model.number="periodicWave.imag[i]"
             class="silder" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
             :max="1" :min="-1" :step="0.001">
         </div>
@@ -144,7 +144,7 @@ export default {
   data() {
     return {
       // 音量
-      volume: 50,
+      volume: 30,
       // 持续时间 0.5 - 3
       duration: 1.5,
       // 波形
@@ -204,7 +204,7 @@ export default {
       },
       // custom
       periodicWave: {
-        real: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        real: [0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         imag: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       }
       // selectedIndex: -1,

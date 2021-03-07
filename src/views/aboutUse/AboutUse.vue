@@ -7,7 +7,7 @@
     <div class="content">
       <section class="part">
         <h3>简介</h3>
-        <p>咋写咋写咋写</p>
+        <p>光之演奏家，为 FF14 量身打造的演奏工具</p>
       </section>
       <section class="part">
         <h3>功能</h3>
@@ -16,17 +16,14 @@
         <p>解析 MIDI 文件为曲谱</p>
         <p>播放解析出的曲谱</p>
         <p>不断更新的曲库</p>
-        <p>PWA功能</p>
+        <p>PWA功能，可添加到桌面或手机主屏幕作为 App 使用✌</p>
         <p>移动端适配 & 差异性功能</p>
         <p>自定义声音配置</p>
       </section>
       <section class="part">
         <h3>待做功能</h3>
         <p>音色/乐器选择</p>
-        <p>场景音选择</p>
-        <p>倍速</p>
         <p>根据实时频谱丰富背景</p>
-        <p>彩蛋</p>
         <p>组合键冲突处理 Chrome</p>
         <p>体验优化</p>
       </section>
@@ -37,13 +34,16 @@
         <p>[Shift] Ctrl (Q|N|W|T|Tab) 等</p>
         <p>本项目使用的一些新特性，在不同浏览器上可能会有差别，若出现问题，请升级浏览器到最新版本，推荐使用 Chrome 浏览器</p>
       </section>
-      <!-- <section class="part">
-        <h3>贡献人员</h3>
-        <p>[截图] + 角色名@大区</p>
-      </section> -->
+      <section class="part">
+        <h3>曲谱提供</h3>
+        <p>大部分曲谱均来自 midishow, 感谢所有作者❤</p>
+        <p>感谢 QWQPOI@midishow 的协助</p>
+      </section>
       <section class="part">
         <h3>联系与反馈</h3>
-        <p>xxx</p>
+        <p>若有任何问题，请联系我</p>
+        <p>QQ: 1031568754</p>
+        <p>妙蛤种子@琥珀原</p>
       </section>
     </div>
   </ff-dialog>

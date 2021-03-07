@@ -8,7 +8,7 @@
       }">
       <!-- menu -->
       <div class="menu-wrapper">
-        <i v-show="!isMobile" class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
+        <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
         <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>

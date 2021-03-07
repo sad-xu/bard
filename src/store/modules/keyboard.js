@@ -1,6 +1,6 @@
 const state = {
   // 是否是全音阶
-  isFullScale: Boolean(localStorage.getItem('isFullScale')), // false,
+  isFullScale: Boolean(Number(localStorage.getItem('isFullScale'))), // false,
   keyMap: JSON.parse(localStorage.getItem('keyMap')) || {
     higher: 'shiftKey',
     lower: 'ctrlKey',

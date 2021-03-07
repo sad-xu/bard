@@ -19,12 +19,15 @@
     <!-- 曲目列表 -->
     <transition name="list-fade">
       <div v-show="showMusicScore" class="score-body" @scroll="handleScroll">
+        <div v-for="i in 5" :key="`${i}-up`" class="space"></div>
         <div
           v-for="(item, i) in musicList" :key="i"
           class="song" :class="{ 'selected-song': selectedIndex === i }"
           @click="handleMusicSelect(item, i)">
-          {{ item.name }}
+          <span class="song-name">{{ item.name }}</span>
+          <span class="song-auth">By: <span style="color: #3f51b5;">{{ item.auth }}</span></span>
         </div>
+        <div v-for="i in 5" :key="`${i}-down`" class="space"></div>
       </div>
     </transition>
     <transition name="model-fade">
@@ -74,6 +77,28 @@ const itemHeight = 64
 const N_ARR = ['1', '1#', '2', '3b', '3', '4', '4#', '5', '5#', '6', '7b', '7']
 const NN_ARR = ['1', '1♯', '2', '3♭', '3', '4', '4♯', '5', '5♯', '6', '7♭', '7']
 
+// const SONG_LIST = require.context('../../../public/mids', false, /\.mid$/).keys().map(v => v.slice(2, -4))
+const SONG_LIST = [
+  { name: 'tomorrow and tomorrow', auth: 'QWQPOI' },
+  { name: '勾指起誓', auth: 'QWQPOI' },
+  { name: '陆行鸟之歌', auth: 'QWQPOI' },
+  { name: '植物大战僵尸', auth: 'QWQPOI' },
+  { name: 'il vento doro', auth: 'QWQPOI' },
+  { name: '克罗地亚狂想曲', auth: '顾长歌' },
+  { name: '喀秋莎', auth: '顾长歌' },
+  { name: '希望之花', auth: '66189118' },
+  { name: '青鸟', auth: '66189118' },
+  { name: '千本樱', auth: 'yuancho' },
+  { name: '5.0蛮神 妖灵王', auth: 'zhou364394799' },
+  { name: 'Deja vu 头文字D', auth: '试作型红茶' },
+  { name: 'dragon song', auth: 'gohiey' },
+  { name: '悠久之风', auth: '蛙石' },
+  { name: '斗地主', auth: 'freeizng影子' },
+  { name: '热烈的决斗者', auth: '海边的吉卜力' },
+  { name: '白金ディスコ', auth: 'unjason' },
+  { name: '黑人抬棺', auth: '六芒_龙' }
+]
+
 export default {
   // 虚化
   props: {
@@ -85,13 +110,13 @@ export default {
   data() {
     return {
       selectedIndex: -1,
-      // 陆行鸟之歌 植物大战僵尸
-      musicList: Array.from({ length: 40 }).map((v, i) => {
-        let name = ''
-        const index = i % 3
-        name = ['陆行鸟之歌', '植物大战僵尸', 'il vento doro'][index]
-        return { name: `${name}-${i}`, source: name }
-      }),
+      musicList: SONG_LIST,
+      // Array.from({ length: 30 }).map((v, i) => {
+      //   let name = ''
+      //   const index = i % SONG_LIST.length
+      //   name = SONG_LIST[index]
+      //   return { name: `${name}-${i}`, source: name }
+      // }),
       // 乐谱显示
       showPaper: false,
       // 乐谱音符
@@ -137,7 +162,7 @@ export default {
     showMusicScore() {
       this.$nextTick(() => {
         scrollBodyDom.scrollTo({
-          top: this.selectedIndex === -1 ? 1 * itemHeight : this.selectedIndex * itemHeight - scrollBodyDom.offsetHeight / 2,
+          top: this.selectedIndex === -1 ? 5 * itemHeight : (this.selectedIndex + 5) * itemHeight - scrollBodyDom.offsetHeight / 2,
           behavior: 'smooth'
         })
       })
@@ -152,13 +177,15 @@ export default {
       this.$store.dispatch('app/toggleMusicScore')
     },
     handleMusicSelect(item, i) {
-      console.log(item, i)
+      const isFullScale = this.$store.getters.isFullScale
       this.toggleMusicScore()
       this.selectedIndex = i
 
+      Timer.stop()
+      this.isPlay = false
+
       const request = new XMLHttpRequest()
-      // request.open('GET', '/mids/il vento doro.mid', true)
-      request.open('GET', `/mids/${item.source}.mid`, true)
+      request.open('GET', `/mids/${item.name}.mid`, true)
       request.responseType = 'arraybuffer'
       request.onload = () => {
         const { headerChunk, trackChunk } = parseMIDI(request.response)
@@ -179,11 +206,16 @@ export default {
               const N = N_ARR[B % 12]
               const NN = NN_ARR[B % 12]
               let O = Math.floor(B / 12) - 1
-              if (O <= 4) O = '↓'
-              else if (O >= 6) O = '↑'
-              else O = ''
+              let OO = ''
+              if (O <= 4) {
+                O = '↓'
+                OO = '-l'
+              } else if (O >= 6) {
+                O = '↑'
+                OO = '-h'
+              } else O = ''
               if (t - lastT) {
-                musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN, this.commonKeyMap[N] || '--'])
+                musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN, this.commonKeyMap[N + (isFullScale ? OO : '')] || '--'])
                 lastT = t
               }
             }
@@ -331,7 +363,7 @@ export default {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 200px;
+  min-width: 200px;
   padding: 0 20px;
   display: flex;
   flex-direction: column;
@@ -344,13 +376,17 @@ export default {
     width: 0;
     height: 0;
   }
+  .space {
+    height: 60px;
+    flex-shrink: 0;
+  }
   .song {
+    position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    height: 60px;
-    padding: 15px 4px;
+    height: 65px;
+    padding: 15px 10px 24px 10px;
     margin: 2px 0;
     background-color: #ecf0ff;
     border-bottom: 1px solid #eee;
@@ -362,6 +398,16 @@ export default {
     }
     &:last-of-type {
       border-bottom: 0;
+    }
+    .song-name {
+      color: #673ab7;
+      font-weight: bold;
+    }
+    .song-auth {
+      position: absolute;
+      right: 5px;
+      bottom: 5px;
+      font-size: 14px;
     }
   }
   .selected-song {
@@ -403,6 +449,7 @@ export default {
   background-color: rgba(3, 3, 3, 0.3);
   box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
+  backdrop-filter: blur(3px);
   overflow: hidden;
   // -webkit-backface-visibility: hidden;
   &::before,

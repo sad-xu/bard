@@ -203,7 +203,6 @@ export function parseMIDI(arrayBuffer) {
     }
     tracks.push(list)
   })
-
   midiInfo.trackChunk = tracks
   return midiInfo
 }

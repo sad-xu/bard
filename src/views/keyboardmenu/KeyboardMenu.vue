@@ -16,18 +16,18 @@
         请选择要设定的音阶，鼠标右键单击可解除设定
       </p>
       <div class="footer-buttons">
-        <div></div>
+        <!-- <div></div> -->
         <!-- <ff-button @click="reset">
           恢复初期设置
         </ff-button> -->
-        <div>
-          <ff-button class="apply-button" @click="applySetting">
-            应用
-          </ff-button>
-          <ff-button @click="closeMenu">
-            关闭
-          </ff-button>
-        </div>
+        <!-- <div> -->
+        <ff-button class="apply-button" @click="applySetting">
+          应用
+        </ff-button>
+        <ff-button @click="closeMenu">
+          关闭
+        </ff-button>
+        <!-- </div> -->
       </div>
     </div>
   </ff-dialog>
@@ -103,7 +103,7 @@ export default {
   }
   .footer-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     .apply-button {
       margin-right: 20px;
     }
