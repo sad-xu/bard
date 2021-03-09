@@ -4,7 +4,7 @@
       <i class="iconfont icon-arrow-fill ff-arrow" :class="{ 'ff-arrow-rotate': visible }"></i>
       <div>{{ selectedLabel }}</div>
     </div>
-    <transition name="ff-zome-in-top">
+    <transition name="ff-zoom-in-top">
       <ul v-show="visible" v-clickoutside="handleClickoutside" class="ff-select-dropdown__list">
         <li
           v-for="item in options"
@@ -95,7 +95,6 @@ export default {
   display: inline-block;
   width: 100px;
   font-size: 14px;
-  border: 1px solid #403b3b;
   border-radius: 5px;
   user-select: none;
 }
@@ -130,12 +129,17 @@ export default {
   z-index: 9;
   .ff-select-dropdown__item {
     font-size: 14px;
-    padding: 0 10px;
+    padding: 4px 10px;
+    border-bottom: 1px dashed #999;
+    transition: background 0.3s;
+    cursor: pointer;
     // height: 34px;
     // line-height: 34px;
-    cursor: pointer;
     &:hover {
       background-color: #555;
+    }
+    &:last-of-type {
+      border-bottom: 0;
     }
   }
 }

@@ -200,3 +200,25 @@ ul,
 li {
   list-style: none;
 }
+
+input[type="range"] {
+  height: 7px;
+  outline: none;
+  appearance: none;
+  border-radius: 10px;
+  background: #dbeaf2;
+  cursor: default;
+  &::-webkit-slider-thumb {
+    appearance: none;
+    box-shadow: 0 0 2px;
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    // background: linear-gradient(red, green);
+    background: #50a9b6;
+    cursor: pointer;
+    &:hover {
+      background-color: #4b97c0;
+    }
+  }
+}
