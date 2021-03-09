@@ -22,7 +22,7 @@
         <p>
           Produced by <span style="color: #c7a2e8;">妙蛤种子@琥珀原</span>
         </p>
-        <span :class="{'version-tip__mobile': isMobile}" style="color: #fff;">V0.8-alpha | 不代表最终效果</span>
+        <!-- <span :class="{'version-tip__mobile': isMobile}" style="color: #fff;">V1.1</span> -->
         <p>
           Made with <span style="color: #e91e63;">❤</span>
         </p>
