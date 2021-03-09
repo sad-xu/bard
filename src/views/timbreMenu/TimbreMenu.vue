@@ -1,7 +1,7 @@
 <template>
   <ff-dialog
     :visible="showTimbreMenu"
-    title="音色设置 - 初始测试简陋乞丐宝宝调试版" append-to-body
+    title="音色设置 - 原始测试简陋乞丐宝宝调试版" append-to-body
     default-left="-20%" default-top="5%"
     max-height="70vh" @close="closeTimbreMenu">
     <!--  -->
@@ -24,10 +24,10 @@
         自定义波形
       </p>
       <div class="diy">
-        <div class="silder-wrapper">
+        <div class="slider-wrapper">
           <input
             v-for="i in 15" :key="i" v-model.number="periodicWave.real[i]"
-            class="silder" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
+            class="slider" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
             :max="1" :min="-1" :step="0.001">
         </div>
         <table class="number-table">
@@ -37,15 +37,15 @@
             </td>
           </tr>
         </table>
-        <button class="reset-buttom" @click="resetWave('real')">
+        <ff-button class="reset-buttom" @click="resetWave('real')">
           重置
-        </button>
+        </ff-button>
       </div>
       <div class="diy">
-        <div class="silder-wrapper">
+        <div class="slider-wrapper">
           <input
             v-for="i in 15" :key="i" v-model.number="periodicWave.imag[i]"
-            class="silder" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
+            class="slider" :style="{ left: `${6.25 * (i - 1)}%` }" type="range"
             :max="1" :min="-1" :step="0.001">
         </div>
         <table class="number-table">
@@ -55,9 +55,9 @@
             </td>
           </tr>
         </table>
-        <button class="reset-buttom" @click="resetWave('imag')">
+        <ff-button class="reset-buttom" @click="resetWave('imag')">
           重置
-        </button>
+        </ff-button>
       </div>
     </div>
     <!--  -->
@@ -65,82 +65,60 @@
       <p class="config-title">
         音量
       </p>
-      <ff-silder
+      <ff-slider
         v-model="volume"
         @change="handleChangeVolumn">
-      </ff-silder>
+      </ff-slider>
     </div>
     <!--  -->
     <div class="config">
       <p class="config-title">
         持续时间
       </p>
-      <ff-silder
+      <ff-slider
         v-model="duration"
         :min="0.5" :max="3" :step="0.1"
         @change="handleChangeDuration">
-      </ff-silder>
+      </ff-slider>
     </div>
     <!--  -->
     <div class="config">
       <p class="config-title">
-        滤波器
+        滤波器（最多可叠加三层）
       </p>
       <div class="filter-wrapper">
         <div v-for="(filter, i) in filterList" :key="i" class="filter">
-          <input v-model="filter.checked" type="checkbox">
-          <ff-select v-model="filter.type" :options="filterOption"></ff-select>
-          <div>
-            <span>Freq</span>
-            <ff-silder v-model="filter.freq" :min="250" :max="2000"></ff-silder>
+          <div class="filter-header">
+            <input v-model="filter.checked" class="checkbox" type="checkbox">
+            <ff-select v-model="filter.type" :options="filterOption"></ff-select>
           </div>
-          <div v-if="filterParamsMap[filter.type].haveQ">
+          <div class="filter-item">
+            <span>Freq</span>
+            <ff-slider v-model="filter.freq" :min="250" :max="2000"></ff-slider>
+          </div>
+          <div v-if="filterParamsMap[filter.type].haveQ" class="filter-item">
             <span>Q</span>
-            <ff-silder
+            <ff-slider
               v-model="filter.Q"
               :min="0.1" :max="100" :step="0.1">
-            </ff-silder>
+            </ff-slider>
           </div>
-          <div v-if="filterParamsMap[filter.type].haveGain">
+          <div v-if="filterParamsMap[filter.type].haveGain" class="filter-item">
             <span>Gain</span>
-            <ff-silder v-model="filter.gain" :min="-40" :max="40"></ff-silder>
+            <ff-slider v-model="filter.gain" :min="-40" :max="40"></ff-slider>
           </div>
         </div>
       </div>
     </div>
-    <!-- <div class="timbre-wrapper">
-      <div
-        v-for="(item, index) in timbreList" :key="item.id"
-        :class="selectedIndex === index ? 'selected-timbre' : ''"
-        class="timbre" @click="handleSelectTimber(index)">
-        {{ item.name }}
-      </div>
-      <div class="timbre">
-        +
-      </div>
-    </div> -->
-    <!-- <div class="tuner" @click="showTunerMenu = !showTunerMenu">
-      打开调音器
-    </div> -->
-    <!--  -->
-    <!-- <timbre
-      ref="Timbre"
-      :visible="showTunerMenu"
-      @close="showTunerMenu = false">
-    </timbre> -->
   </ff-dialog>
 </template>
 
 <script>
-// import Timbre from './Timbre'
 import { debounce } from '@/utils'
 import Sound from '@/utils/Sound'
 
 export default {
   name: 'TimbreMenu',
-  // components: {
-  //   Timbre
-  // },
   data() {
     return {
       // 音量
@@ -207,17 +185,12 @@ export default {
         real: [0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         imag: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       }
-      // selectedIndex: -1,
-      // showTunerMenu: false
     }
   },
   computed: {
     showTimbreMenu() {
       return this.$store.getters.showTimbreMenu
     }
-    // timbreList() {
-    //   return this.$store.getters.timbreList
-    // }
   },
   watch: {
     selectedWave(wave) {
@@ -250,12 +223,7 @@ export default {
     resetWave(key) {
       this.periodicWave[key] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     },
-    // handleSelectTimber(index) {
-    //   this.selectedIndex = index
-    //   this.$refs.Timbre.setTimbre(this.timbreList[index])
-    // },
     closeTimbreMenu() {
-      // this.showTunerMenu = false
       this.$store.dispatch('timbre/toggleShowTimbreMenu')
     }
   }
@@ -266,6 +234,7 @@ export default {
 .config {
   margin-bottom: 15px;
   padding-left: 20px;
+  padding-top: 10px;
   .config-title {
     margin-left: -20px;
     margin-bottom: 10px;
@@ -274,6 +243,7 @@ export default {
 
 .wave-wrapper {
   display: flex;
+  font-size: 15px;
   .wave {
     margin-right: 20px;
     label {
@@ -285,18 +255,38 @@ export default {
 .filter-wrapper {
   display: flex;
   .filter {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    .filter-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+      .checkbox {
+        margin-right: 6px;
+      }
+    }
+    .filter-item {
+      font-size: 14px;
+      /deep/ .ff-slider__runway {
+        width: 60%;
+      }
+    }
   }
 }
 
 .diy {
   position: relative;
   display: flex;
-  .silder-wrapper {
+  margin-bottom: 6px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+  .slider-wrapper {
     position: relative;
     height: 120px;
     width: 350px;
-    .silder {
+    .slider {
       width: 100px;
       height: 5px;
       position: absolute;
@@ -307,9 +297,10 @@ export default {
   .number-table {
     flex-grow: 1;
     border-collapse: collapse;
-    margin-top: 10px;
+    font-size: 12px;
     td {
       width: 25%;
+      padding: 4px 0;
       text-align: center;
       border: 1px solid #696969;
     }
@@ -317,34 +308,9 @@ export default {
   .reset-buttom {
     position: absolute;
     right: 0;
-    bottom: 8px;
-    font-size: 14px;
-    padding: 0 10px;
+    bottom: 6px;
+    font-size: 12px;
+    padding: 3px 14px;
   }
 }
-
-// .timbre-wrapper {
-//   display: flex;
-//   flex-wrap: wrap;
-//   .timbre {
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     width: 80px;
-//     height: 80px;
-//     margin: 15px;
-//     background-color: pink;
-//     border-radius: 10px;
-//     cursor: pointer;
-//   }
-//   .selected-timbre {
-//     box-shadow: 0 0 6px 6px #dc5c5c;
-//   }
-// }
-
-// .tuner {
-//   position: absolute;
-//   bottom: 0;
-//   right: 0;
-// }
 </style>

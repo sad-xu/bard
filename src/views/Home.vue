@@ -12,6 +12,15 @@
         <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
+      <!--  -->
+      <div class="spec-menu">
+        <span v-if="isMobile && isSupportWakeLock" title="常亮模式下不会熄屏(部分浏览器下有效)" @click="toggleLightMode">
+          {{ isWakeLock ? '关闭' : '开启' }}常亮模式
+        </span>
+        <span v-if="!isMobile && isSupportImmersionMode" title="沉浸模式下不会有按键冲突" @click="toggleImmersionMode">
+          {{ isImmersionMode ? '关闭' : '开启' }}沉浸模式
+        </span>
+      </div>
       <!-- bg -->
       <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
       <!-- <canvas id="Screen" ref="Screen"></canvas> -->
@@ -50,6 +59,8 @@ import { debounce } from '@/utils'
 
 const sounder = new Sound()
 
+let wakeLock = null
+
 export default {
   name: 'Home',
   components: {
@@ -58,6 +69,16 @@ export default {
     TimbreMenu,
     MusicScore,
     AboutUse
+  },
+  data() {
+    return {
+      // 常亮模式
+      isSupportWakeLock: false,
+      isWakeLock: false,
+      // 沉浸模式
+      isSupportImmersionMode: false,
+      isImmersionMode: false
+    }
   },
   computed: {
     isMobile() {
@@ -72,6 +93,19 @@ export default {
         this.$store.getters.showAboutUse
     }
   },
+  created() {
+    if ('wakeLock' in navigator) {
+      this.isSupportWakeLock = true
+    }
+    if ('keyboard' in navigator) {
+      this.isSupportImmersionMode = true
+    }
+    document.addEventListener('fullscreenchange', e => {
+      if (!document.fullscreenElement) {
+        this.isImmersionMode = false
+      }
+    })
+  },
   methods: {
     sing({ note, pitch }) {
       sounder.sing(note, pitch)
@@ -84,6 +118,30 @@ export default {
     },
     openAboutUse() {
       this.$store.dispatch('app/toggleAboutUse')
+    },
+    toggleLightMode() {
+      if (this.isWakeLock) {
+        wakeLock.release()
+        this.isWakeLock = false
+      } else {
+        navigator.wakeLock.request('screen').then(res => {
+          wakeLock = res
+          this.isWakeLock = true
+        })
+      }
+    },
+    async toggleImmersionMode() {
+      if (this.isImmersionMode) {
+        this.isImmersionMode = false
+      } else {
+        try {
+          await document.documentElement.requestFullscreen()
+          await navigator.keyboard.lock()
+          this.isImmersionMode = true
+        } catch (err) {
+          console.log(err)
+        }
+      }
     },
     initCanvas() {
       const screenDom = this.$refs.Screen
@@ -176,6 +234,13 @@ export default {
       transform: scale(1.2);
     }
   }
+}
+
+.spec-menu {
+  position: absolute;
+  top: 20px;
+  left: 130px;
+  z-index: 9;
 }
 
 // #Screen {

@@ -2,7 +2,7 @@
   <div>
     <!-- 当前曲目 -->
     <div class="score-header" :class="{ filter: filter || showMusicScore }">
-      <span class="current-music" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
+      <span class="current-music" :class="{ 'current-music__mibile': isMobile }" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
       <i v-show="musicScore.length && !isMobile" class="iconfont icon-music-setting" title="显示乐谱" @click="showPaper = !showPaper"></i>
     </div>
     <!-- 播放 / 暂停 / 重播  -->
@@ -320,7 +320,14 @@ export default {
     border-radius: 10px;
     color: #fff;
     background-color: #716ac3;
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     cursor: pointer;
+  }
+  .current-music__mibile {
+    max-width: 120px;
   }
   .icon-music-setting {
     font-size: 24px;
@@ -336,7 +343,6 @@ export default {
 .menu-wrapper {
   position: absolute;
   top: 4%;
-  left: 30%;
   right: 20%;
   height: 40px;
   display: flex;
@@ -531,7 +537,7 @@ export default {
 .notes-wrapper__mobile {
   left: 2%;
   right: 2%;
-  height: calc(90vh - 50px);
+  height: calc(90vh - 30px);
   .notes {
     padding: 2px 6px;
     margin-bottom: 6px;

@@ -5,7 +5,7 @@
       class="ff-slider__runway"
       :max="max" :min="min" :step="step"
       @change="handleChange">
-    <span>{{ value }}</span>
+    <span class="ff-slider__val">{{ value }}{{ unit }}</span>
     <!-- <ff-button class="silder-button" @click="stepBack">
       ◀
     </ff-button>
@@ -28,7 +28,7 @@
 import { debounce } from '@/utils'
 
 export default {
-  name: 'FfSilder',
+  name: 'FfSlider',
   model: {
     prop: 'value',
     event: 'change'
@@ -49,6 +49,11 @@ export default {
     step: {
       type: Number,
       default: 1
+    },
+    // 单位
+    unit: {
+      type: String,
+      default: ''
     }
   },
   methods: {
@@ -73,20 +78,15 @@ export default {
 //   font-size: 12px;
 // }
 
+.ff-slider {
+  display: flex;
+  align-items: center;
+}
 .ff-slider__runway {
-  outline: none;
-  appearance: none;
+  margin-right: 10px;
   width: 30%;
-  height: 10px;
-  background: orange;
-  &::-webkit-slider-thumb {
-    appearance: none;
-    box-shadow: 0 0 2px;
-    width: 20px;
-    height: 20px;
-    border-radius: 100%;
-    background: linear-gradient(red, green);
-    cursor: pointer;
-  }
+}
+.ff-slider__val {
+  font-size: 14px;
 }
 </style>
