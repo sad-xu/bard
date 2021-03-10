@@ -2,6 +2,28 @@
 
 ## FF14 演奏 <s>（吟游诗人）</s> 模拟器
 
+## 安装
+
+`npm config set registry https://registry.npm.taobao.org -g`
+
+`npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/ -g`
+
+`npm install`
+
+## VSCode 相关
+
+必装插件 `Vetur`、`ESLint`、`stylelint`
+
+```json
+// 保存时自动修复
+"editor.codeActionsOnSave": {
+  "source.fixAll.eslint": true,
+  "source.fixAll.stylelint": true
+}
+```
+
+## 打包发布
+
 ```bash
 cd dist
 # 上传
@@ -32,8 +54,6 @@ MIDI 相关 解析mid文件生成谱子并播放
 设备尺寸自适应 -- 媒体查询 √  vw单位 ×
 
 PWA
-
-虚拟平滑惯性滚动
 
 ## 需求变更记录
 

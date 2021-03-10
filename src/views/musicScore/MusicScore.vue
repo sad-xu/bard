@@ -2,8 +2,16 @@
   <div>
     <!-- 当前曲目 -->
     <div class="score-header" :class="{ filter: filter || showMusicScore }">
-      <span class="current-music" :class="{ 'current-music__mibile': isMobile }" @click="toggleMusicScore">{{ selectedMusicName || '选择乐谱' }}</span>
-      <i v-show="musicScore.length && !isMobile" class="iconfont icon-music-setting" title="显示乐谱" @click="showPaper = !showPaper"></i>
+      <span
+        class="current-music" :class="{ 'current-music__mibile': isMobile }"
+        @click="$store.dispatch('app/toggleMusicScore')">
+        {{ selectedMusicName || '选择乐谱' }}
+      </span>
+      <i
+        v-show="musicScore.length && !isMobile"
+        class="iconfont icon-music-setting"
+        title="显示乐谱" @click="showPaper = !showPaper">
+      </i>
     </div>
     <!-- 播放 / 暂停 / 重播  -->
     <div
@@ -17,22 +25,7 @@
       <i class="iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
     </div>
     <!-- 曲目列表 -->
-    <transition name="list-fade">
-      <div v-show="showMusicScore" class="score-body" @scroll="handleScroll">
-        <div v-for="i in 5" :key="`${i}-up`" class="space"></div>
-        <div
-          v-for="(item, i) in musicList" :key="i"
-          class="song" :class="{ 'selected-song': selectedIndex === i }"
-          @click="handleMusicSelect(item, i)">
-          <span class="song-name">{{ item.name }}</span>
-          <span class="song-auth">By: <span style="color: #3f51b5;">{{ item.auth }}</span></span>
-        </div>
-        <div v-for="i in 5" :key="`${i}-down`" class="space"></div>
-      </div>
-    </transition>
-    <transition name="model-fade">
-      <div v-show="showMusicScore" class="model" @click="toggleMusicScore"></div>
-    </transition>
+    <music-list @handleMusicSelect="handleMusicSelect"></music-list>
     <!-- 乐谱 -->
     <transition name="paper-fade">
       <div
@@ -43,9 +36,17 @@
             <span
               v-for="item in musicScore" :key="item[0]"
               :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
-              class="notes" :style="`margin-left: ${item[1]}px;`">
+              class="notes" :style="`margin-left: ${item[1] * zoomLevel}px;margin-bottom: ${10 * zoomLevel}px;`">
               {{ showKeycode ? item[5] : item[4] }}
             </span>
+          </div>
+        </div>
+        <div class="zoom-wrapper" :class="{ 'zoom-wrapper__mobile': isMobile }">
+          <div @click="handleZoomIn">
+            +
+          </div>
+          <div @click="handleZoomOut">
+            -
           </div>
         </div>
         <div class="tip">
@@ -66,42 +67,19 @@
 import Sound from '@/utils/Sound'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
+import MusicList from './MusicList'
 const sounder = new Sound()
 // sounder.setVolume(0.05)
-// TODO: 音量调节
-
-let scrollBodyDom = null
-let childrenDoms = []
-const itemHeight = 64
 
 const N_ARR = ['1', '1#', '2', '3b', '3', '4', '4#', '5', '5#', '6', '7b', '7']
 const NN_ARR = ['1', '1♯', '2', '3♭', '3', '4', '4♯', '5', '5♯', '6', '7♭', '7']
 
-// const SONG_LIST = require.context('../../../public/mids', false, /\.mid$/).keys().map(v => v.slice(2, -4))
-const SONG_LIST = [
-  { name: 'tomorrow and tomorrow', auth: 'QWQPOI' },
-  { name: '勾指起誓', auth: 'QWQPOI' },
-  { name: '陆行鸟之歌', auth: 'QWQPOI' },
-  { name: '植物大战僵尸', auth: 'QWQPOI' },
-  { name: 'il vento doro', auth: 'QWQPOI' },
-  { name: '克罗地亚狂想曲', auth: '顾长歌' },
-  { name: '喀秋莎', auth: '顾长歌' },
-  { name: '希望之花', auth: '66189118' },
-  { name: '青鸟', auth: '66189118' },
-  { name: '千本樱', auth: 'yuancho' },
-  { name: '5.0蛮神 妖灵王', auth: 'zhou364394799' },
-  { name: 'Deja vu 头文字D', auth: '试作型红茶' },
-  { name: 'dragon song', auth: 'gohiey' },
-  { name: '悠久之风', auth: '蛙石' },
-  { name: '斗地主', auth: 'freeizng影子' },
-  { name: '热烈的决斗者', auth: '海边的吉卜力' },
-  { name: '白金ディスコ', auth: 'unjason' },
-  { name: '黑人抬棺', auth: '六芒_龙' }
-]
-
 export default {
-  // 虚化
+  components: {
+    MusicList
+  },
   props: {
+    // 虚化
     filter: {
       type: Boolean,
       default: false
@@ -109,14 +87,7 @@ export default {
   },
   data() {
     return {
-      selectedIndex: -1,
-      musicList: SONG_LIST,
-      // Array.from({ length: 30 }).map((v, i) => {
-      //   let name = ''
-      //   const index = i % SONG_LIST.length
-      //   name = SONG_LIST[index]
-      //   return { name: `${name}-${i}`, source: name }
-      // }),
+      selectedMusicName: '',
       // 乐谱显示
       showPaper: false,
       // 乐谱音符
@@ -127,6 +98,8 @@ export default {
       isPlay: false,
       // 播放按钮显隐
       hideMenu: true,
+      // 间距缩放 (0,2]
+      zoomLevel: 1,
       // 切换按键显示 音符 / 按键
       showKeycode: true,
       compositeMap: {
@@ -140,9 +113,9 @@ export default {
     isMobile() {
       return this.$store.getters.isMobile
     },
-    selectedMusicName() {
-      return this.selectedIndex === -1 ? '' : this.musicList[this.selectedIndex].name
-    },
+    // selectedMusicName() {
+    //   return this.selectedIndex === -1 ? '' : this.musicList[this.selectedIndex].name
+    // },
     showMusicScore() {
       return this.$store.getters.showMusicScore
     },
@@ -158,28 +131,10 @@ export default {
       return obj
     }
   },
-  watch: {
-    showMusicScore() {
-      this.$nextTick(() => {
-        scrollBodyDom.scrollTo({
-          top: this.selectedIndex === -1 ? 5 * itemHeight : (this.selectedIndex + 5) * itemHeight - scrollBodyDom.offsetHeight / 2,
-          behavior: 'smooth'
-        })
-      })
-    }
-  },
-  mounted() {
-    scrollBodyDom = this.$el.querySelector('.score-body')
-    childrenDoms = scrollBodyDom.children
-  },
   methods: {
-    toggleMusicScore() {
-      this.$store.dispatch('app/toggleMusicScore')
-    },
-    handleMusicSelect(item, i) {
+    handleMusicSelect(item) {
+      this.selectedMusicName = item.name
       const isFullScale = this.$store.getters.isFullScale
-      this.toggleMusicScore()
-      this.selectedIndex = i
 
       Timer.stop()
       this.isPlay = false
@@ -268,52 +223,31 @@ export default {
       this.initTheSong()
       Timer.start()
     },
-    handleScroll() {
-      const scrollTop = scrollBodyDom.scrollTop
-      const offsetHeight = scrollBodyDom.offsetHeight
-      const startIndex = Math.floor(scrollTop / itemHeight)
-      const endIndex = Math.floor((scrollTop + offsetHeight) / itemHeight)
-      for (let i = startIndex; i <= endIndex; i++) {
-        const child = childrenDoms[i]
-        if (child) {
-          const n = 1 - Math.abs((child.offsetTop - scrollTop) / offsetHeight - 0.5) * 0.5
-          // 不设置 scaleZ, 避免过多合成层
-          child.style.transform = `scaleX(${n}) scaleY(${n})` // `scale3d(${n}, ${n}, 1)`
-          child.style.opacity = n
-        }
-      }
+    // 放大
+    handleZoomIn() {
+      this.zoomLevel = Math.min(2, this.zoomLevel + 0.2)
+    },
+    // 缩小
+    handleZoomOut() {
+      this.zoomLevel = Math.max(0.1, this.zoomLevel - 0.2)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.model-fade-enter-active { transition: opacity 0.5s; }
-.model-fade-leave-active { transition: opacity 0.2s; }
-.model-fade-enter,
-.model-fade-leave-to {
-  opacity: 0;
-}
-
-.list-fade-enter-active { transition: transform 0.5s; }
-.list-fade-leave-active { transition: transform 0.3s; }
-.list-fade-enter,
-.list-fade-leave-to {
-  transform: translateX(-100%);
-}
-
 .filter {
   filter: blur(5px);
 }
 
 //
 .score-header {
-  position: absolute;
+  position: fixed;
   top: 4%;
   left: 2%;
   display: flex;
   align-items: center;
-  transition: filter 0.5s;
+  // transition: filter 0.5s;
   .current-music {
     padding: 4px 10px;
     margin-right: 10px;
@@ -341,14 +275,14 @@ export default {
 }
 
 .menu-wrapper {
-  position: absolute;
+  position: fixed;
   top: 4%;
   right: 20%;
   height: 40px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  transition: opacity 0.5s, filter 0.5s;
+  transition: opacity 0.5s; //, filter 0.5s;
   .iconfont {
     font-size: 24px;
     color: #bbb;
@@ -364,84 +298,16 @@ export default {
   opacity: 0;
 }
 
-.score-body {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  min-width: 200px;
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  transform-origin: left;
-  // transform: translateZ(0);
-  z-index: 99;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
-  .space {
-    height: 60px;
-    flex-shrink: 0;
-  }
-  .song {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    height: 65px;
-    padding: 15px 10px 24px 10px;
-    margin: 2px 0;
-    background-color: #ecf0ff;
-    border-bottom: 1px solid #eee;
-    border-radius: 10px;
-    transition: box-shadow 0.3s;
-    cursor: pointer;
-    &:hover {
-      box-shadow: 0 0 20px 0 #03a9f4;
-    }
-    &:last-of-type {
-      border-bottom: 0;
-    }
-    .song-name {
-      color: #673ab7;
-      font-weight: bold;
-    }
-    .song-auth {
-      position: absolute;
-      right: 5px;
-      bottom: 5px;
-      font-size: 14px;
-    }
-  }
-  .selected-song {
-    box-shadow: 0 0 20px 0 #03a9f4;
-  }
-}
-
-.model {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 20px 0 #505050;
-  z-index: 9;
-}
-
 .paper {
   height: calc(90vh - 180px);
   display: flex;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   top: 10%;
   left: 7%;
   right: 7%;
   padding-top: 10px;
-  transition: filter 0.5s;
+  // transition: filter 0.5s;
 }
 .notes-wrapper {
   // position: absolute;
@@ -472,6 +338,7 @@ export default {
     height: 100%;
     padding-top: 10px;
     overflow-y: auto;
+    scrollbar-width: none;
     &::-webkit-scrollbar {
       width: 0;
       height: 0;
@@ -493,6 +360,27 @@ export default {
 .notes-down {
   background-image: linear-gradient(#7a82be, #85e9e1);
   color: #eee;
+}
+
+.zoom-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  right: -20px;
+  transform: translateX(100%);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  > div {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 }
 
 .tip {
@@ -544,6 +432,16 @@ export default {
   }
   .tip {
     margin: 0;
+    .key-tip {
+      display: none;
+    }
   }
+}
+
+.zoom-wrapper__mobile {
+  flex-direction: initial;
+  right: 10px;
+  bottom: 7px;
+  transform: translateX(0);
 }
 </style>
