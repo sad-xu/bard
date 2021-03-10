@@ -8,18 +8,17 @@
       }">
       <!-- menu -->
       <div class="menu-wrapper">
+        <i
+          v-if="isMobile && isSupportWakeLock" class="iconfont icon-changlliang" :class="{ 'is-wake-lock' :isWakeLock }"
+          title="常亮模式"
+          @click="toggleLightMode"></i>
+        <i v-if="!isMobile && isSupportImmersionMode" title="沉浸模式（不会有按键冲突）" class="iconfont icon-chenjin" @click="toggleImmersionMode"></i>
         <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
         <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
       <!--  -->
-      <div class="spec-menu">
-        <span v-if="isMobile && isSupportWakeLock" title="常亮模式下不会熄屏(部分浏览器下有效)" @click="toggleLightMode">
-          {{ isWakeLock ? '关闭' : '开启' }}常亮模式
-        </span>
-        <span v-if="!isMobile && isSupportImmersionMode" title="沉浸模式下不会有按键冲突" @click="toggleImmersionMode">
-          {{ isImmersionMode ? '关闭' : '开启' }}沉浸模式
-        </span>
+      <div class="spec-menu" :class="{ 'spec-menu__mobile': isMobile }">
       </div>
       <!-- bg -->
       <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
@@ -234,12 +233,22 @@ export default {
       transform: scale(1.2);
     }
   }
+  .icon-changlliang {
+    color: #555;
+    &:hover {
+      color: #555;
+      transform: scale(1);
+    }
+  }
+  .is-wake-lock {
+    color: #ffc107 !important;
+  }
 }
 
 .spec-menu {
   position: absolute;
-  top: 20px;
-  left: 130px;
+  top: 30px;
+  left: 50%;
   z-index: 9;
 }
 
@@ -283,5 +292,8 @@ export default {
   position: absolute;
   bottom: 100%;
   right: 10px;
+}
+.spec-menu__mobile {
+
 }
 </style>

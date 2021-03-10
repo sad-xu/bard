@@ -43,7 +43,9 @@ const SONG_LIST = [
   { name: '斗地主', auth: 'freeizng影子' },
   { name: '热烈的决斗者', auth: '海边的吉卜力' },
   { name: '白金ディスコ', auth: 'unjason' },
-  { name: '黑人抬棺', auth: '六芒_龙' }
+  { name: '黑人抬棺', auth: '六芒_龙' },
+  { name: '天晴大鲶音头', auth: '5uwu' },
+  { name: '猪八戒背媳妇', auth: '北川上の樱子' }
 ]
 
 export default {

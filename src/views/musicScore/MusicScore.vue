@@ -16,7 +16,7 @@
     <!-- 播放 / 暂停 / 重播  -->
     <div
       v-show="selectedIndex !== -1"
-      class="menu-wrapper" :class="{'menu-wrapper-hidden': hideMenu, filter: filter || showMusicScore }">
+      class="menu-wrapper" :class="{'menu-wrapper-hidden': hideMenu, filter: filter || showMusicScore, 'menu-wrapper__mobile': isMobile }">
       <i
         class="iconfont"
         :class="isPlay ? 'icon-stop' : 'icon-start'"
@@ -160,7 +160,7 @@ export default {
               const B = track[1][0]
               const N = N_ARR[B % 12]
               const NN = NN_ARR[B % 12]
-              let O = Math.floor(B / 12) - 1
+              let O = Math.floor(B / 12)
               let OO = ''
               if (O <= 4) {
                 O = '↓'
@@ -178,7 +178,7 @@ export default {
         })
         musicScore.sort((a, b) => a[0] - b[0])
         this.musicScore = musicScore
-        // console.log(headerChunk, trackChunk, musicScore)
+        console.log(headerChunk, trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
         // console.log(tickTime, mult, tickTime * mult)
         this.tickTime = tickTime * mult
         this.initTheSong()
@@ -188,6 +188,7 @@ export default {
       request.send(null)
     },
     initTheSong() {
+      const that = this
       let t = 0
       let tickIndex = 0
       const musicScore = this.musicScore
@@ -205,6 +206,7 @@ export default {
           tickIndex++
           if (tickIndex > len) {
             Timer.end()
+            that.isPlay = false
           }
         }
       }, tickTime)
@@ -214,7 +216,13 @@ export default {
         Timer.stop()
         this.isPlay = false
       } else {
-        Timer.start()
+        if (Timer.status === 'free') {
+          // 播完后，再播放
+          this.initTheSong()
+          Timer.start()
+        } else {
+          Timer.start()
+        }
         this.isPlay = true
       }
     },
@@ -443,5 +451,9 @@ export default {
   right: 10px;
   bottom: 7px;
   transform: translateX(0);
+}
+.menu-wrapper__mobile {
+  right: 50%;
+  transform: translateX(70%);
 }
 </style>

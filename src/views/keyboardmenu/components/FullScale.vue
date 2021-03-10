@@ -219,6 +219,7 @@ export default {
   .composite-panel {
     width: 230px;
     color: #d9ceb6;
+    margin-left: 20px;
     .composite {
       display: flex;
       justify-content: space-between;

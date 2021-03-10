@@ -1,7 +1,7 @@
 <template>
   <div class="part-scale">
     <div class="left-panel">
-      <div class="panel-item">
+      <div class="panel-item" style="margin-right: 20px;">
         <key-bind
           v-for="item in keyConfig[0]" :key="item.note"
           :note="item.note" :label="item.label"
