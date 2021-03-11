@@ -158,16 +158,21 @@ export default {
             if (track[2] === 'down') {
               // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
               const B = track[1][0]
-              const N = N_ARR[B % 12]
-              const NN = NN_ARR[B % 12]
+              let N = N_ARR[B % 12]
+              let NN = NN_ARR[B % 12]
               let O = Math.floor(B / 12)
               let OO = ''
-              if (O <= 4) {
+              if (O === 4) { // low
                 O = '↓'
                 OO = '-l'
-              } else if (O >= 6) {
+              } else if (O === 6) { // high
                 O = '↑'
                 OO = '-h'
+              } else if (O === 7) { // i
+                O = ''
+                OO = ''
+                N = 'i'
+                NN = 'i'
               } else O = ''
               if (t - lastT) {
                 musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN, this.commonKeyMap[N + (isFullScale ? OO : '')] || '--'])
@@ -178,7 +183,7 @@ export default {
         })
         musicScore.sort((a, b) => a[0] - b[0])
         this.musicScore = musicScore
-        console.log(headerChunk, trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
+        // console.log(headerChunk, trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
         // console.log(tickTime, mult, tickTime * mult)
         this.tickTime = tickTime * mult
         this.initTheSong()
