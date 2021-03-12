@@ -7,7 +7,10 @@
     <div class="content">
       <section class="part">
         <h3>简介</h3>
-        <p>光之演奏家，为 FF14 量身打造的演奏工具</p>
+        <p>
+          <span style="font-weight: bold; color: #4db6ac; font-size: 18px;">光之演奏家</span>
+          ，为 FF14 量身打造的演奏工具
+        </p>
       </section>
       <section class="part">
         <h3>功能</h3>
@@ -21,6 +24,7 @@
         <p>自定义声音配置</p>
         <p>常亮模式 - 移动端不熄屏功能（部分浏览器有效）</p>
         <p>沉浸模式 - PC端不会按键冲突（部分浏览器有效）</p>
+        <p>可上传、解析本地 .mid 文件</p>
       </section>
       <section class="part">
         <h3>待做功能</h3>
@@ -31,20 +35,23 @@
       <section class="part">
         <h3>注意事项</h3>
         <p>本项目为纯前端工具类项目，可离线使用（midi曲谱需要提前缓存）</p>
-        <p>由于浏览器及系统限制，在非沉浸模式下，以下组合键无法演奏</p>
+        <p>由于浏览器及系统限制，非 沉浸模式 下，以下组合键无法演奏</p>
         <p>[Shift] Ctrl (Q|N|W|T|Tab) 等</p>
-        <p>本项目使用的一些新特性，在不同浏览器上可能会有差别，若出现问题，请升级浏览器到最新版本，推荐使用 Chrome 浏览器</p>
+        <p>本项目使用的一些新特性，在不同浏览器上可能会有差别</p>
+        <p>若出现问题，请升级浏览器到最新版本，推荐使用 Chrome 浏览器</p>
       </section>
       <section class="part">
         <h3>曲谱提供</h3>
-        <p>大部分曲谱均来自 midishow, 感谢所有作者❤</p>
-        <p>感谢 QWQPOI@midishow 的协助</p>
+        <p>大部分曲谱均来自 midishow.com, 感谢所有作者 <span style="color: #f44336;">❤</span></p>
+        <p>感谢 <span style="color: #f06292;">QWQPOI@midishow</span> 的协助</p>
       </section>
       <section class="part">
         <h3>联系与反馈</h3>
         <p>若有任何问题，请联系我</p>
-        <p>QQ: 1031568754</p>
-        <p>妙蛤种子@琥珀原</p>
+        <p>QQ: <span style="color: #42a5f5;">1031568754</span></p>
+        <p style="color: #ebaaf5;">
+          妙蛤种子@琥珀原
+        </p>
       </section>
     </div>
   </ff-dialog>
@@ -76,6 +83,11 @@ export default {
   // height: 80vh;
   padding-top: 20px;
   margin-right: -10px;
+  user-select: text;
+  ::selection {
+    background-color: #eee;
+    color: #383838;
+  }
   // overflow-y: auto;
   // scrollbar-width: thin;
   // scrollbar-color: #686868 rgba(0, 0, 0, 0.2);
@@ -98,11 +110,12 @@ export default {
     margin-bottom: 40px;
     h3 {
       margin-bottom: 10px;
+      color: #bbb;
     }
     p {
       font-size: 16px;
-      line-height: 22px;
-      color: #e8e8e8;
+      line-height: 26px;
+      color: #f0f0f0;
     }
   }
 }

@@ -123,7 +123,9 @@ https://www.jianshu.com/p/6c495b51a40c
 
   `about:config permissions.default.shortcuts = 2`
 
-## PWA
+## PWA - Workbox
+
+`index.html` 不缓存，其他缓存
 
 ## 音色
 
@@ -134,4 +136,46 @@ https://www.jianshu.com/p/6c495b51a40c
 ```js
 // https://googlechromelabs.github.io/web-audio-samples/archive/demos/wavetable-synth.html
 // https://github.com/GoogleChromeLabs/web-audio-samples/tree/gh-pages/samples/audio/wave-tables
+```
 
+自定义波形参数
+
+https://github.com/lukehorvat/web-audio-oscillators/tree/master/lib
+
+## TODO
+
+mid文件导入入口
+
+内置乐器参数
+
+## 拓展
+
+网页版midi编辑器
+
+* 技术栈
+  
+  Vue3 + TS or React + TS
+
+  第三方库 - 能不用就不用
+
+* 后端 ? 云函数 ?
+
+  用户系统 ? ×
+
+  保存乐谱 分享 搜索 评分
+
+* 音阶
+  
+  4 5 6 or 全部
+
+* 编辑区
+  
+  时间轴 | 音符
+
+  速度 节拍
+
+* 文件操作
+  
+  导入导出mid
+  
+  midi文件内容拼接

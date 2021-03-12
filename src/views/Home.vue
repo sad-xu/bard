@@ -9,9 +9,10 @@
       <!-- menu -->
       <div class="menu-wrapper">
         <i
-          v-if="isMobile && isSupportWakeLock" class="iconfont icon-changlliang" :class="{ 'is-wake-lock' :isWakeLock }"
-          title="常亮模式"
-          @click="toggleLightMode"></i>
+          v-if="isMobile && isSupportWakeLock" class="iconfont icon-changlliang"
+          :class="{ 'is-wake-lock' :isWakeLock }"
+          title="常亮模式" @click="toggleLightMode">
+        </i>
         <i v-if="!isMobile && isSupportImmersionMode" title="沉浸模式（不会有按键冲突）" class="iconfont icon-chenjin" @click="toggleImmersionMode"></i>
         <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
         <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
@@ -221,6 +222,7 @@ export default {
   right: 2%;
   top: 4%;
   display: flex;
+  align-items: center;
   z-index: 9;
   .iconfont {
     font-size: 24px;
@@ -239,6 +241,9 @@ export default {
       color: #555;
       transform: scale(1);
     }
+  }
+  .icon-chenjin {
+    font-size: 22px;
   }
   .is-wake-lock {
     color: #ffc107 !important;

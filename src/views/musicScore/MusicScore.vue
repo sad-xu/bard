@@ -2,27 +2,35 @@
   <div>
     <!-- 当前曲目 -->
     <div class="score-header" :class="{ filter: filter || showMusicScore }">
-      <span
+      <!-- <span class="upload-wrapper">
+        <svg
+          class="upload-icon" viewBox="0 0 1024 1024" version="1.1"
+          xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+          <path d="M800 992.512 224 992.512C153.312 992.512 96 935.2 96 864.512L96 160.512C96 89.824 153.312 32.512 224 32.512L635.616 32.512C646.688 30.432 658.448 33.04 667.024 41.6L916.704 291.28C922.256 296.816 925.456 303.76 926.544 310.96 927.488 313.968 928 317.184 928 320.512L928 864.512C928 935.2 870.688 992.512 800 992.512ZM672 146.448 672 288.512 814.064 288.512 672 146.448ZM864 352.512 640 352.512C622.32 352.512 608 338.192 608 320.512L608 96.512 224 96.512C188.656 96.512 160 125.168 160 160.512L160 864.512C160 899.856 188.656 928.512 224 928.512L800 928.512C835.344 928.512 864 899.856 864 864.512L864 352.512ZM704 608.512 544 608.512 544 768.512C544 786.192 529.664 800.512 512 800.512 494.32 800.512 480 786.192 480 768.512L480 608.512 320 608.512C302.32 608.512 288 594.192 288 576.512 288 558.832 302.32 544.512 320 544.512L480 544.512 480 384.512C480 366.832 494.32 352.512 512 352.512 529.664 352.512 544 366.832 544 384.512L544 544.512 704 544.512C721.68 544.512 736 558.832 736 576.512 736 594.192 721.68 608.512 704 608.512Z" />
+        </svg>
+      </span> -->
+      <upload-mid @parse-upload-file="handleParseUploadFile"></upload-mid>
+      <div
         class="current-music" :class="{ 'current-music__mibile': isMobile }"
         @click="$store.dispatch('app/toggleMusicScore')">
         {{ selectedMusicName || '选择乐谱' }}
-      </span>
-      <i
+      </div>
+      <!-- <i
         v-show="musicScore.length && !isMobile"
         class="iconfont icon-music-setting"
         title="显示乐谱" @click="showPaper = !showPaper">
-      </i>
+      </i> -->
     </div>
     <!-- 播放 / 暂停 / 重播  -->
     <div
-      v-show="selectedIndex !== -1"
+      v-show="musicScore.length"
       class="menu-wrapper" :class="{'menu-wrapper-hidden': hideMenu, filter: filter || showMusicScore, 'menu-wrapper__mobile': isMobile }">
       <i
         class="iconfont"
         :class="isPlay ? 'icon-stop' : 'icon-start'"
         :title="isPlay ? '暂停' : '播放'" @click="toggleTheSong">
       </i>
-      <i class="iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
+      <i v-if="!isMobile" class="iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
     </div>
     <!-- 曲目列表 -->
     <music-list @handleMusicSelect="handleMusicSelect"></music-list>
@@ -68,6 +76,7 @@ import Sound from '@/utils/Sound'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
 import MusicList from './MusicList'
+import UploadMid from './UploadMid'
 const sounder = new Sound()
 // sounder.setVolume(0.05)
 
@@ -76,7 +85,8 @@ const NN_ARR = ['1', '1♯', '2', '3♭', '3', '4', '4♯', '5', '5♯', '6', '7
 
 export default {
   components: {
-    MusicList
+    MusicList,
+    UploadMid
   },
   props: {
     // 虚化
@@ -134,7 +144,6 @@ export default {
   methods: {
     handleMusicSelect(item) {
       this.selectedMusicName = item.name
-      const isFullScale = this.$store.getters.isFullScale
 
       Timer.stop()
       this.isPlay = false
@@ -143,54 +152,57 @@ export default {
       request.open('GET', `/mids/${item.name}.mid`, true)
       request.responseType = 'arraybuffer'
       request.onload = () => {
-        const { headerChunk, trackChunk } = parseMIDI(request.response)
-        const musicScore = []
-        // Tip: 每个 tick 约为 1.6ms，但定时器最短间隔为4ms，实际表现会慢好几倍
-        // 所以将间隔时间 = tick * 10, 并且将tick数 / 10
-        // 将 tick 时间缩放为20ms左右
-        const tickTime = headerChunk.tempo / headerChunk.tick / 1000
-        const mult = 20 / tickTime
-        trackChunk.forEach(chunk => {
-          let t = 0
-          let lastT = 0
-          chunk.forEach(track => {
-            t += track[0] / mult
-            if (track[2] === 'down') {
-              // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
-              const B = track[1][0]
-              let N = N_ARR[B % 12]
-              let NN = NN_ARR[B % 12]
-              let O = Math.floor(B / 12)
-              let OO = ''
-              if (O === 4) { // low
-                O = '↓'
-                OO = '-l'
-              } else if (O === 6) { // high
-                O = '↑'
-                OO = '-h'
-              } else if (O === 7) { // i
-                O = ''
-                OO = ''
-                N = 'i'
-                NN = 'i'
-              } else O = ''
-              if (t - lastT) {
-                musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN, this.commonKeyMap[N + (isFullScale ? OO : '')] || '--'])
-                lastT = t
-              }
-            }
-          })
-        })
-        musicScore.sort((a, b) => a[0] - b[0])
-        this.musicScore = musicScore
-        // console.log(headerChunk, trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
-        // console.log(tickTime, mult, tickTime * mult)
-        this.tickTime = tickTime * mult
-        this.initTheSong()
-        this.hideMenu = false
-        this.showPaper = true
+        this.parseBinary(request.response)
       }
       request.send(null)
+    },
+    parseBinary(binaryData) {
+      const { headerChunk, trackChunk } = parseMIDI(binaryData)
+      const isFullScale = this.$store.getters.isFullScale
+      const musicScore = []
+      // Tip: 每个 tick 约为 1.6ms，但定时器最短间隔为4ms，实际表现会慢好几倍
+      // 所以将间隔时间 = tick * 10, 并且将tick数 / 10
+      // 将 tick 时间缩放为20ms左右
+      const tickTime = headerChunk.tempo / headerChunk.tick / 1000
+      const mult = 20 / tickTime
+      trackChunk.forEach(chunk => {
+        let t = 0
+        let lastT = 0
+        chunk.forEach(track => {
+          t += track[0] / mult
+          if (track[2] === 'down') {
+            // 音符 N=B mod 12 余数  音阶 0=B div 12 - 1 商
+            const B = track[1][0]
+            let N = N_ARR[B % 12]
+            let NN = NN_ARR[B % 12]
+            let O = Math.floor(B / 12)
+            let OO = ''
+            if (O === 4) { // low
+              O = '↓'
+              OO = '-l'
+            } else if (O === 6) { // high
+              O = '↑'
+              OO = '-h'
+            } else if (O === 7) { // i
+              O = ''
+              OO = ''
+              N = 'i'
+              NN = 'i'
+            } else O = ''
+            if (t - lastT) {
+              musicScore.push([t, Number((t - lastT).toFixed(2)), N, O, NN, this.commonKeyMap[N + (isFullScale ? OO : '')] || '--'])
+              lastT = t
+            }
+          }
+        })
+      })
+      musicScore.sort((a, b) => a[0] - b[0])
+      this.musicScore = musicScore
+      // console.log(headerChunk, trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
+      this.tickTime = tickTime * mult
+      this.initTheSong()
+      this.hideMenu = false
+      this.showPaper = true
     },
     initTheSong() {
       const that = this
@@ -243,6 +255,12 @@ export default {
     // 缩小
     handleZoomOut() {
       this.zoomLevel = Math.max(0.1, this.zoomLevel - 0.2)
+    },
+    handleParseUploadFile(name, binaryData) {
+      this.selectedMusicName = name
+      Timer.stop()
+      this.isPlay = false
+      this.parseBinary(binaryData)
     }
   }
 }
@@ -271,20 +289,24 @@ export default {
     word-break: break-all;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: opacity 0.3s;
     cursor: pointer;
+    &:hover {
+      opacity: 0.8;
+    }
   }
   .current-music__mibile {
     max-width: 120px;
   }
-  .icon-music-setting {
-    font-size: 24px;
-    color: #fff;
-    transition: all 0.3s;
-    cursor: pointer;
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
+  // .icon-music-setting {
+  //   font-size: 24px;
+  //   color: #fff;
+  //   transition: all 0.3s;
+  //   cursor: pointer;
+  //   &:hover {
+  //     transform: scale(1.2);
+  //   }
+  // }
 }
 
 .menu-wrapper {
@@ -458,7 +480,7 @@ export default {
   transform: translateX(0);
 }
 .menu-wrapper__mobile {
-  right: 50%;
+  right: 45%;
   transform: translateX(70%);
 }
 </style>
