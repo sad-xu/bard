@@ -49,7 +49,7 @@ const NOTE_MAP = {
   7: 987.767,
   '7-l': 493.883,
 
-  i: 2093
+  i: 1046.502
 }
 
 const instanceList = []

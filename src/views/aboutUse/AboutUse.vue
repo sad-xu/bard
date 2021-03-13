@@ -49,7 +49,7 @@
         <h3>联系与反馈</h3>
         <p>若有任何问题，请联系我</p>
         <p>QQ: <span style="color: #42a5f5;">1031568754</span></p>
-        <p style="color: #ebaaf5;">
+        <p style="color: #c7a2e8;">
           妙蛤种子@琥珀原
         </p>
       </section>
@@ -114,7 +114,8 @@ export default {
     }
     p {
       font-size: 16px;
-      line-height: 26px;
+      line-height: 22px;
+      margin: 10px 0;
       color: #f0f0f0;
     }
   }
