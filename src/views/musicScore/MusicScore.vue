@@ -198,7 +198,8 @@ export default {
       })
       musicScore.sort((a, b) => a[0] - b[0])
       this.musicScore = musicScore
-      console.log(trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
+      // console.log(trackChunk.map(chunk => chunk.filter(item => item[2] === 'down').map(v => v[1][0])))
+      // console.log(trackChunk)
       this.tickTime = tickTime * mult
       this.initTheSong()
       this.hideMenu = false
