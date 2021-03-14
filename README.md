@@ -142,6 +142,8 @@ https://www.jianshu.com/p/6c495b51a40c
 
 https://github.com/lukehorvat/web-audio-oscillators/tree/master/lib
 
+https://github.com/mohayonao/wave-tables
+
 ## TODO
 
 mid文件导入入口

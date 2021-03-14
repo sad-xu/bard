@@ -1,11 +1,11 @@
 <template>
   <ff-dialog
     :visible="showTimbreMenu"
-    title="音色设置 - 原始测试简陋乞丐宝宝调试版" append-to-body
+    title="音色设置 - 测试版" append-to-body
     default-left="-20%" default-top="5%"
     max-height="70vh" @close="closeTimbreMenu">
     <!--  -->
-    <div class="config">
+    <div class="config wave-config">
       <p class="config-title">
         音源波形
       </p>
@@ -132,8 +132,14 @@ export default {
         { label: '方波', value: 'square' },
         { label: '锯齿波', value: 'sawtooth' },
         { label: '三角波', value: 'triangle' },
-        { label: 'testA', value: 'testA' },
-        { label: 'testB', value: 'testB' },
+        { label: 'bass', value: 'bass' },
+        { label: 'brass', value: 'brass' },
+        { label: 'chiptune', value: 'chiptune' },
+        { label: 'organ', value: 'organ' },
+        { label: 'organ2', value: 'organ2' },
+        { label: 'aah', value: 'aah' },
+        { label: 'celeste', value: 'celeste' },
+        { label: 'wurlitzer', value: 'wurlitzer' },
         { label: '自定义', value: 'diy' }
       ],
       //
@@ -241,11 +247,15 @@ export default {
   }
 }
 
+.wave-config {
+  margin-bottom: 5px;
+}
 .wave-wrapper {
   display: flex;
+  flex-wrap: wrap;
   font-size: 15px;
   .wave {
-    margin-right: 20px;
+    margin: 10px 20px 10px 0;
     label {
       cursor: pointer;
       margin-left: 4px;
