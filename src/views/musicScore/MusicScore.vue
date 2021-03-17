@@ -185,7 +185,7 @@ export default {
               OO = '-h'
             } else if (O === 7) { // i
               O = '↑'
-              OO = ''
+              OO = '-h'
               N = 'i'
               NN = 'i'
             } else O = ''

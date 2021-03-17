@@ -93,7 +93,7 @@ export default {
           { note: '5-h', label: '', key: '' },
           { note: '6-h', label: '', key: '' },
           { note: '7-h', label: '', key: '' },
-          { note: 'i', label: '', key: '' }
+          { note: 'i-h', label: '', key: '' }
         ],
         medium: [
           { note: '1', label: '', key: '' },

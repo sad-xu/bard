@@ -103,7 +103,7 @@ const fullKeyboard = [
   { label: '6-h', truthLabel: '6', code: '' },
   { label: '7b-h', truthLabel: '7 ♭', code: '', type: 20 },
   { label: '7-h', truthLabel: '7', code: '' },
-  { label: 'i', code: '' }
+  { label: 'i-h', truthLabel: 'i', code: '' }
 ]
 
 export default {
