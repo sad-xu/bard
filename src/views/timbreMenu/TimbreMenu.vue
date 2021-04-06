@@ -122,7 +122,7 @@ export default {
   data() {
     return {
       // 音量
-      volume: 30,
+      volume: (localStorage.getItem('volume') || 0.3) * 100,
       // 持续时间 0.5 - 3
       duration: 1.5,
       // 波形

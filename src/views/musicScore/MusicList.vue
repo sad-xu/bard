@@ -59,7 +59,7 @@
 
 // const SONG_LIST = require.context('../../../public/mids', false, /\.mid$/).keys().map(v => v.slice(2, -4))
 const SONG_LIST = [
-  // { name: '世上只有妈妈好', auth: '甜国夜鹰', star: 1 },
+  { name: '世上只有妈妈好', auth: '甜国夜鹰 & QWQPOI', star: 1 },
   { name: '数码宝贝主题曲', auth: '北川上の樱子', star: 1 },
   { name: '水手', auth: '顾长歌', star: 1 },
   { name: '送别', auth: 'zhtgood', star: 1 },

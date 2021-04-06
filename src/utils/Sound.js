@@ -83,7 +83,7 @@ class Sound {
     this.real = []
     this.imag = []
     this.linkedList = [totalGainNode, analyser] // 维护当前节点链
-    this.setVolume(0.3)
+    this.setVolume(localStorage.getItem('volume') || 0.3)
     // 保存实例
     instanceList.push(this)
   }
@@ -125,6 +125,7 @@ class Sound {
 
   // 设置自身音量
   setVolume(percentage) {
+    percentage = Number(percentage)
     if (percentage <= 0) percentage = 0.0001
     this.volume = percentage
     this.totalGainNode.gain.exponentialRampToValueAtTime(3.4 * percentage, this.context.currentTime + 1)
@@ -135,6 +136,7 @@ class Sound {
 
 // 设置总音量
 Sound.setAllVolume = function(percentage) {
+  localStorage.setItem('volume', percentage)
   instanceList.forEach(instance => {
     instance.setVolume(percentage)
   })
