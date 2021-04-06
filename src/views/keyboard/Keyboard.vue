@@ -114,6 +114,8 @@ export default {
       keyboard: this.$store.getters.isFullScale ? fullKeyboard : partKeyboard,
       higherPressed: false,
       lowerPressed: false,
+      highSemitonePressed: false,
+      lowSemitonePressed: false,
       // 当前按下的键
       pressedCodes: {}
     }
@@ -168,6 +170,10 @@ export default {
             this.higherPressed = false
           } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
             this.lowerPressed = false
+          } else if (code === keyMap.highSemitone.key) {
+            this.highSemitonePressed = false
+          } else if (code === keyMap.lowSemitone.key) {
+            this.lowSemitonePressed = false
           }
           this.$set(this.pressedCodes, code, false)
         }
@@ -186,6 +192,10 @@ export default {
             this.higherPressed = true
           } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
             this.lowerPressed = true
+          } else if (code === keyMap.highSemitone.key) {
+            this.highSemitonePressed = true
+          } else if (code === keyMap.lowSemitone.key) {
+            this.lowSemitonePressed = true
           }
           //
           const note = keyMap.common[code] // 物理按键
@@ -193,7 +203,8 @@ export default {
             const pitch = e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : '')
             this.$emit('sing', {
               note,
-              pitch
+              pitch,
+              semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
             })
             this.$set(this.pressedCodes, code, true)
             // console.log(code, note, pitch)

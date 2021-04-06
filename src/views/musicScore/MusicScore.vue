@@ -64,6 +64,10 @@
             <span class="notes-up">{{ compositeMap[keyMap.higher] }}</span>
             <span>低八度</span>
             <span class="notes-down">{{ compositeMap[keyMap.lower] }}</span>
+            <span v-if="keyMap.highSemitone.label">高半音</span>
+            <span v-if="keyMap.highSemitone.label" class="semitione-high">{{ keyMap.highSemitone.label }}</span>
+            <span v-if="keyMap.lowSemitone.label">低半音</span>
+            <span v-if="keyMap.lowSemitone.label" class="semitione-low">{{ keyMap.lowSemitone.label }}</span>
           </div>
         </div>
       </div>
@@ -391,11 +395,15 @@ export default {
 }
 .notes-up {
   background-image: linear-gradient(#f3ea91, #e0651d);
-  color: #eee;
 }
 .notes-down {
   background-image: linear-gradient(#7a82be, #85e9e1);
-  color: #eee;
+}
+.semitione-high {
+  background-color: #eee;
+}
+.semitione-low {
+  background-color: #eee;
 }
 
 .zoom-wrapper {
@@ -432,20 +440,26 @@ export default {
   .key-tip {
     display: flex;
     align-items: center;
+    .notes-up,
+    .notes-down,
+    .semitione-high,
+    .semitione-low {
+      display: inline-block;
+      min-width: 40px;
+      text-align: center;
+      padding: 2px 4px;
+      border-radius: 10px;
+      margin: 0 14px 0 6px;
+      color: #474747;
+    }
+    & :last-child {
+      margin-right: 0;
+    }
   }
-  .notes-up,
-  .notes-down {
-    display: inline-block;
-    width: 40px;
-    text-align: center;
-    padding: 2px 4px;
-    border-radius: 10px;
-    margin: 0 14px 0 6px;
-    color: #474747;
-  }
-  .notes-down {
-    margin-right: 0;
-  }
+
+  // .notes-down {
+  //   margin-right: 0;
+  // }
 }
 
 .paper-fade-enter-active,

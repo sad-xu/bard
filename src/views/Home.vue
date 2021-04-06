@@ -107,8 +107,8 @@ export default {
     })
   },
   methods: {
-    sing({ note, pitch }) {
-      sounder.sing(note, pitch)
+    sing({ note, pitch, semitone }) {
+      sounder.sing(note, pitch, semitone)
     },
     openKeyboardMenu() {
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')

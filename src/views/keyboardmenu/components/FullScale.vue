@@ -65,9 +65,23 @@
           <span>高八度</span>
           <ff-select v-model="higherKey" :options="compositeOption"></ff-select>
         </div>
-        <div class="composite">
+        <div class="composite" style="margin-bottom: 10px;">
           <span>低八度</span>
           <ff-select v-model="lowerKey" :options="compositeOption"></ff-select>
+        </div>
+        <div class="composite">
+          <span>高半音</span>
+          <key-bind
+            :label="highSemitoneKey.label"
+            @changeBind="changeBind(highSemitoneKey, $event)">
+          </key-bind>
+        </div>
+        <div class="composite">
+          <span>低半音</span>
+          <key-bind
+            :label="lowSemitoneKey.label"
+            @changeBind="changeBind(lowSemitoneKey, $event)">
+          </key-bind>
         </div>
       </div>
     </div>
@@ -138,6 +152,8 @@ export default {
       }],
       higherKey: 'shiftKey',
       lowerKey: 'ctrlKey',
+      highSemitoneKey: { label: '', key: '' },
+      lowSemitoneKey: { label: '', key: '' },
       compositeOption: [
         { label: 'Shift', value: 'shiftKey' },
         { label: 'Alt', value: 'altKey' },
@@ -147,9 +163,11 @@ export default {
   },
   methods: {
     init() {
-      const { higher, lower, common } = this.$store.getters.keyMap
+      const { higher, lower, highSemitone, lowSemitone, common } = this.$store.getters.keyMap
       this.higherKey = higher
       this.lowerKey = lower
+      this.highSemitoneKey = highSemitone
+      this.lowSemitoneKey = lowSemitone
       const obj = {}
       for (const code in common) {
         obj[common[code]] = code
@@ -184,6 +202,8 @@ export default {
       this.$store.dispatch('keyboard/setKeyMap', {
         higher: this.higherKey,
         lower: this.lowerKey,
+        highSemitone: this.highSemitoneKey,
+        lowSemitone: this.lowSemitoneKey,
         common
       })
     },

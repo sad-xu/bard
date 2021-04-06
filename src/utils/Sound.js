@@ -53,6 +53,8 @@ const NOTE_MAP = {
   i: 1046.502
 }
 
+const HALF_RATIO = 1.059463
+
 const instanceList = []
 
 // (oscillator --> gainNode) --> totalGainNode --> ( filter... ) --> analyser --> destination
@@ -91,8 +93,9 @@ class Sound {
   // 听个响
   // 音调 A-G
   // 高 低 平 higher lower ''
+  // 高/低 半音 high low
   // https://blog.szynalski.com/2014/04/web-audio-api/
-  sing(note, pitch) {
+  sing(note, pitch, semitone) {
     this.singingNum++
     const context = this.context
     const oscillator = context.createOscillator()
@@ -111,6 +114,8 @@ class Sound {
     let mul = 1 // 高频 * 2  低频 / 2
     if (pitch === 'higher') mul = 2
     else if (pitch === 'lower') mul = 0.5
+    if (semitone === 'high') mul *= HALF_RATIO
+    else if (semitone === 'low') mul /= HALF_RATIO
     oscillator.frequency.value = NOTE_MAP[note] * mul
     //
     const currentTime = this.context.currentTime

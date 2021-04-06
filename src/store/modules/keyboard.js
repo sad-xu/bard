@@ -1,9 +1,25 @@
 const state = {
   // 是否是全音阶
   isFullScale: Boolean(Number(localStorage.getItem('isFullScale'))), // false,
-  keyMap: JSON.parse(localStorage.getItem('keyMap')) || {
+  keyMap: initKeyMap(),
+  showKeyboardMenu: false
+}
+
+function initKeyMap() {
+  const storageKeyMap = JSON.parse(localStorage.getItem('keyMap'))
+  if (storageKeyMap) {
+    if (!storageKeyMap.highSemitone) {
+      storageKeyMap.highSemitone = { label: '', key: '' }
+    }
+    if (!storageKeyMap.lowSemitone) {
+      storageKeyMap.lowSemitone = { label: '', key: '' }
+    }
+  }
+  return storageKeyMap || {
     higher: 'shiftKey',
     lower: 'ctrlKey',
+    highSemitone: { label: '', key: '' },
+    lowSemitone: { label: '', key: '' },
     common: { // 物理按键 -> 音符
       Digit1: '1',
       KeyZ: '1#',
@@ -19,8 +35,7 @@ const state = {
       Digit7: '7',
       Digit8: 'i'
     }
-  },
-  showKeyboardMenu: false
+  }
 }
 
 const mutations = {
