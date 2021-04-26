@@ -42,6 +42,21 @@
 </template>
 
 <script>
+const NOTE_MAP = {
+  1: 0,
+  '1#': 1,
+  2: 2,
+  '3b': 3,
+  3: 4,
+  4: 5,
+  '4#': 6,
+  5: 7,
+  '5#': 8,
+  6: 9,
+  '7b': 10,
+  7: 11,
+  i: 12
+}
 // ctrl shift alt
 const COMPOSITE_KEYS = {
   altKey: 'Alt',
@@ -175,6 +190,15 @@ export default {
           } else if (code === keyMap.lowSemitone.key) {
             this.lowSemitonePressed = false
           }
+          // TODO: 组合键 收回判定
+          const note = keyMap.common[code]
+          if (note) {
+            this.$emit('silent', {
+              note: NOTE_MAP[note] + 6 * 12,
+              pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
+              semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
+            })
+          }
           this.$set(this.pressedCodes, code, false)
         }
       })
@@ -200,14 +224,12 @@ export default {
           //
           const note = keyMap.common[code] // 物理按键
           if (note) {
-            const pitch = e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : '')
             this.$emit('sing', {
-              note,
-              pitch,
+              note: NOTE_MAP[note] + 6 * 12,
+              pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
               semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
             })
             this.$set(this.pressedCodes, code, true)
-            // console.log(code, note, pitch)
           }
           return false
         }
@@ -221,7 +243,7 @@ export default {
     // 鼠标点击键盘
     handleKeyClick({ label }) {
       this.$emit('sing', {
-        note: label,
+        note: NOTE_MAP[label] + 6 * 12,
         pitch: this.higherPressed ? 'higher' : (this.lowerPressed ? 'lower' : '')
       })
     }

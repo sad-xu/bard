@@ -25,7 +25,7 @@
       <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
       <!-- <canvas id="Screen" ref="Screen"></canvas> -->
       <!-- 键盘 -->
-      <keyboard v-show="!isMobile" @sing="sing"></keyboard>
+      <keyboard v-show="!isMobile" @sing="sing" @silent="silent"></keyboard>
       <!-- 页脚 -->
       <footer class="footer">
         <p>
@@ -49,15 +49,18 @@
 </template>
 
 <script>
-import Sound from '@/utils/Sound'
+import Music from '@/utils/Music'
+// import Sound from '@/utils/Sound'
 import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 import TimbreMenu from './timbreMenu/TimbreMenu'
 import MusicScore from './musicScore/MusicScore'
 import AboutUse from './aboutUse/AboutUse'
-import { debounce } from '@/utils'
+// import { debounce } from '@/utils'
 
-const sounder = new Sound()
+Music.setZone('violin')
+const musician = new Music()
+// const sounder = new Sound()
 
 let wakeLock = null
 
@@ -108,7 +111,11 @@ export default {
   },
   methods: {
     sing({ note, pitch, semitone }) {
-      sounder.sing(note, pitch, semitone)
+      // sounder.sing(note, pitch, semitone)
+      musician.sing(note, pitch, semitone)
+    },
+    silent({ note, pitch, semitone }) {
+      musician.silent(note, pitch, semitone)
     },
     openKeyboardMenu() {
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
@@ -142,60 +149,60 @@ export default {
           console.log(err)
         }
       }
-    },
-    initCanvas() {
-      const screenDom = this.$refs.Screen
-      const ctx = screenDom.getContext('2d')
-      let width = screenDom.clientWidth
-      let height = screenDom.clientHeight
-      screenDom.width = width
-      screenDom.height = height
-      const analyser = sounder.analyser
-      const timeArray = new Uint8Array(analyser.frequencyBinCount)
-      const freqArray = new Uint8Array(analyser.frequencyBinCount)
-      const barWidth = width / analyser.frequencyBinCount * 2
-      // 窗口改变适应
-      window.addEventListener('resize', debounce(function() {
-        width = screenDom.clientWidth
-        height = screenDom.clientHeight
-        screenDom.width = width
-        screenDom.height = height
-      }))
-      const draw = () => {
-        if (!sounder.singingNum) {
-          // 空闲
-        } else {
-          ctx.fillStyle = '#eff3f5'
-          // ctx.fillRect(0, 0, width, height)
-          ctx.clearRect(0, 0, width, height)
-          ctx.lineWidth = 1
-          ctx.strokeStyle = '#f00'
-          analyser.getByteFrequencyData(freqArray)
-          analyser.getByteTimeDomainData(timeArray)
-          let x = 0
-          let y = 0
-          ctx.beginPath()
-          freqArray.forEach((v, i) => {
-            // 频域
-            const barHeight = v / 255 * height
-            ctx.fillStyle = '#606162'
-            ctx.fillRect(x, height - barHeight, barWidth, barHeight)
-            // 时域
-            y = timeArray[i] / 128 * height / 2
-            if (i === 0) {
-              ctx.moveTo(x, y)
-            } else {
-              ctx.lineTo(x, y)
-            }
-            x += barWidth
-          })
-          ctx.lineTo(width, height / 2)
-          ctx.stroke()
-        }
-        requestAnimationFrame(draw)
-      }
-      draw()
     }
+    // initCanvas() {
+    //   const screenDom = this.$refs.Screen
+    //   const ctx = screenDom.getContext('2d')
+    //   let width = screenDom.clientWidth
+    //   let height = screenDom.clientHeight
+    //   screenDom.width = width
+    //   screenDom.height = height
+    //   const analyser = sounder.analyser
+    //   const timeArray = new Uint8Array(analyser.frequencyBinCount)
+    //   const freqArray = new Uint8Array(analyser.frequencyBinCount)
+    //   const barWidth = width / analyser.frequencyBinCount * 2
+    //   // 窗口改变适应
+    //   window.addEventListener('resize', debounce(function() {
+    //     width = screenDom.clientWidth
+    //     height = screenDom.clientHeight
+    //     screenDom.width = width
+    //     screenDom.height = height
+    //   }))
+    //   const draw = () => {
+    //     if (!sounder.singingNum) {
+    //       // 空闲
+    //     } else {
+    //       ctx.fillStyle = '#eff3f5'
+    //       // ctx.fillRect(0, 0, width, height)
+    //       ctx.clearRect(0, 0, width, height)
+    //       ctx.lineWidth = 1
+    //       ctx.strokeStyle = '#f00'
+    //       analyser.getByteFrequencyData(freqArray)
+    //       analyser.getByteTimeDomainData(timeArray)
+    //       let x = 0
+    //       let y = 0
+    //       ctx.beginPath()
+    //       freqArray.forEach((v, i) => {
+    //         // 频域
+    //         const barHeight = v / 255 * height
+    //         ctx.fillStyle = '#606162'
+    //         ctx.fillRect(x, height - barHeight, barWidth, barHeight)
+    //         // 时域
+    //         y = timeArray[i] / 128 * height / 2
+    //         if (i === 0) {
+    //           ctx.moveTo(x, y)
+    //         } else {
+    //           ctx.lineTo(x, y)
+    //         }
+    //         x += barWidth
+    //       })
+    //       ctx.lineTo(width, height / 2)
+    //       ctx.stroke()
+    //     }
+    //     requestAnimationFrame(draw)
+    //   }
+    //   draw()
+    // }
   }
 }
 </script>

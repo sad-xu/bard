@@ -245,6 +245,10 @@ export default {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 6px;
+      > span {
+        flex-shrink: 0;
+        margin-right: 10px;
+      }
       &:last-of-type {
         margin-bottom: 0;
       }
