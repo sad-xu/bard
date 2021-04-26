@@ -25,7 +25,7 @@
       <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
       <!-- <canvas id="Screen" ref="Screen"></canvas> -->
       <!-- 键盘 -->
-      <keyboard v-show="!isMobile" @sing="sing" @silent="silent"></keyboard>
+      <keyboard v-show="!isMobile" @sing="sing" @silent="silent" @silentAll="silentAll"></keyboard>
       <!-- 页脚 -->
       <footer class="footer">
         <p>
@@ -116,6 +116,9 @@ export default {
     },
     silent({ note, pitch, semitone }) {
       musician.silent(note, pitch, semitone)
+    },
+    silentAll() {
+      musician.silentAll()
     },
     openKeyboardMenu() {
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')

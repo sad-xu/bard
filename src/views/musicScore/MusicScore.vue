@@ -160,6 +160,10 @@ export default {
       // 将 tick 时间缩放为20ms左右
       const tickTime = headerChunk.tempo / headerChunk.tick / 1000
       const mult = 20 / tickTime
+
+      // TODO: 乐谱加上 up 事件
+      // ['down', B, t, ]
+      // ['up', B, t]
       trackChunk.forEach(chunk => {
         let t = 0
         let lastT = 0
@@ -185,9 +189,9 @@ export default {
               NN = 'i'
             } else O = ''
             if (t - lastT) {
-              // [时间, 间隔, 音符, 高低八度, 显示1, 显示2, pitch]
+              // [时间, 距前一个音符按下的间隔, 音符, 高低八度, 显示1, 显示2, pitch]
               musicScore.push([
-                t, Number((t - lastT).toFixed(2)), N, O, NN,
+                t, Number((t - lastT).toFixed(2)), '', O, NN,
                 this.commonKeyMap[N + (isFullScale ? OO : '')] || '--',
                 B
               ])

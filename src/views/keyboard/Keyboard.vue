@@ -30,8 +30,8 @@
           'black-key': item.type,
           'full-black-key': item.type && isFullScale
         }"
-        :style="item.type ? `left: ${ 100 / (isFullScale ? 22 : 8) * item.type}%` : ''"
-        @click.stop="handleKeyClick(item)">
+        :style="item.type ? `left: ${ 100 / (isFullScale ? 22 : 8) * item.type}%` : ''">
+        <!-- @mousedown.stop="handleKeyDown(item)" @mouseup.stop="handleKeyUp(item)" -->
         <span class="code" :class="{'hidden-code': !item.code}">
           {{ item.code | toggleKeycode }}
         </span>
@@ -181,23 +181,32 @@ export default {
           // 指示器
           const { code, key } = e
           // console.log(code, key)
+          let flag = false
           if (key === COMPOSITE_KEYS[keyMap.higher]) {
+            flag = true
             this.higherPressed = false
           } else if (key === COMPOSITE_KEYS[keyMap.lower]) {
+            flag = true
             this.lowerPressed = false
           } else if (code === keyMap.highSemitone.key) {
+            flag = true
             this.highSemitonePressed = false
           } else if (code === keyMap.lowSemitone.key) {
+            flag = true
             this.lowSemitonePressed = false
           }
-          // TODO: 组合键 收回判定
-          const note = keyMap.common[code]
-          if (note) {
-            this.$emit('silent', {
-              note: NOTE_MAP[note] + 6 * 12,
-              pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
-              semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
-            })
+          // 组合键收回 清空所有
+          if (flag) {
+            this.$emit('silentAll')
+          } else {
+            const note = keyMap.common[code]
+            if (note) {
+              this.$emit('silent', {
+                note: this.getNoteNum(note), // NOTE_MAP[note] + 6 * 12,
+                pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
+                semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
+              })
+            }
           }
           this.$set(this.pressedCodes, code, false)
         }
@@ -225,7 +234,7 @@ export default {
           const note = keyMap.common[code] // 物理按键
           if (note) {
             this.$emit('sing', {
-              note: NOTE_MAP[note] + 6 * 12,
+              note: this.getNoteNum(note),
               pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
               semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
             })
@@ -240,12 +249,26 @@ export default {
         e.returnValue = null
       })
     },
-    // 鼠标点击键盘
-    handleKeyClick({ label }) {
-      this.$emit('sing', {
-        note: NOTE_MAP[label] + 6 * 12,
-        pitch: this.higherPressed ? 'higher' : (this.lowerPressed ? 'lower' : '')
-      })
+    // Bug: 鼠标与键盘先后按下同一键，无法区分，需要另加字段区分
+    // // 鼠标按下
+    // handleKeyDown({ label }) {
+    //   this.$emit('sing', {
+    //     note: this.getNoteNum(label), // NOTE_MAP[label] + 6 * 12,
+    //     pitch: this.higherPressed ? 'higher' : (this.lowerPressed ? 'lower' : ''),
+    //     semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
+    //   })
+    // },
+    // // 鼠标松开
+    // handleKeyUp({ label }) {
+    //   this.$emit('silent', {
+    //     note: this.getNoteNum(label), // NOTE_MAP[label] + 6 * 12,
+    //     pitch: this.higherPressed ? 'higher' : (this.lowerPressed ? 'lower' : ''),
+    //     semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
+    //   })
+    // },
+    getNoteNum(label) {
+      const [note, hl = ''] = label.split('-')
+      return NOTE_MAP[note] + 12 * (6 + (hl === 'h' ? 1 : (hl === 'l' ? -1 : 0)))
     }
   }
 }

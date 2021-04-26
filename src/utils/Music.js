@@ -68,9 +68,20 @@ class Music {
     // bufferSourceNode.stop(currentTime + this.duration)
   }
 
+  // 停止单个
   silent(note, pitch, semitone) {
-    const key = `${note}${pitch}${semitone}`
-    console.log(this.singing)
+    this._soundOff(`${note}${pitch}${semitone}`)
+  }
+
+  // 停止所有
+  silentAll() {
+    for (const key in this.singing) {
+      this._soundOff(key)
+    }
+  }
+
+  // 静音
+  _soundOff(key) {
     if (this.singing[key]) {
       const currentTime = this.context.currentTime
       // this.singing[key][0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
