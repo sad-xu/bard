@@ -86,6 +86,7 @@ export function parseMIDI(arrayBuffer) {
   trackChunk.forEach(track => {
     const list = []
     const len = track.length
+    let lastStat = 0
     for (let i = 0; i < len;) {
       const start = i
       while (track[i] >= 128) {
@@ -93,9 +94,19 @@ export function parseMIDI(arrayBuffer) {
       }
       i++
       const time = getTruthNum(track.subarray(start, i)) // delta time
-      const stat = track[i] // 状态字节
+      let stat = track[i] // 状态字节
       const item = [time]
+      // 简写情况 前后状态一致,后面的状态字节可省略
+      if (stat < 0x80) {
+        stat = lastStat
+        i--
+      } else {
+        lastStat = stat
+      }
+      // 正常情况
       switch (true) {
+        // case stat < 0x80:
+        //   break
         case stat >= 0x80 && stat <= 0x8f:
           item.push(track.subarray(i + 1, i + 3))
           item.push('up')
@@ -199,6 +210,7 @@ export function parseMIDI(arrayBuffer) {
           break
         }
       }
+      // console.log(stat, item)
       list.push(item)
     }
     tracks.push(list)

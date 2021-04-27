@@ -201,11 +201,12 @@ export default {
           } else {
             const note = keyMap.common[code]
             if (note) {
-              this.$emit('silent', {
-                note: this.getNoteNum(note), // NOTE_MAP[note] + 6 * 12,
-                pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
-                semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
-              })
+              this.$emit('silent', this.getNoteNum(note))
+              // {
+              //   note: this.getNoteNum(note), // NOTE_MAP[note] + 6 * 12,
+              //   pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
+              //   semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
+              // })
             }
           }
           this.$set(this.pressedCodes, code, false)
@@ -233,11 +234,12 @@ export default {
           //
           const note = keyMap.common[code] // 物理按键
           if (note) {
-            this.$emit('sing', {
-              note: this.getNoteNum(note),
-              pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
-              semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
-            })
+            this.$emit('sing', this.getNoteNum(note))
+            // {
+            //   note: this.getNoteNum(note),
+            //   pitch: e[keyMap.higher] ? 'higher' : (e[keyMap.lower] ? 'lower' : ''),
+            //   semitone: this.highSemitonePressed ? 'high' : (this.lowSemitonePressed ? 'low' : '')
+            // })
             this.$set(this.pressedCodes, code, true)
           }
           return false
@@ -268,7 +270,11 @@ export default {
     // },
     getNoteNum(label) {
       const [note, hl = ''] = label.split('-')
-      return NOTE_MAP[note] + 12 * (6 + (hl === 'h' ? 1 : (hl === 'l' ? -1 : 0)))
+      const common = hl === 'h' ? 1 : (hl === 'l' ? -1 : 0)
+      const pitch = this.higherPressed ? 1 : this.lowerPressed ? -1 : 0
+      const semiton = this.highSemitonePressed ? 1 : (this.lowSemitonePressed ? -1 : 0)
+      // console.log(NOTE_MAP[note] + 12 * (6 + common + pitch) + semiton)
+      return NOTE_MAP[note] + 12 * (5 + common + pitch) + semiton
     }
   }
 }

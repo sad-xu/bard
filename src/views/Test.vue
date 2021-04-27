@@ -46,11 +46,16 @@ export default {
   },
   methods: {
     handleClick() {
-      musician.sing('', '', '')
+      musician.sing(73, '', '')
       setTimeout(() => {
-        musician.sing('', '', 'high')
+        musician.silent(73, '', '')
+        musician.sing(60, 'higher', 'high')
         setTimeout(() => {
-          musician.sing('', '', 'low')
+          musician.silent(60, 'higher', 'high')
+          musician.sing(86, 'lower', 'low')
+          setTimeout(() => {
+            musician.silent(86, 'lower', 'low')
+          }, 1500)
         }, 1500)
       }, 1500)
     },

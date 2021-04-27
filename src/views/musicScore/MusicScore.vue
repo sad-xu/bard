@@ -29,12 +29,14 @@
         :class="{ filter: filter || showMusicScore, 'notes-wrapper__mobile': isMobile }">
         <div class="notes-wrapper">
           <div class="notes-inner-box">
-            <span
-              v-for="item in musicScore" :key="item[0]"
-              :class="{ 'notes-up': item[3] === '↑', 'notes-down': item[3] === '↓' }"
-              class="notes" :style="`margin-left: ${item[1] * zoomLevel}px;margin-bottom: ${10 * zoomLevel}px;`">
-              {{ showKeycode ? item[5] : item[4] }}
-            </span>
+            <template v-for="item in musicScore">
+              <span
+                v-if="item[0] === 'down'" :key="item[1]"
+                :class="{ 'notes-up': item[4] === '↑', 'notes-down': item[4] === '↓' }"
+                class="notes" :style="`margin-left: ${item[2] * zoomLevel}px;margin-bottom: ${10 * zoomLevel}px;`">
+                {{ showKeycode ? item[6] : item[5] }}
+              </span>
+            </template>
           </div>
         </div>
         <div class="zoom-wrapper" :class="{ 'zoom-wrapper__mobile': isMobile }">
@@ -135,6 +137,13 @@ export default {
       return obj
     }
   },
+  watch: {
+    isPlay(v) {
+      if (!v) {
+        musician.silentAll()
+      }
+    }
+  },
   methods: {
     handleMusicSelect(item) {
       this.selectedMusicName = item.name
@@ -152,7 +161,7 @@ export default {
     },
     parseBinary(binaryData) {
       const { headerChunk, trackChunk } = parseMIDI(binaryData)
-      console.log(headerChunk, trackChunk)
+      // console.log(headerChunk, trackChunk)
       const isFullScale = this.$store.getters.isFullScale
       const musicScore = []
       // Tip: 每个 tick 约为 1.6ms，但定时器最短间隔为4ms，实际表现会慢好几倍
@@ -161,9 +170,6 @@ export default {
       const tickTime = headerChunk.tempo / headerChunk.tick / 1000
       const mult = 20 / tickTime
 
-      // TODO: 乐谱加上 up 事件
-      // ['down', B, t, ]
-      // ['up', B, t]
       trackChunk.forEach(chunk => {
         let t = 0
         let lastT = 0
@@ -188,20 +194,23 @@ export default {
               N = 'i'
               NN = 'i'
             } else O = ''
-            if (t - lastT) {
-              // [时间, 距前一个音符按下的间隔, 音符, 高低八度, 显示1, 显示2, pitch]
-              musicScore.push([
-                t, Number((t - lastT).toFixed(2)), '', O, NN,
-                this.commonKeyMap[N + (isFullScale ? OO : '')] || '--',
-                B
-              ])
-              lastT = t
-            }
+            // if (t - lastT) {
+            // [类型, 时间, 距前一个音符按下的间隔, 音符, 高低八度, 显示1, 显示2, pitch]
+            musicScore.push([
+              'down', t, Number((t - lastT).toFixed(2)), N, O, NN,
+              this.commonKeyMap[N + (isFullScale ? OO : '')] || '--',
+              B
+            ])
+            lastT = t
+            // }
+          } else if (track[2] === 'up') {
+            // [类型, 时间, pitch]
+            musicScore.push(['up', t, track[1][0]])
           }
         })
       })
-      musicScore.sort((a, b) => a[0] - b[0])
-      console.log(musicScore)
+      musicScore.sort((a, b) => a[1] - b[1])
+      // console.log(musicScore)
       this.musicScore = musicScore
       this.tickTime = tickTime * mult
       this.initTheSong()
@@ -219,12 +228,12 @@ export default {
       Timer.init(function() {
         t++
         const item = musicScore[tickIndex]
-        if (t >= item[0]) {
-          // let pitch = ''
-          // if (item[3] === '↑') pitch = 'higher'
-          // else if (item[3] === '↓') pitch = 'lower'
-          // sounder.sing(item[2], pitch)
-          musician.sing(item[6])
+        if (t >= item[1]) {
+          if (item[0] === 'down') {
+            musician.sing(item[7])
+          } else if (item[0] === 'up') {
+            musician.silent(item[2])
+          }
           tickIndex++
           if (tickIndex > len) {
             Timer.end()

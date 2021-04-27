@@ -4,15 +4,13 @@ import getters from './getters'
 
 import app from './modules/app'
 import keyboard from './modules/keyboard'
-import timbre from './modules/timbre'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
     app,
-    keyboard,
-    timbre
+    keyboard
   },
   getters
 })

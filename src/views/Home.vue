@@ -15,7 +15,8 @@
         </i>
         <i v-if="!isMobile && isSupportImmersionMode" title="沉浸模式（不会有按键冲突）" class="iconfont icon-chenjin" @click="toggleImmersionMode"></i>
         <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
-        <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i>
+        <!-- <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i> -->
+        <i class="iconfont icon-yinxiao" title="乐器设置" @click="openInstrumentMenu"></i>
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
       <!--  -->
@@ -31,7 +32,11 @@
         <p>
           Produced by <span style="color: #c7a2e8;">妙蛤种子@琥珀原</span>
         </p>
-        <!-- <span :class="{'version-tip__mobile': isMobile}" style="color: #fff;">V1.1</span> -->
+        <span
+          v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
+          @click="showTip = !showTip">
+          可以选择乐器辣，如果出现Bug记得告诉我哦(๑•̀ㅂ•́)و✧
+        </span>
         <p>
           Made with <span style="color: #e91e63;">❤</span>
         </p>
@@ -40,7 +45,9 @@
     <!-- 按键设置 -->
     <keyboard-menu></keyboard-menu>
     <!-- 音色设置 -->
-    <timbre-menu></timbre-menu>
+    <!-- <timbre-menu></timbre-menu> -->
+    <!-- 乐器选择 -->
+    <instrument-menu></instrument-menu>
     <!-- 使用须知 -->
     <about-use></about-use>
     <!-- 乐谱选择 -->
@@ -53,12 +60,12 @@ import Music from '@/utils/Music'
 // import Sound from '@/utils/Sound'
 import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
-import TimbreMenu from './timbreMenu/TimbreMenu'
+// import TimbreMenu from './timbreMenu/TimbreMenu'
+import InstrumentMenu from './instrumentMenu/InstrumentMenu'
 import MusicScore from './musicScore/MusicScore'
 import AboutUse from './aboutUse/AboutUse'
 // import { debounce } from '@/utils'
 
-Music.setZone('violin')
 const musician = new Music()
 // const sounder = new Sound()
 
@@ -69,12 +76,14 @@ export default {
   components: {
     Keyboard,
     KeyboardMenu,
-    TimbreMenu,
+    // TimbreMenu,
+    InstrumentMenu,
     MusicScore,
     AboutUse
   },
   data() {
     return {
+      showTip: true,
       // 常亮模式
       isSupportWakeLock: false,
       isWakeLock: false,
@@ -92,7 +101,7 @@ export default {
     },
     hasDialogOpended() {
       return this.$store.getters.showKeyboardMenu ||
-        this.$store.getters.showTimbreMenu ||
+        this.$store.getters.showInstrumentMenu ||
         this.$store.getters.showAboutUse
     }
   },
@@ -110,12 +119,12 @@ export default {
     })
   },
   methods: {
-    sing({ note, pitch, semitone }) {
+    sing(note) {
       // sounder.sing(note, pitch, semitone)
-      musician.sing(note, pitch, semitone)
+      musician.sing(note)
     },
-    silent({ note, pitch, semitone }) {
-      musician.silent(note, pitch, semitone)
+    silent(note) {
+      musician.silent(note)
     },
     silentAll() {
       musician.silentAll()
@@ -123,8 +132,11 @@ export default {
     openKeyboardMenu() {
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
     },
-    openTimbreMenu() {
-      this.$store.dispatch('timbre/toggleShowTimbreMenu')
+    // openTimbreMenu() {
+    //   this.$store.dispatch('timbre/toggleShowTimbreMenu')
+    // },
+    openInstrumentMenu() {
+      this.$store.dispatch('app/toggleInstrumentMenu')
     },
     openAboutUse() {
       this.$store.dispatch('app/toggleAboutUse')
@@ -221,6 +233,7 @@ export default {
   }
   .filter {
     filter: blur(5px);
+    pointer-events: none;
   }
   .transform-scale {
     transform: scale(0.9, 0.9);

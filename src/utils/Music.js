@@ -8,6 +8,7 @@
 const instanceList = []
 // 所有乐器音色
 const soundFontMap = {}
+let currentZone = {}
 
 // (AudioBufferSourceNode --> gainNode) --> totalGainNode --> compressor --> destination
 class Music {
@@ -21,9 +22,9 @@ class Music {
 
     this.context = context
     this.volume = 0 // 音量百分比
-    this.duration = 0.5 // 声音持续时间
+    this.duration = 0.6 // 声音持续时间
     this.totalGainNode = totalGainNode
-    this.zone = [] // 当前音色列表
+    this.zone = currentZone // 当前音色
     this.singing = {} // 正在演奏的
     this.setVolume(localStorage.getItem('volume') || 0.3)
     // 保存实例
@@ -31,10 +32,10 @@ class Music {
   }
 
   // 听个响
-  // 音符 62-71 72-83 84-95
+  // 音符 60-71 72-83 84-95
   // 高 低 平 higher lower ''
   // 高/低 半音 high low
-  sing(note, pitch, semitone) {
+  sing(note) {
     const context = this.context
     const bufferSourceNode = context.createBufferSource()
     const gainNode = context.createGain()
@@ -50,12 +51,12 @@ class Music {
     bufferSourceNode.playbackRate.value = playbackRate // 播放速度 - 频率
 
     // 半音 + 八度
-    let detune = 0
-    if (pitch === 'higher') detune += 1200
-    else if (pitch === 'lower') detune -= 1200
-    if (semitone === 'high') detune += 100
-    else if (semitone === 'low') detune -= 100
-    bufferSourceNode.detune.value = detune // ±100 半音 ±1200 八度
+    // let detune = 0
+    // if (pitch === 'higher') detune += 1200
+    // else if (pitch === 'lower') detune -= 1200
+    // if (semitone === 'high') detune += 100
+    // else if (semitone === 'low') detune -= 100
+    // bufferSourceNode.detune.value = detune // ±100 半音 ±1200 八度
 
     bufferSourceNode.connect(gainNode)
     gainNode.connect(this.totalGainNode)
@@ -63,14 +64,12 @@ class Music {
     const currentTime = context.currentTime
     bufferSourceNode.start()
     gainNode.gain.exponentialRampToValueAtTime(1, currentTime + 0.1)
-    this.singing[`${note}${pitch}${semitone}`] = [gainNode, bufferSourceNode]
-    // gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + this.duration)
-    // bufferSourceNode.stop(currentTime + this.duration)
+    this.singing[note] = [gainNode, bufferSourceNode]
   }
 
   // 停止单个
-  silent(note, pitch, semitone) {
-    this._soundOff(`${note}${pitch}${semitone}`)
+  silent(note) {
+    this._soundOff(note)
   }
 
   // 停止所有
@@ -84,9 +83,10 @@ class Music {
   _soundOff(key) {
     if (this.singing[key]) {
       const currentTime = this.context.currentTime
-      // this.singing[key][0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
-      // this.singing[key][0].gain.setTargetAtTime(0.01, currentTime, 0.2)
+      // this.singing[key][0].gain.setTargetAtTime(0.01, currentTime, this.duration / 3)
+      // this.singing[key][0].gain.exponentialRampToValueAtTime(0.01, currentTime + this.duration)
       this.singing[key][0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
+      // this.singing[key][0].gain.setValueCurveAtTime(new Float32Array([0.7, 0.5, 0.2, 0]), currentTime, this.duration)
       this.singing[key][1].stop(currentTime + this.duration)
       delete this.singing[key]
     }
@@ -112,6 +112,7 @@ Music.setAllVolume = function(percentage) {
 
 // 设置持续时间
 Music.setAllDuration = function(duration) {
+  localStorage.setItem('duration', duration)
   instanceList.forEach(instance => {
     instance.duration = duration
   })
@@ -119,6 +120,7 @@ Music.setAllDuration = function(duration) {
 
 // 设置乐器
 Music.setZone = function(name = 'piano') {
+  localStorage.setItem('instrument', name)
   return new Promise((resolve, reject) => {
     if (soundFontMap[name]) {
       resolve(soundFontMap[name])
@@ -147,6 +149,7 @@ Music.setZone = function(name = 'piano') {
         zone.fineTune = zone.fineTune || 0
         zone.originalPitch = zone.originalPitch || 6000
         zone.sampleRate = zone.sampleRate || 44100
+        soundFontMap[name] = zone
         resolve(zone)
       }
       request.onerror = () => {
@@ -155,10 +158,16 @@ Music.setZone = function(name = 'piano') {
       request.send(null)
     }
   }).then(zone => {
+    currentZone = zone
     instanceList.forEach(instance => {
       instance.zone = zone
     })
   })
 }
+
+if (!localStorage.getItem('instrument')) {
+  localStorage.setItem('instrument', 'harp')
+}
+Music.setZone(localStorage.getItem('instrument'))
 
 export default Music
