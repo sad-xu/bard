@@ -234,8 +234,8 @@ export default {
   position: absolute;
   width: 100%;
   top: 0;
-  // bottom: 150px;
-  height: calc(100% - 180px);
+  max-height: 50vw;
+  min-height: calc(100% - 180px);
   object-fit: cover;
 }
 
@@ -264,6 +264,6 @@ export default {
   right: 10px;
 }
 .video-box__mobile {
-  height: 100%;
+  min-height: 100%;
 }
 </style>
