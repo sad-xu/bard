@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import Music from '@/utils/Music'
+// import Music from '@/utils/Music'
 
 // Music.setZone()
-const musician = new Music()
+// const musician = new Music()
 
 export default {
   name: 'Test',
@@ -46,18 +46,18 @@ export default {
   },
   methods: {
     handleClick() {
-      musician.sing(73, '', '')
-      setTimeout(() => {
-        musician.silent(73, '', '')
-        musician.sing(60, 'higher', 'high')
-        setTimeout(() => {
-          musician.silent(60, 'higher', 'high')
-          musician.sing(86, 'lower', 'low')
-          setTimeout(() => {
-            musician.silent(86, 'lower', 'low')
-          }, 1500)
-        }, 1500)
-      }, 1500)
+      // musician.sing(73, '', '')
+      // setTimeout(() => {
+      //   musician.silent(73, '', '')
+      //   musician.sing(60, 'higher', 'high')
+      //   setTimeout(() => {
+      //     musician.silent(60, 'higher', 'high')
+      //     musician.sing(86, 'lower', 'low')
+      //     setTimeout(() => {
+      //       musician.silent(86, 'lower', 'low')
+      //     }, 1500)
+      //   }, 1500)
+      // }, 1500)
     },
     handleSelectChange(item) {
       console.log('select', item)

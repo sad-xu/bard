@@ -294,6 +294,7 @@ export default {
   align-items: center;
   // transition: filter 0.5s;
   .current-music {
+    font-size: 14px;
     padding: 4px 10px;
     margin-right: 10px;
     border-radius: 10px;
@@ -396,10 +397,14 @@ export default {
   .notes {
     display: inline-block;
     border-radius: 10px;
-    padding: 4px 8px;
     margin-bottom: 10px;
     background-color: #b2b2b2;
     color: #333;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    font-size: 15px;
   }
 }
 .notes-up {
@@ -485,10 +490,10 @@ export default {
   left: 2%;
   right: 2%;
   height: calc(90vh - 30px);
-  .notes {
-    padding: 2px 6px;
-    margin-bottom: 6px;
-  }
+  // .notes {
+  //   padding: 2px 6px;
+  //   margin-bottom: 6px;
+  // }
   .tip {
     margin: 0;
     .key-tip {

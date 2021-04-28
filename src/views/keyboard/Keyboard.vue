@@ -287,6 +287,7 @@ export default {
   bottom: 20px;
   left: 0;
   right: 0;
+  box-shadow: 0 -2px 5px 0 #1c192c;
 }
 
 .keyboard {
@@ -297,6 +298,8 @@ export default {
   display: flex;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   overflow: hidden;
   .key {
     flex-grow: 1;
@@ -318,8 +321,8 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       font-size: 12px;
       color: #fff;
       background-color: #5a5d5a;

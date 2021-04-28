@@ -19,12 +19,14 @@
         <i class="iconfont icon-yinxiao" title="乐器设置" @click="openInstrumentMenu"></i>
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
-      <!--  -->
-      <div class="spec-menu" :class="{ 'spec-menu__mobile': isMobile }">
-      </div>
       <!-- bg -->
-      <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
-      <!-- <canvas id="Screen" ref="Screen"></canvas> -->
+      <!-- <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div> -->
+      <!-- video -->
+      <video
+        class="video-box" :class="{ 'video-box__mobile': isMobile }"
+        autoplay loop muted>
+        <source src="https://static.web.sdo.com/jijiamobile/pic/ff14/ffweb850/20210401vid.mp4?123" type="video/mp4">
+      </video>
       <!-- 键盘 -->
       <keyboard v-show="!isMobile" @sing="sing" @silent="silent" @silentAll="silentAll"></keyboard>
       <!-- 页脚 -->
@@ -57,17 +59,14 @@
 
 <script>
 import Music from '@/utils/Music'
-// import Sound from '@/utils/Sound'
 import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 // import TimbreMenu from './timbreMenu/TimbreMenu'
 import InstrumentMenu from './instrumentMenu/InstrumentMenu'
 import MusicScore from './musicScore/MusicScore'
 import AboutUse from './aboutUse/AboutUse'
-// import { debounce } from '@/utils'
 
 const musician = new Music()
-// const sounder = new Sound()
 
 let wakeLock = null
 
@@ -120,7 +119,6 @@ export default {
   },
   methods: {
     sing(note) {
-      // sounder.sing(note, pitch, semitone)
       musician.sing(note)
     },
     silent(note) {
@@ -165,59 +163,6 @@ export default {
         }
       }
     }
-    // initCanvas() {
-    //   const screenDom = this.$refs.Screen
-    //   const ctx = screenDom.getContext('2d')
-    //   let width = screenDom.clientWidth
-    //   let height = screenDom.clientHeight
-    //   screenDom.width = width
-    //   screenDom.height = height
-    //   const analyser = sounder.analyser
-    //   const timeArray = new Uint8Array(analyser.frequencyBinCount)
-    //   const freqArray = new Uint8Array(analyser.frequencyBinCount)
-    //   const barWidth = width / analyser.frequencyBinCount * 2
-    //   // 窗口改变适应
-    //   window.addEventListener('resize', debounce(function() {
-    //     width = screenDom.clientWidth
-    //     height = screenDom.clientHeight
-    //     screenDom.width = width
-    //     screenDom.height = height
-    //   }))
-    //   const draw = () => {
-    //     if (!sounder.singingNum) {
-    //       // 空闲
-    //     } else {
-    //       ctx.fillStyle = '#eff3f5'
-    //       // ctx.fillRect(0, 0, width, height)
-    //       ctx.clearRect(0, 0, width, height)
-    //       ctx.lineWidth = 1
-    //       ctx.strokeStyle = '#f00'
-    //       analyser.getByteFrequencyData(freqArray)
-    //       analyser.getByteTimeDomainData(timeArray)
-    //       let x = 0
-    //       let y = 0
-    //       ctx.beginPath()
-    //       freqArray.forEach((v, i) => {
-    //         // 频域
-    //         const barHeight = v / 255 * height
-    //         ctx.fillStyle = '#606162'
-    //         ctx.fillRect(x, height - barHeight, barWidth, barHeight)
-    //         // 时域
-    //         y = timeArray[i] / 128 * height / 2
-    //         if (i === 0) {
-    //           ctx.moveTo(x, y)
-    //         } else {
-    //           ctx.lineTo(x, y)
-    //         }
-    //         x += barWidth
-    //       })
-    //       ctx.lineTo(width, height / 2)
-    //       ctx.stroke()
-    //     }
-    //     requestAnimationFrame(draw)
-    //   }
-    //   draw()
-    // }
   }
 }
 </script>
@@ -227,8 +172,8 @@ export default {
   height: 100%;
   .content {
     height: 100%;
-    transition: transform 0.2s, filter 0.3s, ease 0.25s;
-    will-change: transform, filter;
+    transition: transform 0.3s 0.1s, filter 0.1s, ease 0.25s;
+    will-change: filter;
     // -webkit-backface-visibility: hidden;
   }
   .filter {
@@ -273,28 +218,25 @@ export default {
   }
 }
 
-.spec-menu {
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  z-index: 9;
-}
-
-// #Screen {
+// .bg-img {
 //   position: absolute;
 //   width: 100%;
+//   top: 0;
 //   bottom: 180px;
+//   background-size: auto 100%;
+//   background-repeat: no-repeat;
+//   background-position: center;
+//   background-image: url(https://static.web.sdo.com/jijiamobile/pic/ff14/191010shismages/M3aprHHlg5_hV72kWPhGQLv4eM.png);
+//   opacity: 0.7;
 // }
-.bg-img {
+
+.video-box {
   position: absolute;
   width: 100%;
   top: 0;
-  bottom: 180px;
-  background-size: auto 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-image: url(https://static.web.sdo.com/jijiamobile/pic/ff14/191010shismages/M3aprHHlg5_hV72kWPhGQLv4eM.png);
-  opacity: 0.7;
+  // bottom: 150px;
+  height: calc(100% - 180px);
+  object-fit: cover;
 }
 
 .footer {
@@ -312,16 +254,16 @@ export default {
 }
 
 /* mobile */
-.bg-img__mobile {
-  bottom: 0;
-  background-size: 100% auto;
-}
+// .bg-img__mobile {
+//   bottom: 0;
+//   background-size: 100% auto;
+// }
 .version-tip__mobile {
   position: absolute;
   bottom: 100%;
   right: 10px;
 }
-.spec-menu__mobile {
-
+.video-box__mobile {
+  height: 100%;
 }
 </style>
