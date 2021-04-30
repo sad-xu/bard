@@ -20,7 +20,7 @@
         <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
       </div>
       <!-- bg -->
-      <!-- <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div> -->
+      <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
       <!-- video -->
       <video
         class="video-box" :class="{ 'video-box__mobile': isMobile }"
@@ -218,17 +218,17 @@ export default {
   }
 }
 
-// .bg-img {
-//   position: absolute;
-//   width: 100%;
-//   top: 0;
-//   bottom: 180px;
-//   background-size: auto 100%;
-//   background-repeat: no-repeat;
-//   background-position: center;
-//   background-image: url(https://static.web.sdo.com/jijiamobile/pic/ff14/191010shismages/M3aprHHlg5_hV72kWPhGQLv4eM.png);
-//   opacity: 0.7;
-// }
+.bg-img {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 180px;
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(https://static.web.sdo.com/jijiamobile/pic/ff14/191010shismages/M3aprHHlg5_hV72kWPhGQLv4eM.png);
+  opacity: 0.7;
+}
 
 .video-box {
   position: absolute;

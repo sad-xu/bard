@@ -1,6 +1,6 @@
 # Bard
 
-## FF14 演奏 <s>（吟游诗人）</s> 模拟器
+## FF14 光之演奏家 演奏 <s>（吟游诗人）</s> 模拟器
 
 ## 安装
 
@@ -8,11 +8,11 @@
 
 `npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/ -g`
 
-`npm install`
+`npm i`
 
 ## VSCode 相关
 
-必装插件 `Vetur`、`ESLint`、`stylelint`
+必装插件 `Vetur`、`ESLint`、`stylelint`、`EditorConfig for VS Code`
 
 ```json
 // 保存时自动修复
@@ -146,9 +146,9 @@ https://github.com/lukehorvat/web-audio-oscillators/tree/master/lib
 
 https://github.com/mohayonao/wave-tables
 
-## TODO
+* 已改为使用音频数据
 
-音色实现修改 振荡器 -> 音频数据
+## TODO
 
 音游模式
 
