@@ -53,7 +53,7 @@
     <!-- 使用须知 -->
     <about-use></about-use>
     <!-- 乐谱选择 -->
-    <music-score :filter="hasDialogOpended"></music-score>
+    <music-score :filter="hasDialogOpended || showMusicScore"></music-score>
   </div>
 </template>
 

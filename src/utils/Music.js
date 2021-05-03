@@ -32,7 +32,7 @@ class Music {
   }
 
   // 听个响
-  // 音符 60-71 72-83 84-95
+  // 音符 48-59 60-71 72-83 84
   // 高 低 平 higher lower ''
   // 高/低 半音 high low
   sing(note) {

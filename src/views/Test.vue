@@ -6,6 +6,9 @@
     <ff-button @click="handleStop">
       STOP
     </ff-button>
+    <ff-button @click="handleRestart">
+      RESTART
+    </ff-button>
     <div id="MugBox" ref="MugBox"></div>
   </div>
 </template>
@@ -54,6 +57,9 @@ export default {
     },
     handleStop() {
       mug.stop()
+    },
+    handleRestart() {
+      mug.replay()
     }
   }
 }

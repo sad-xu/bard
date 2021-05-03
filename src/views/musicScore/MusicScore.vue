@@ -13,68 +13,45 @@
     <div
       v-show="musicScore.length"
       class="menu-wrapper" :class="{'menu-wrapper-hidden': hideMenu, filter: filter || showMusicScore, 'menu-wrapper__mobile': isMobile }">
+      <div
+        v-if="!isMobile" v-show="showPaper && musicScore.length"
+        class="mug-button" @click="handleMugButtonClick">
+        {{ isMug ? '退出' : '' }}音游模式
+      </div>
       <i
-        class="iconfont"
+        v-show="!isMug" class="iconfont"
         :class="isPlay ? 'icon-stop' : 'icon-start'"
         :title="isPlay ? '暂停' : '播放'" @click="toggleTheSong">
       </i>
-      <i v-if="!isMobile" class="iconfont icon-reload" title="重播" @click="reloadTheSong"></i>
+      <i
+        v-if="!isMobile" v-show="!isMug"
+        class="iconfont icon-reload" title="重播" @click="reloadTheSong">
+      </i>
     </div>
     <!-- 曲目列表 -->
     <music-list @handleMusicSelect="handleMusicSelect"></music-list>
     <!-- 乐谱 -->
-    <transition name="paper-fade">
-      <div
-        v-show="showPaper && musicScore.length" class="paper"
-        :class="{ filter: filter || showMusicScore, 'notes-wrapper__mobile': isMobile }">
-        <div class="notes-wrapper">
-          <div class="notes-inner-box">
-            <template v-for="item in musicScore">
-              <span
-                v-if="item[0] === 'down'" :key="item[1]"
-                :class="{ 'notes-up': item[4] === '↑', 'notes-down': item[4] === '↓' }"
-                class="notes" :style="`margin-left: ${item[2] * zoomLevel}px;margin-bottom: ${10 * zoomLevel}px;`">
-                {{ showKeycode ? item[6] : item[5] }}
-              </span>
-            </template>
-          </div>
-        </div>
-        <div class="zoom-wrapper" :class="{ 'zoom-wrapper__mobile': isMobile }">
-          <div @click="handleZoomIn">
-            +
-          </div>
-          <div @click="handleZoomOut">
-            -
-          </div>
-        </div>
-        <div class="tip">
-          <span @click="showKeycode = !showKeycode">切换按键显示</span>
-          <div class="key-tip">
-            <span>高八度</span>
-            <span class="notes-up">{{ compositeMap[keyMap.higher] }}</span>
-            <span>低八度</span>
-            <span class="notes-down">{{ compositeMap[keyMap.lower] }}</span>
-            <span v-if="keyMap.highSemitone.label">高半音</span>
-            <span v-if="keyMap.highSemitone.label" class="semitione-high">{{ keyMap.highSemitone.label }}</span>
-            <span v-if="keyMap.lowSemitone.label">低半音</span>
-            <span v-if="keyMap.lowSemitone.label" class="semitione-low">{{ keyMap.lowSemitone.label }}</span>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <notes-paper
+      :filter="filter" :hide-tip="isMug"
+      :show-paper="showPaper" :music-score="musicScore">
+    </notes-paper>
+    <!-- 音游 -->
+    <!--  v-show="isMug" -->
+    <div v-if="!isMobile" ref="MugWrapper" class="mug-wrapper"></div>
   </div>
 </template>
 
 <script>
 import Music from '@/utils/Music'
-// import Sound from '@/utils/Sound'
 import { parseMIDI } from '@/utils/MIDI'
 import Timer from '@/utils/Timer'
 import MusicList from './MusicList'
 import UploadMid from './UploadMid'
+import NotesPaper from './NotesPaper'
+import MUG from '@/utils/MUG'
 
+let mug = null
 const musician = new Music()
-// const sounder = new Sound()
 
 const N_ARR = ['1', '1#', '2', '3b', '3', '4', '4#', '5', '5#', '6', '7b', '7']
 const NN_ARR = ['1', '1♯', '2', '3♭', '3', '4', '4♯', '5', '5♯', '6', '7♭', '7']
@@ -82,7 +59,8 @@ const NN_ARR = ['1', '1♯', '2', '3♭', '3', '4', '4♯', '5', '5♯', '6', '7
 export default {
   components: {
     MusicList,
-    UploadMid
+    UploadMid,
+    NotesPaper
   },
   props: {
     // 虚化
@@ -104,29 +82,16 @@ export default {
       isPlay: false,
       // 播放按钮显隐
       hideMenu: true,
-      // 间距缩放 (0,2]
-      zoomLevel: 1,
-      // 切换按键显示 音符 / 按键
-      showKeycode: true,
-      compositeMap: {
-        altKey: 'Alt',
-        ctrlKey: 'Ctrl',
-        shiftKey: 'Shift'
-      }
+      // 是否音游模式
+      isMug: false
     }
   },
   computed: {
     isMobile() {
       return this.$store.getters.isMobile
     },
-    // selectedMusicName() {
-    //   return this.selectedIndex === -1 ? '' : this.musicList[this.selectedIndex].name
-    // },
     showMusicScore() {
       return this.$store.getters.showMusicScore
-    },
-    keyMap() {
-      return this.$store.getters.keyMap
     },
     commonKeyMap() {
       const obj = {}
@@ -262,19 +227,26 @@ export default {
       this.initTheSong()
       Timer.start()
     },
-    // 放大
-    handleZoomIn() {
-      this.zoomLevel = Math.min(2, this.zoomLevel + 0.2)
-    },
-    // 缩小
-    handleZoomOut() {
-      this.zoomLevel = Math.max(0.1, this.zoomLevel - 0.2)
-    },
     handleParseUploadFile(name, binaryData) {
       this.selectedMusicName = name
       Timer.stop()
       this.isPlay = false
       this.parseBinary(binaryData)
+    },
+    // 音游按钮
+    handleMugButtonClick() {
+      this.isMug = !this.isMug
+      this.$nextTick(() => {
+        if (this.isMug) {
+          if (!mug) {
+            mug = new MUG(this.$refs.MugWrapper)
+          }
+          mug.setScore(this.musicScore)
+          mug.replay()
+        } else {
+          mug.stop()
+        }
+      })
     }
   }
 }
@@ -285,7 +257,6 @@ export default {
   filter: blur(5px);
 }
 
-//
 .score-header {
   position: fixed;
   top: 4%;
@@ -313,15 +284,6 @@ export default {
   .current-music__mibile {
     max-width: 120px;
   }
-  // .icon-music-setting {
-  //   font-size: 24px;
-  //   color: #fff;
-  //   transition: all 0.3s;
-  //   cursor: pointer;
-  //   &:hover {
-  //     transform: scale(1.2);
-  //   }
-  // }
 }
 
 .menu-wrapper {
@@ -348,166 +310,18 @@ export default {
   opacity: 0;
 }
 
-.paper {
-  height: calc(90vh - 180px);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 10%;
-  left: 7%;
-  right: 7%;
-  padding-top: 10px;
-  // transition: filter 0.5s;
-}
-.notes-wrapper {
-  // position: absolute;
-  // top: 10%;
-  // left: 7%;
-  // right: 7%;
-  position: relative;
-  // margin-top: 20px;
-  // max-height: calc(90vh - 240px);
-  height: 100%;
-  background-color: rgba(3, 3, 3, 0.3);
-  box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.3);
-  border-radius: 5px;
-  backdrop-filter: blur(3px);
-  overflow: hidden;
-  // -webkit-backface-visibility: hidden;
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    box-shadow: 0 0 12px 8px rgb(50, 50, 50);
-  }
-  &::before { top: 0; }
-  &::after { bottom: 0; }
-  .notes-inner-box {
-    height: 100%;
-    padding-top: 10px;
-    overflow-y: auto;
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-  }
-  .notes {
-    display: inline-block;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    background-color: #b2b2b2;
-    color: #333;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    text-align: center;
-    font-size: 15px;
-  }
-}
-.notes-up {
-  background-image: linear-gradient(#f3ea91, #e0651d);
-}
-.notes-down {
-  background-image: linear-gradient(#7a82be, #85e9e1);
-}
-.semitione-high {
-  background-color: #eee;
-}
-.semitione-low {
-  background-color: #eee;
-}
+.mug-button {
 
-.zoom-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+}
+.mug-wrapper {
   position: absolute;
-  right: -20px;
-  transform: translateX(100%);
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  > div {
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    text-align: center;
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-}
-
-.tip {
-  padding-top: 8px;
-  margin: 0 -5%;
-  flex-shrink: 0;
-  height: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  color: #eee;
-  .key-tip {
-    display: flex;
-    align-items: center;
-    .notes-up,
-    .notes-down,
-    .semitione-high,
-    .semitione-low {
-      display: inline-block;
-      min-width: 40px;
-      text-align: center;
-      padding: 2px 4px;
-      border-radius: 10px;
-      margin: 0 14px 0 6px;
-      color: #474747;
-    }
-    & :last-child {
-      margin-right: 0;
-    }
-  }
-
-  // .notes-down {
-  //   margin-right: 0;
-  // }
-}
-
-.paper-fade-enter-active,
-.paper-fade-leave-active {
-  transition: opacity 0.5s;
-}
-.paper-fade-enter,
-.paper-fade-leave-to {
-  opacity: 0;
+  top: 10%;
+  left: 30px;
+  right: 30px;
+  height: calc(90vh - 180px);
 }
 
 /* mobile */
-.notes-wrapper__mobile {
-  left: 2%;
-  right: 2%;
-  height: calc(90vh - 30px);
-  // .notes {
-  //   padding: 2px 6px;
-  //   margin-bottom: 6px;
-  // }
-  .tip {
-    margin: 0;
-    .key-tip {
-      display: none;
-    }
-  }
-}
-
-.zoom-wrapper__mobile {
-  flex-direction: initial;
-  right: 10px;
-  bottom: 7px;
-  transform: translateX(0);
-}
 .menu-wrapper__mobile {
   right: 45%;
   transform: translateX(70%);

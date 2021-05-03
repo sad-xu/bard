@@ -49,13 +49,13 @@ class MUG {
   }
 
   // 设置乐谱
-  // [按下时刻, 按下时长, 音符]
+  // [按下时刻, 按下时长, 音符, 按键]
   // [类型, 时间, 距前一个音符按下的间隔, 音符, 高低八度, 显示1, 显示2, pitch]`
   setScore(score) {
     const scoreList = []
     score.forEach((item, i) => {
       if (item[0] === 'down') {
-        scoreList.push([item[1] * 16 + 3000, score[i + 1][1] - item[1], item[7]])
+        scoreList.push([item[1] * 16 + 3000, score[i + 1][1] - item[1], item[7], item[6]])
       }
     })
     this.score = scoreList
@@ -68,6 +68,21 @@ class MUG {
       this.lastT = performance.now()
       this.draw()
     }
+  }
+
+  // 暂停
+  stop() {
+    if (this.isPlay) {
+      console.log(this)
+      this.isPlay = false
+    }
+  }
+
+  // 重玩
+  replay() {
+    this.isPlay = false
+    this.t = 0
+    this.play()
   }
 
   //
@@ -94,17 +109,36 @@ class MUG {
       }
     }
 
-    ctx.fillStyle = '#f00'
+    ctx.shadowBlur = 10
     ctx.font = '16px serif'
     ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
     ctx.clearRect(0, 0, width, height)
+
     list.forEach(item => {
-      const x = width * (item[2] - 59) / 37
+      const pitch = item[2]
+      // TODO: 音符位置
+      const x = width / 37 * (pitch - 48)
       const y = height - height * (item[0] - t) / 3000
-      const w = 40
-      const h = 1 * item[1]
-      ctx.fillRect(x - w / 2, y - h / 2, 40, h)
-      ctx.strokeText(item[2], x, y)
+      const w = width / 37
+      const h = Math.max(1 * item[1], 20)
+
+      if (pitch <= 59) {
+        ctx.shadowColor = '#85e9e1'
+        ctx.fillStyle = '#85e9e1'
+      } else if (pitch >= 72) {
+        ctx.shadowColor = '#e0651d'
+        ctx.fillStyle = '#e0651d'
+      } else {
+        ctx.shadowColor = '#fff'
+        ctx.fillStyle = '#fff'
+      }
+
+      this._drawRoundRect(ctx, x - w, y - h / 2, w, h, 10)
+      // 按键显示
+      if (item[3]) {
+        ctx.strokeText(item[3], x - w / 2, y)
+      }
     })
     // over
     if (!list.length && this.scoreIndex !== 0) {
@@ -115,12 +149,15 @@ class MUG {
     }
   }
 
-  // 暂停
-  stop() {
-    if (this.isPlay) {
-      console.log(this)
-      this.isPlay = false
-    }
+  // 绘制圆角矩形
+  _drawRoundRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath()
+    ctx.moveTo(x + radius, y)
+    ctx.arcTo(x + width, y, x + width, y + height, radius)
+    ctx.arcTo(x + width, y + height, x, y + height, radius)
+    ctx.arcTo(x, y + height, x, y, radius)
+    ctx.arcTo(x, y, x + radius, y, radius)
+    ctx.fill()
   }
 }
 
