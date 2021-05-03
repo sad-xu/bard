@@ -25,10 +25,10 @@
         <p>常亮模式 - 移动端不熄屏功能（部分浏览器有效）</p>
         <p>沉浸模式 - PC端不会按键冲突（部分浏览器有效）</p>
         <p>可上传、解析本地 .mid 文件</p>
+        <p>演奏/音游模式</p>
       </section>
       <section class="part">
         <h3>待做功能</h3>
-        <p>演奏/音游模式</p>
         <p>体验优化</p>
       </section>
       <section class="part">

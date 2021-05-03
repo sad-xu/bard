@@ -13,12 +13,18 @@ class MUG {
     // 乐谱
     this.score = []
     this.scoreIndex = 0 // 乐谱指针
+    // 是否是全键盘
+    this.isFullScale = true
     // 播放状态
     this.isPlay = false
     // 播放时间
     this.t = 0 // 持续时间
     this.lastT = 0 // 上一帧的时刻
-
+    // 回调
+    this.cb = null
+    // 黑白键区分
+    this.blackKeys = { 1: 1, 3: 2, 6: 4, 8: 5, 10: 6 }
+    this.whiteKeys = { 0: 0, 2: 1, 4: 2, 5: 3, 7: 4, 9: 5, 11: 6 }
     this.init(wrapperEl)
   }
 
@@ -48,10 +54,10 @@ class MUG {
     this.height = height
   }
 
-  // 设置乐谱
+  // 设置乐谱 是否是全键盘
   // [按下时刻, 按下时长, 音符, 按键]
   // [类型, 时间, 距前一个音符按下的间隔, 音符, 高低八度, 显示1, 显示2, pitch]`
-  setScore(score) {
+  setScore(score, isFullScale) {
     const scoreList = []
     score.forEach((item, i) => {
       if (item[0] === 'down') {
@@ -59,13 +65,16 @@ class MUG {
       }
     })
     this.score = scoreList
+    this.isFullScale = isFullScale
   }
 
   // 开始游戏
-  play() {
+  // cb 正常播放完成的回调
+  play(cb) {
     if (!this.isPlay) {
       this.isPlay = true
       this.lastT = performance.now()
+      this.cb = cb
       this.draw()
     }
   }
@@ -79,10 +88,11 @@ class MUG {
   }
 
   // 重玩
-  replay() {
+  replay(cb) {
     this.isPlay = false
     this.t = 0
-    this.play()
+    this.scoreIndex = 0
+    this.play(cb)
   }
 
   //
@@ -93,7 +103,6 @@ class MUG {
       this.lastT = time
     }
     const { ctx, width, height } = this
-
     const list = []
     const score = this.score
     const t = this.t
@@ -109,40 +118,60 @@ class MUG {
       }
     }
 
-    ctx.shadowBlur = 10
-    ctx.font = '16px serif'
+    ctx.shadowBlur = 4
+    ctx.font = 'bolder 15px serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.clearRect(0, 0, width, height)
 
     list.forEach(item => {
       const pitch = item[2]
-      // TODO: 音符位置
-      const x = width / 37 * (pitch - 48)
-      const y = height - height * (item[0] - t) / 3000
-      const w = width / 37
-      const h = Math.max(1 * item[1], 20)
+      let x
+      let w
 
-      if (pitch <= 59) {
-        ctx.shadowColor = '#85e9e1'
-        ctx.fillStyle = '#85e9e1'
-      } else if (pitch >= 72) {
-        ctx.shadowColor = '#e0651d'
-        ctx.fillStyle = '#e0651d'
+      // TODO: 全键盘区分
+
+      // 黑白键区分
+      const p = pitch % 12
+      const isBlack = Boolean(this.blackKeys[p])
+      if (isBlack) {
+        x = width / 22 * (Math.floor((pitch - 48) / 12) * 7 + this.blackKeys[p] - 0.5)
+        w = width * 0.04
+        ctx.shadowColor = '#656060'
+        ctx.fillStyle = '#333'
       } else {
-        ctx.shadowColor = '#fff'
-        ctx.fillStyle = '#fff'
+        x = width / 22 * (Math.floor((pitch - 48) / 12) * 7 + this.whiteKeys[p])
+        w = width / 22
+        ctx.shadowColor = '#333'
+        ctx.fillStyle = '#e2e1e4'
       }
 
-      this._drawRoundRect(ctx, x - w, y - h / 2, w, h, 10)
+      const y = height - height * (item[0] - t) / 3000
+      const h = Math.max(1 * item[1], 20)
+
+      this._drawRoundRect(ctx, x, y - h / 2, w, h, 10)
       // 按键显示
       if (item[3]) {
-        ctx.strokeText(item[3], x - w / 2, y)
+        if (isBlack) {
+          ctx.shadowColor = '#333'
+          ctx.fillStyle = '#e2e1e4'
+        } else {
+          ctx.shadowColor = '#e2e1e4'
+          ctx.fillStyle = '#333'
+        }
+        if (pitch <= 59) {
+          ctx.fillStyle = '#8092cf'
+        } else if (pitch >= 72) {
+          ctx.fillStyle = '#dd651b'
+        }
+        ctx.shadowBlur = 0
+        ctx.fillText(item[3], x + w / 2, y)
       }
     })
     // over
     if (!list.length && this.scoreIndex !== 0) {
       this.stop()
+      if (this.cb) this.cb()
     }
     if (this.isPlay) {
       requestAnimationFrame(this.draw.bind(this))

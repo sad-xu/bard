@@ -23,8 +23,9 @@
       <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
       <!-- video -->
       <video
-        class="video-box" :class="{ 'video-box__mobile': isMobile }"
-        autoplay loop muted>
+        class="video-box" :class="{ 'video-box__mobile': isMobile, 'video-loaded': videoLoadend }"
+        autoplay loop muted
+        @loadeddata="handleLoadeddata">
         <source src="https://static.web.sdo.com/jijiamobile/pic/ff14/ffweb850/20210401vid.mp4?123" type="video/mp4">
       </video>
       <!-- 键盘 -->
@@ -37,7 +38,7 @@
         <span
           v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
           @click="showTip = !showTip">
-          可以选择乐器辣，如果出现Bug记得告诉我哦(๑•̀ㅂ•́)و✧
+          新增演奏模式辣，如果出现Bug记得告诉我哦(๑•̀ㅂ•́)و✧
         </span>
         <p>
           Made with <span style="color: #e91e63;">❤</span>
@@ -88,7 +89,9 @@ export default {
       isWakeLock: false,
       // 沉浸模式
       isSupportImmersionMode: false,
-      isImmersionMode: false
+      isImmersionMode: false,
+      // video
+      videoLoadend: false
     }
   },
   computed: {
@@ -130,9 +133,6 @@ export default {
     openKeyboardMenu() {
       this.$store.dispatch('keyboard/toggleShowKeyboardMenu')
     },
-    // openTimbreMenu() {
-    //   this.$store.dispatch('timbre/toggleShowTimbreMenu')
-    // },
     openInstrumentMenu() {
       this.$store.dispatch('app/toggleInstrumentMenu')
     },
@@ -162,6 +162,10 @@ export default {
           console.log(err)
         }
       }
+    },
+    // video 加载
+    handleLoadeddata() {
+      this.videoLoadend = true
     }
   }
 }
@@ -236,7 +240,12 @@ export default {
   top: 0;
   max-height: 50vw;
   min-height: calc(100% - 180px);
+  opacity: 0;
   object-fit: cover;
+  transition: opacity 1.5s;
+}
+.video-loaded {
+  opacity: 1;
 }
 
 .footer {

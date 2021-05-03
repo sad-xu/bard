@@ -36,8 +36,7 @@
       :show-paper="showPaper" :music-score="musicScore">
     </notes-paper>
     <!-- 音游 -->
-    <!--  v-show="isMug" -->
-    <div v-if="!isMobile" ref="MugWrapper" class="mug-wrapper"></div>
+    <div v-if="!isMobile" v-show="isMug" ref="MugWrapper" class="mug-wrapper"></div>
   </div>
 </template>
 
@@ -235,14 +234,42 @@ export default {
     },
     // 音游按钮
     handleMugButtonClick() {
+      if (this.isPlay) {
+        Timer.stop()
+        this.isPlay = false
+      }
       this.isMug = !this.isMug
       this.$nextTick(() => {
         if (this.isMug) {
           if (!mug) {
             mug = new MUG(this.$refs.MugWrapper)
           }
-          mug.setScore(this.musicScore)
-          mug.replay()
+          mug.setScore(this.musicScore, this.$store.getters.isFullScale)
+          // mug.setScore([
+          //   ['down', 0, 0, '5', '', '5', 'A', 60], ['up', 28.124999999999996, 60],
+          //   ['down', 31.249999999999996, 31.25, '3', '', '3', 'S', 61], ['up', 46.87499999999999, 61],
+          //   ['down', 46.87499999999999, 15.62, '5', '', '5', 'D', 62], ['up', 60.93749999999999, 62],
+          //   ['down', 62.49999999999999, 15.63, '1', '↑', '1', '9', 63], ['up', 118.74999999999999, 63],
+          //   ['down', 124.99999999999999, 62.5, '6', '', '6', 'H', 70], ['up', 153.12499999999997, 70],
+          //   ['down', 156.24999999999997, 31.25, '1', '↑', '1', 'Q', 72], ['up', 184.37499999999997, 72],
+          //   ['down', 187.49999999999997, 31.25, '5', '', '5', 'G', 74], ['up', 243.74999999999997, 74],
+          //   ['down', 249.99999999999997, 62.5, '5', '', '5', 'G', 76], ['up', 278.12499999999994, 76],
+          //   ['down', 281.24999999999994, 31.25, '1', '', '1', 'A', 78], ['up', 296.87499999999994, 78],
+          //   ['down', 296.87499999999994, 15.63, '2', '', '2', 'S', 80], ['up', 310.93749999999994, 80],
+          //   ['down', 312.49999999999994, 15.63, '3', '', '3', 'D', 82], ['up', 340.62499999999994, 82],
+          //   ['down', 343.74999999999994, 31.25, '2', '', '2', 'S', 50], ['up', 359.37499999999994, 50],
+          //   ['down', 359.37499999999994, 15.63, '1', '', '1', 'A', 54], ['up', 373.43749999999994, 54],
+          //   ['down', 374.99999999999994, 15.63, '2', '', '2', 'S', 88], ['up', 459.37499999999994, 88],
+          //   ['down', 499.99999999999994, 125, '5', '', '5', 'G', 90], ['up', 528.1249999999999, 90],
+          //   ['down', 531.2499999999999, 31.25, '3', '', '3', 'D', 92], ['up', 546.8749999999999, 92],
+          //   ['down', 546.8749999999999, 15.63, '5', '', '5', 'G', 94], ['up', 560.9374999999999, 94],
+          //   ['down', 562.4999999999999, 15.63, '1', '↑', '1', 'Q', 95], ['up', 604.6874999999999, 95],
+          //   ['down', 609.3749999999999, 46.88, '7', '', '7', 'J', 94], ['up', 623.4374999999999, 94],
+          //   ['down', 624.9999999999999, 15.63, '6', '', '6', 'H', 93], ['up', 653.1249999999999, 93]
+          // ])
+          mug.replay(() => {
+            this.isMug = false
+          })
         } else {
           mug.stop()
         }
@@ -311,7 +338,28 @@ export default {
 }
 
 .mug-button {
-
+  position: relative;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 4px 6px;
+  margin-right: 30px;
+  color: #3b3b3b;
+  background-image: linear-gradient(90deg, #00c0ff 0%, #ffcf00 49%, #fc4f4f 100%);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s;
+  &::after {
+    content: 'New';
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #ffeb3b;
+    font-size: 12px;
+    transform: translate(60%, -60%);
+  }
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 .mug-wrapper {
   position: absolute;
@@ -319,6 +367,7 @@ export default {
   left: 30px;
   right: 30px;
   height: calc(90vh - 180px);
+  pointer-events: none;
 }
 
 /* mobile */

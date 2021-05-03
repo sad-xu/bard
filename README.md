@@ -148,9 +148,13 @@ https://github.com/mohayonao/wave-tables
 
 * 已改为使用音频数据
 
-## TODO
+## 个人配置
 
-音游模式
+```json
+{"higher":"shiftKey","lower":"ctrlKey","highSemitone":{"label":"Tab","key":"Tab"},"lowSemitone":{"label":"AltLeft","key":"AltLeft"},"common":{"KeyQ":"1-h","KeyW":"2-h","KeyE":"3-h","KeyR":"4-h","KeyT":"5-h","KeyY":"6-h","KeyU":"7-h","KeyI":"i-h","KeyA":"1","KeyS":"2","KeyD":"3","KeyF":"4","KeyG":"5","KeyH":"6","KeyJ":"7","KeyZ":"1-l","KeyX":"2-l","KeyC":"3-l","KeyV":"4-l","KeyB":"5-l","KeyN":"6-l","KeyM":"7-l","KeyO":"1#-h","KeyP":"3b-h","BracketLeft":"4#-h","BracketRight":"5#-h","Backslash":"7b-h","Digit6":"1#","Digit7":"3b","Digit8":"4#","Digit9":"5#","Digit0":"7b","Digit1":"1#-l","Digit2":"3b-l","Digit3":"4#-l","Digit4":"5#-l","Digit5":"7b-l"}}
+
+{"higher":"shiftKey","lower":"ctrlKey","highSemitone":{"label":"","key":""},"lowSemitone":{"label":"","key":""},"common":{"Digit1":"1","Digit2":"2","Digit3":"3","Digit4":"4","Digit5":"5","Digit6":"6","Digit7":"7","Digit8":"i","KeyZ":"1#","KeyX":"3b","KeyC":"4#","KeyV":"5#","KeyB":"7b"}}
+```
 
 ## 拓展
 
