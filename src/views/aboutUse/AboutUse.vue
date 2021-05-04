@@ -16,7 +16,7 @@
         <h3>功能</h3>
         <p>和 FF14 一致的，基于 Web Audio 的演奏功能</p>
         <p>和 FF14 一致的，两种键盘 & 自定义键位</p>
-        <p>和 FF14 一致的，乐器选择 🎸🎻🎹🎺🥁</p>
+        <p>和 FF14 一致的，乐器选择 🎸🎻🎹🎺🥁 支持长按</p>
         <p>解析 MIDI 文件为曲谱</p>
         <p>播放解析出的曲谱</p>
         <p>不断更新的曲库</p>
@@ -59,11 +59,6 @@
 <script>
 export default {
   name: 'AboutUse',
-  data() {
-    return {
-
-    }
-  },
   computed: {
     showAboutUse() {
       return this.$store.getters.showAboutUse
@@ -79,7 +74,6 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  // height: 80vh;
   padding-top: 20px;
   margin-right: -10px;
   user-select: text;
@@ -87,24 +81,6 @@ export default {
     background-color: #eee;
     color: #383838;
   }
-  // overflow-y: auto;
-  // scrollbar-width: thin;
-  // scrollbar-color: #686868 rgba(0, 0, 0, 0.2);
-  // &::-webkit-scrollbar {
-  //   width: 6px;
-  //   height: 6px;
-  // }
-  // &::-webkit-scrollbar-track {
-  //   background: rgba(0, 0, 0, 0.2);
-  //   border-radius: 4px;
-  // }
-  // &::-webkit-scrollbar-thumb {
-  //   background-color: #686868;
-  //   border-radius: 4px;
-  //   &:hover {
-  //     background-color: rgba(144, 147, 153, 0.5);
-  //   }
-  // }
   .part {
     margin-bottom: 40px;
     h3 {

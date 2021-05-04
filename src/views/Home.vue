@@ -13,11 +13,14 @@
           :class="{ 'is-wake-lock' :isWakeLock }"
           title="常亮模式" @click="toggleLightMode">
         </i>
-        <i v-if="!isMobile && isSupportImmersionMode" title="沉浸模式（不会有按键冲突）" class="iconfont icon-chenjin" @click="toggleImmersionMode"></i>
-        <i class="iconfont icon-keyboard" title="按键设置" @click="openKeyboardMenu"></i>
-        <!-- <i v-show="!isMobile" class="iconfont icon-yinxiao" title="音色设置" @click="openTimbreMenu"></i> -->
-        <i class="iconfont icon-yinxiao" title="乐器设置" @click="openInstrumentMenu"></i>
-        <i class="iconfont icon-question" title="使用须知" @click="openAboutUse"></i>
+        <i
+          v-if="!isMobile && isSupportImmersionMode"
+          style="color: #eee;" title="沉浸模式（不会有按键冲突）"
+          class="iconfont icon-chenjin" @click="toggleImmersionMode">
+        </i>
+        <i class="iconfont icon-keyboard" style="color: #9fa8da;" title="按键设置" @click="openKeyboardMenu"></i>
+        <i class="iconfont icon-yinxiao" style="color: #ef9a9a;" title="乐器设置" @click="openInstrumentMenu"></i>
+        <i class="iconfont icon-question" style="color: #b3e5fc;" title="使用须知" @click="openAboutUse"></i>
       </div>
       <!-- bg -->
       <div class="bg-img" :class="{ 'bg-img__mobile': isMobile }"></div>
@@ -38,7 +41,7 @@
         <span
           v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
           @click="showTip = !showTip">
-          新增演奏模式辣，如果出现Bug记得告诉我哦(๑•̀ㅂ•́)و✧
+          新增音游模式辣，如果出现Bug记得告诉我哦(๑•̀ㅂ•́)و✧
         </span>
         <p>
           Made with <span style="color: #e91e63;">❤</span>
@@ -47,8 +50,6 @@
     </div>
     <!-- 按键设置 -->
     <keyboard-menu></keyboard-menu>
-    <!-- 音色设置 -->
-    <!-- <timbre-menu></timbre-menu> -->
     <!-- 乐器选择 -->
     <instrument-menu></instrument-menu>
     <!-- 使用须知 -->
@@ -62,7 +63,6 @@
 import Music from '@/utils/Music'
 import Keyboard from './keyboard/Keyboard'
 import KeyboardMenu from './keyboardmenu/KeyboardMenu'
-// import TimbreMenu from './timbreMenu/TimbreMenu'
 import InstrumentMenu from './instrumentMenu/InstrumentMenu'
 import MusicScore from './musicScore/MusicScore'
 import AboutUse from './aboutUse/AboutUse'
@@ -76,7 +76,6 @@ export default {
   components: {
     Keyboard,
     KeyboardMenu,
-    // TimbreMenu,
     InstrumentMenu,
     MusicScore,
     AboutUse
@@ -203,14 +202,12 @@ export default {
     transition: all 0.3s;
     cursor: pointer;
     &:hover {
-      color: #fff;
       transform: scale(1.2);
     }
   }
   .icon-changlliang {
-    color: #555;
+    color: #ffcc80;
     &:hover {
-      color: #555;
       transform: scale(1);
     }
   }
@@ -263,10 +260,9 @@ export default {
 }
 
 /* mobile */
-// .bg-img__mobile {
-//   bottom: 0;
-//   background-size: 100% auto;
-// }
+.bg-img__mobile {
+  background-size: 100% auto;
+}
 .version-tip__mobile {
   position: absolute;
   bottom: 100%;

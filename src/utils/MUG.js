@@ -124,30 +124,43 @@ class MUG {
     ctx.textBaseline = 'middle'
     ctx.clearRect(0, 0, width, height)
 
+    const isFullScale = this.isFullScale
     list.forEach(item => {
       const pitch = item[2]
       let x
       let w
-
-      // TODO: 全键盘区分
-
       // 黑白键区分
       const p = pitch % 12
       const isBlack = Boolean(this.blackKeys[p])
-      if (isBlack) {
-        x = width / 22 * (Math.floor((pitch - 48) / 12) * 7 + this.blackKeys[p] - 0.5)
-        w = width * 0.04
-        ctx.shadowColor = '#656060'
-        ctx.fillStyle = '#333'
-      } else {
-        x = width / 22 * (Math.floor((pitch - 48) / 12) * 7 + this.whiteKeys[p])
-        w = width / 22
-        ctx.shadowColor = '#333'
-        ctx.fillStyle = '#e2e1e4'
-      }
 
       const y = height - height * (item[0] - t) / 3000
       const h = Math.max(1 * item[1], 20)
+
+      if (isFullScale) {
+        if (isBlack) {
+          x = width / 22 * (Math.floor((pitch - 48) / 12) * 7 + this.blackKeys[p] - 0.5)
+          w = width * 0.04
+          ctx.shadowColor = '#656060'
+          ctx.fillStyle = '#333'
+        } else {
+          x = width / 22 * (Math.floor((pitch - 48) / 12) * 7 + this.whiteKeys[p])
+          w = width / 22
+          ctx.shadowColor = '#333'
+          ctx.fillStyle = '#e2e1e4'
+        }
+      } else {
+        if (isBlack) {
+          x = width / 8 * (this.blackKeys[p] - 0.32)
+          w = width * 0.08
+          ctx.shadowColor = '#656060'
+          ctx.fillStyle = '#333'
+        } else {
+          x = width / 8 * this.whiteKeys[p]
+          w = width / 8
+          ctx.shadowColor = '#333'
+          ctx.fillStyle = '#e2e1e4'
+        }
+      }
 
       this._drawRoundRect(ctx, x, y - h / 2, w, h, 10)
       // 按键显示
@@ -168,6 +181,7 @@ class MUG {
         ctx.fillText(item[3], x + w / 2, y)
       }
     })
+
     // over
     if (!list.length && this.scoreIndex !== 0) {
       this.stop()
