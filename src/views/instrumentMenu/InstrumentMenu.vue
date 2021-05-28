@@ -1,7 +1,7 @@
 <template>
   <ff-dialog
     :visible="showInstrumentMenu"
-    title="声音设置 - 测试版 New~" append-to-body
+    title="声音设置" append-to-body
     default-top="5%"
     max-height="70vh" @close="handleCloseInstrumentMenu">
     <!--  -->
@@ -66,6 +66,12 @@ export default {
       // 长笛 双簧管 单簧管 横笛 排箫 小号 长号 大号 圆号 萨克斯
       // 定音鼓 邦戈鼓 低音鼓 小军鼓 镲
       instrumentList: [
+        [
+          { name: '尼龙弦吉他', fileName: 'nylon-guitar', icon: require('@/assets/guitar.png') },
+          { name: '电吉他(清音)', fileName: 'clean-guitar', icon: require('@/assets/guitar.png') },
+          { name: '电吉他(驱动)', fileName: 'overdriven-guitar', icon: require('@/assets/guitar.png') },
+          { name: '贝司', fileName: 'bass', icon: require('@/assets/guitar.png') }
+        ],
         [
           { name: '竖琴', fileName: 'harp', icon: require('@/assets/harp.png') },
           { name: '钢琴', fileName: 'piano', icon: require('@/assets/piano.png') },

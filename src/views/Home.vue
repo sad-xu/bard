@@ -41,7 +41,7 @@
         <span
           v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
           @click="showTip = !showTip">
-          新增音游模式辣，如果出现Bug记得告诉我哦(๑•̀ㅂ•́)و✧
+          <span style="color: #d86861;">新增吉他乐器！</span> | 有没有好心人能帮忙丰富一下曲库，球球了ಥ_ಥ
         </span>
         <p>
           Made with <span style="color: #e91e63;">❤</span>
@@ -213,6 +213,24 @@ export default {
   }
   .icon-chenjin {
     font-size: 22px;
+  }
+  .icon-yinxiao {
+    position: relative;
+    &::after {
+      content: 'New!';
+      position: absolute;
+      right: 6px;
+      top: 1px;
+      color: #ffeb3b;
+      font-size: 12px;
+      transform: translate(60%, -60%) rotate(23deg);
+      transition: 0.6s;
+    }
+    &:hover {
+      &::after {
+        transform: translate(60%, -60%) rotate(383deg);
+      }
+    }
   }
   .is-wake-lock {
     color: #ffc107 !important;

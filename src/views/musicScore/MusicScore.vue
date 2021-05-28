@@ -348,7 +348,8 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   transition: transform 0.3s;
-  &::after {
+
+  /* &::after {
     content: 'New';
     position: absolute;
     right: 0;
@@ -356,7 +357,7 @@ export default {
     color: #ffeb3b;
     font-size: 12px;
     transform: translate(60%, -60%);
-  }
+  } */
   &:hover {
     transform: scale(1.1);
   }
