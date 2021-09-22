@@ -15,10 +15,11 @@ class Music {
   constructor() {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const totalGainNode = context.createGain()
-    const compressor = context.createDynamicsCompressor()
+    // const compressor = context.createDynamicsCompressor()
 
-    totalGainNode.connect(compressor)
-    compressor.connect(context.destination)
+    // totalGainNode.connect(compressor)
+    // compressor.connect(context.destination)
+    totalGainNode.connect(context.destination)
 
     this.context = context
     this.volume = 0 // 音量百分比
@@ -75,19 +76,20 @@ class Music {
   // 停止所有
   silentAll() {
     for (const key in this.singing) {
-      this._soundOff(key)
+      // this.singing[key].forEach(item => {
+      this._soundOff(this.singing[key])
+      // })
     }
   }
 
   // 静音
   _soundOff(key) {
-    if (this.singing[key]) {
+    const currentSing = this.singing[key]
+    if (currentSing) {
       const currentTime = this.context.currentTime
-      // this.singing[key][0].gain.setTargetAtTime(0.01, currentTime, this.duration / 3)
-      // this.singing[key][0].gain.exponentialRampToValueAtTime(0.01, currentTime + this.duration)
-      this.singing[key][0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
-      // this.singing[key][0].gain.setValueCurveAtTime(new Float32Array([0.7, 0.5, 0.2, 0]), currentTime, this.duration)
-      this.singing[key][1].stop(currentTime + this.duration)
+      // currentSing[0].gain.setTargetAtTime(0.01, currentTime + 0.1, this.duration / 2)
+      currentSing[0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
+      currentSing[1].stop(currentTime + this.duration)
       delete this.singing[key]
     }
   }

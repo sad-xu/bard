@@ -41,7 +41,7 @@
         <span
           v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
           @click="showTip = !showTip">
-          <span style="color: #d86861;">新增吉他乐器！</span> | 有没有好心人能帮忙丰富一下曲库，球球了ಥ_ಥ
+          <span>应该不会再更新了<s>(再偷偷改个Bug)</s></span> | <span style="color: #ff7043;">升级版演奏家</span>和<span style="color: #b39ddb;">另一个神秘项目</span>正在筹备中，敬请期待哟~
         </span>
         <p>
           Made with <span style="color: #e91e63;">❤</span>
@@ -213,24 +213,6 @@ export default {
   }
   .icon-chenjin {
     font-size: 22px;
-  }
-  .icon-yinxiao {
-    position: relative;
-    &::after {
-      content: 'New!';
-      position: absolute;
-      right: 6px;
-      top: 1px;
-      color: #ffeb3b;
-      font-size: 12px;
-      transform: translate(60%, -60%) rotate(23deg);
-      transition: 0.6s;
-    }
-    &:hover {
-      &::after {
-        transform: translate(60%, -60%) rotate(383deg);
-      }
-    }
   }
   .is-wake-lock {
     color: #ffc107 !important;
