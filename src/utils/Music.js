@@ -77,7 +77,7 @@ class Music {
   silentAll() {
     for (const key in this.singing) {
       // this.singing[key].forEach(item => {
-      this._soundOff(this.singing[key])
+      this._soundOff(key)
       // })
     }
   }
