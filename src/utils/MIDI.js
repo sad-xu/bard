@@ -34,6 +34,19 @@ function getTruthNum(byteArray) {
   return sum
 }
 
+/** 限制音调范围 48-59 60-71 72-83 84 */
+function limitTone(note) {
+  const t = note[0]
+  if (t < 48) {
+    console.log(t)
+    note[0] = 59 - ((47 - t) % 12)
+  } else if (t > 84) {
+    console.log(t)
+    note[0] = 72 + ((t - 84) % 12)
+  }
+  return note
+}
+
 /*
   头块 + 音轨块 * n
 
@@ -108,14 +121,14 @@ export function parseMIDI(arrayBuffer) {
         // case stat < 0x80:
         //   break
         case stat >= 0x80 && stat <= 0x8f:
-          item.push(track.subarray(i + 1, i + 3))
+          item.push(limitTone(track.subarray(i + 1, i + 3)))
           item.push('up')
           i += 3
           break
         case stat >= 0x90 && stat <= 0x9f: {
           // 按下且力度为0 === 声音关闭
           const note = track.subarray(i + 1, i + 3)
-          item.push(note)
+          item.push(limitTone(note))
           if (note[1] === 0) {
             item.push('up')
           } else {
@@ -213,7 +226,10 @@ export function parseMIDI(arrayBuffer) {
       // console.log(stat, item)
       list.push(item)
     }
-    tracks.push(list)
+    // 过滤无音符的音轨
+    if (list.some((item) => item[2] === 'down')) {
+      tracks.push(list)
+    }
   })
   midiInfo.trackChunk = tracks
   return midiInfo

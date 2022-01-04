@@ -41,7 +41,7 @@
         <span
           v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
           @click="showTip = !showTip">
-          <span>应该不会再更新了<s>(再偷偷改个Bug)</s></span> | <span style="color: #ff7043;">升级版演奏家</span>和<span style="color: #b39ddb;">另一个神秘项目</span>正在筹备中，敬请期待哟~
+          <span>再小优化一下</span> | <span style="color: #cddc39;">光之演奏家2.0</span>正在开发中，擅长UI/UX的请帮帮我~
         </span>
         <p>
           Made with <span style="color: #e91e63;">❤</span>

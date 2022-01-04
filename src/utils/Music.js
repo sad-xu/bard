@@ -87,8 +87,8 @@ class Music {
     const currentSing = this.singing[key]
     if (currentSing) {
       const currentTime = this.context.currentTime
-      // currentSing[0].gain.setTargetAtTime(0.01, currentTime + 0.1, this.duration / 2)
-      currentSing[0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
+      currentSing[0].gain.setTargetAtTime(0.01, currentTime + 0.1, this.duration / 3)
+      // currentSing[0].gain.linearRampToValueAtTime(0.01, currentTime + this.duration)
       currentSing[1].stop(currentTime + this.duration)
       delete this.singing[key]
     }

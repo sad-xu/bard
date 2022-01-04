@@ -133,7 +133,6 @@ export default {
       // 将 tick 时间缩放为20ms左右
       const tickTime = headerChunk.tempo / headerChunk.tick / 1000
       const mult = 20 / tickTime
-
       trackChunk.forEach(chunk => {
         let t = 0
         let lastT = 0
