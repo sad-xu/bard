@@ -161,9 +161,9 @@ module.exports = {
         .tap(args => {
           args[0].cdn = {
             js: [
-              'https://cdn.jsdelivr.net/npm/vue@2.6.11',
-              'https://cdn.jsdelivr.net/npm/vue-router@3.2.0',
-              'https://cdn.jsdelivr.net/npm/vuex@3.6.0'
+              'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vue@2.6.js',
+              'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vue-router@3.2.js',
+              'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vuex@3.6.js'
             ]
           }
           return args

@@ -29,21 +29,23 @@
         class="video-box" :class="{ 'video-box__mobile': isMobile, 'video-loaded': videoLoadend }"
         autoplay loop muted
         @loadeddata="handleLoadeddata">
-        <source src="https://static.web.sdo.com/jijiamobile/pic/ff14/ffweb850/20210401vid.mp4?123" type="video/mp4">
+        <!-- <source src="https://static.web.sdo.com/jijiamobile/pic/ff14/ffweb850/20210401vid.mp4?123" type="video/mp4"> -->
+        <source src="https://static.web.sdo.com/jijiamobile/pic/ff14/ffweb860/20220210vid.mp4" type="video/mp4">
       </video>
       <!-- 键盘 -->
       <keyboard v-show="!isMobile" @sing="sing" @silent="silent" @silentAll="silentAll"></keyboard>
       <!-- 页脚 -->
       <footer class="footer">
-        <p>
+        <p v-if="!isMobile">
           Produced by <span style="color: #c7a2e8;">妙蛤种子@琥珀原</span>
         </p>
-        <span
-          v-if="!isMobile" style="color: #cfcfcf; cursor: pointer;" :style="{ opacity: showTip ? '1' : '0' }"
-          @click="showTip = !showTip">
-          <span>再小优化一下</span> | <span style="color: #cddc39;">光之演奏家2.0</span>正在开发中，擅长UI/UX的请帮帮我~
+        <!-- :style="{ opacity: showTip ? '1' : '0' }" -->
+        <!-- @click="showTip = !showTip" -->
+        <span style="color: #cfcfcf;">
+          <a href="https://fffff.games" target="_blank" style="color: #ff9800;">2.0.beta 传送门</a>
+          <span style="padding-left:8px;">欢迎试用，希望能得到你的反馈~</span>
         </span>
-        <p>
+        <p v-if="!isMobile">
           Made with <span style="color: #e91e63;">❤</span>
         </p>
       </footer>
