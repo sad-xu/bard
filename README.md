@@ -26,8 +26,11 @@
 
 ```bash
 cd dist
-# 上传
+# 全部上传
 tcb hosting deploy -e ff14-3gaz7i4cedb8328b
+# 上传部分
+tcb hosting deploy ./static/ static/ -e ff14-3gaz7i4cedb8328b
+tcb hosting deploy ./index.html ./index.html -e ff14-3gaz7i4cedb8328b
 # 删除
 tcb hosting delete -e ff14-3gaz7i4cedb8328b
 # tcb hosting delete -d cloudPath -e ff14-3gaz7i4cedb8328b

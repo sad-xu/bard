@@ -51,6 +51,66 @@
 <script>
 import Music from '@/utils/Music'
 
+const INSTRUMENT_LIST = [
+  [
+    { name: '竖琴', fileName: 'ff-harp', icon: require('@/assets/harp.png') },
+    { name: '钢琴', fileName: 'ff-grandpiano', icon: require('@/assets/piano.png') },
+    { name: '鲁特琴', fileName: 'ff-steelguitar', icon: require('@/assets/steelguitar.png') },
+    { name: '拨弦提琴', fileName: 'ff-pizzicato', icon: require('@/assets/pizzicato.png') }
+  ],
+  [
+    { name: '小提琴', fileName: 'ff-violin', icon: require('@/assets/violin.png') },
+    { name: '中提琴', fileName: 'ff-viola', icon: require('@/assets/viola.png') },
+    { name: '大提琴', fileName: 'ff-cello', icon: require('@/assets/cello.png') },
+    { name: '低音提琴', fileName: 'ff-contrabass', icon: require('@/assets/contrabass.png') }
+  ],
+  [
+    { name: '过载吉他', fileName: 'ff-ele-overdriven', icon: require('@/assets/overdriven-guitar.png') },
+    { name: '清音吉他', fileName: 'ff-ele-clean', icon: require('@/assets/clean-guitar.png') },
+    { name: '闷音吉他', fileName: 'ff-ele-mute', icon: require('@/assets/muted-guitar.png') },
+    { name: '重力和弦', fileName: 'ff-ele-powerchord', icon: require('@/assets/powerchord-guitar.png') },
+    { name: '特殊奏法', fileName: 'ff-ele-special', icon: require('@/assets/special-guitar.png') }
+  ],
+  [
+    { name: '长笛', fileName: 'ff-flute', icon: require('@/assets/flute.png') },
+    { name: '双簧管', fileName: 'ff-oboe', icon: require('@/assets/oboe.png') },
+    { name: '单簧管', fileName: 'ff-clarinet', icon: require('@/assets/clarinet.png') },
+    { name: '横笛', fileName: 'ff-piccolo', icon: require('@/assets/piccolo.png') },
+    { name: '排箫', fileName: 'ff-panflute', icon: require('@/assets/panflute.png') }
+  ],
+  [
+    { name: '小号', fileName: 'ff-trumpet', icon: require('@/assets/trumpet.png') },
+    { name: '长号', fileName: 'ff-trombone', icon: require('@/assets/trombone.png') },
+    { name: '大号', fileName: 'ff-tuba', icon: require('@/assets/tuba.png') },
+    { name: '圆号', fileName: 'ff-horn', icon: require('@/assets/horn.png') },
+    { name: '萨克斯', fileName: 'ff-altosax', icon: require('@/assets/altosax.png') }
+  ],
+  [
+    { name: '定音鼓', fileName: 'ff-timpani', icon: require('@/assets/timpani.png') },
+    { name: '邦戈鼓', fileName: 'ff-bongo', icon: require('@/assets/bongo.png') },
+    { name: '低音鼓', fileName: 'ff-bd', icon: require('@/assets/bd.png') },
+    { name: '小军鼓', fileName: 'ff-snare', icon: require('@/assets/snare.png') },
+    { name: '镲', fileName: 'ff-cymbal', icon: require('@/assets/cymbal.png') }
+  ]
+]
+
+// 乐器名 兜底
+const INSTRUMENT_MAP = {}
+INSTRUMENT_LIST.forEach((arr) => {
+  arr.forEach((item) => {
+    INSTRUMENT_MAP[item.fileName] = item.fileName
+  })
+})
+const localInstrument = localStorage.getItem('instrument')
+let defaultInstrument = localInstrument || 'ff-grandpiano'
+if (localInstrument && !INSTRUMENT_MAP[localInstrument]) {
+  // 不存在的乐器
+  window.localStorage.setItem('instrument', 'ff-grandpiano')
+  defaultInstrument = 'ff-grandpiano'
+}
+
+Music.setZone(defaultInstrument)
+
 export default {
   name: 'InstrumentMenu',
   data() {
@@ -60,41 +120,9 @@ export default {
       // 持续时间 0.5 - 3
       duration: localStorage.getItem('duration') || 0.6,
       // 乐器
-      selectedName: localStorage.getItem('instrument'),
-      // 使用 FluidR3_GM 音色库
-      // 竖琴 钢琴 鲁特琴 拨弦提琴
-      // 长笛 双簧管 单簧管 横笛 排箫 小号 长号 大号 圆号 萨克斯
-      // 定音鼓 邦戈鼓 低音鼓 小军鼓 镲
-      instrumentList: [
-        [
-          { name: '尼龙弦吉他', fileName: 'nylon-guitar', icon: require('@/assets/guitar.png') },
-          { name: '电吉他(清音)', fileName: 'clean-guitar', icon: require('@/assets/guitar.png') },
-          { name: '电吉他(驱动)', fileName: 'overdriven-guitar', icon: require('@/assets/guitar.png') },
-          { name: '贝司', fileName: 'bass', icon: require('@/assets/guitar.png') }
-        ],
-        [
-          { name: '竖琴', fileName: 'harp', icon: require('@/assets/harp.png') },
-          { name: '钢琴', fileName: 'piano', icon: require('@/assets/piano.png') },
-          { name: '小提琴', fileName: 'violin', icon: require('@/assets/harp.png') }
-          // { name: '鲁特琴', fileName: '', icon: require('@/assets/lute.png') },
-        ],
-        [
-          { name: '长笛', fileName: 'flute', icon: require('@/assets/flute.png') },
-          { name: '双簧管', fileName: 'oboe', icon: require('@/assets/oboe.png') },
-          { name: '单簧管', fileName: 'clarinet', icon: require('@/assets/clarinet.png') },
-          { name: '小号', fileName: 'trumpet', icon: require('@/assets/trumpet.png') },
-          { name: '长号', fileName: 'trombone', icon: require('@/assets/trombone.png') },
-          { name: '大号', fileName: 'tuba', icon: require('@/assets/tuba.png') },
-          { name: '圆号', fileName: 'horn', icon: require('@/assets/horn.png') }
-        ],
-        [
-          { name: '定音鼓', fileName: 'timpani', icon: require('@/assets/timpani.png') },
-          { name: '镲', fileName: 'cymbal', icon: require('@/assets/cymbal.png') }
-        ],
-        [
-          { name: '天使低语', fileName: 'ahas', icon: require('@/assets/ahas.png') }
-        ]
-      ]
+      selectedName: defaultInstrument,
+      // 乐器库
+      instrumentList: INSTRUMENT_LIST
     }
   },
   computed: {

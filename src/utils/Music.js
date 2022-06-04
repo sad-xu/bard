@@ -1,3 +1,5 @@
+import { base64ToArrayBuffer } from '@/utils'
+
 /**
  * 乐器发声 72-83
  * 声音资源 https://surikov.github.io/webaudiofontdata/sound/0020_Aspirin_sf2_file.html
@@ -8,24 +10,20 @@
 const instanceList = []
 // 所有乐器音色
 const soundFontMap = {}
-let currentZone = {}
+let currentZoneList = []
 
 // (AudioBufferSourceNode --> gainNode) --> totalGainNode --> compressor --> destination
 class Music {
   constructor() {
     const context = new (window.AudioContext || window.webkitAudioContext)()
     const totalGainNode = context.createGain()
-    // const compressor = context.createDynamicsCompressor()
-
-    // totalGainNode.connect(compressor)
-    // compressor.connect(context.destination)
     totalGainNode.connect(context.destination)
 
     this.context = context
     this.volume = 0 // 音量百分比
     this.duration = 0.6 // 声音持续时间
     this.totalGainNode = totalGainNode
-    this.zone = currentZone // 当前音色
+    this.zoneList = currentZoneList // 当前音色
     this.singing = {} // 正在演奏的
     this.setVolume(localStorage.getItem('volume') || 0.3)
     // 保存实例
@@ -37,27 +35,29 @@ class Music {
   // 高 低 平 higher lower ''
   // 高/低 半音 high low
   sing(note) {
+    if (note > 84) note = 84
+    else if (note < 48) note = 48
+
     const context = this.context
     const bufferSourceNode = context.createBufferSource()
     const gainNode = context.createGain()
-    const zone = this.zone
+    const zone = this.zoneList.find(
+      (zone) => zone.keyRangeLow <= note && zone.keyRangeHigh >= note
+    )
+    if (!zone) return
     bufferSourceNode.buffer = zone.buffer
-    bufferSourceNode.loop = true
-    bufferSourceNode.loopStart = zone.loopStart / zone.sampleRate
-    bufferSourceNode.loopEnd = zone.loopEnd / zone.sampleRate
+    bufferSourceNode.loop = zone.loop
+    if (zone.loop) {
+      bufferSourceNode.loopStart = zone.loopStart / zone.sampleRate
+      bufferSourceNode.loopEnd = zone.loopEnd / zone.sampleRate
+    }
+
+    bufferSourceNode.detune.value = (note - zone.keyRangeMiddle) * 100
 
     // 音调 通过控制播放速度调整频率
-    const baseDetune = zone.originalPitch - 100 * zone.coarseTune - zone.fineTune
-    const playbackRate = 1 * Math.pow(2, (100 * note - baseDetune) / 1200)
-    bufferSourceNode.playbackRate.value = playbackRate // 播放速度 - 频率
-
-    // 半音 + 八度
-    // let detune = 0
-    // if (pitch === 'higher') detune += 1200
-    // else if (pitch === 'lower') detune -= 1200
-    // if (semitone === 'high') detune += 100
-    // else if (semitone === 'low') detune -= 100
-    // bufferSourceNode.detune.value = detune // ±100 半音 ±1200 八度
+    // const baseDetune = zone.originalPitch - 100 * zone.coarseTune - zone.fineTune
+    // const playbackRate = 1 * Math.pow(2, (100 * note - baseDetune) / 1200)
+    // bufferSourceNode.playbackRate.value = playbackRate // 播放速度 - 频率
 
     bufferSourceNode.connect(gainNode)
     gainNode.connect(this.totalGainNode)
@@ -121,7 +121,7 @@ Music.setAllDuration = function(duration) {
 }
 
 // 设置乐器
-Music.setZone = function(name = 'piano') {
+Music.setZone = function(name = 'ff-grandpiano') {
   localStorage.setItem('instrument', name)
   return new Promise((resolve, reject) => {
     if (soundFontMap[name]) {
@@ -134,42 +134,42 @@ Music.setZone = function(name = 'piano') {
       request.open('GET', `/soundfonts/${name}.json`, true)
       request.responseType = 'json'
       request.onload = () => {
-        const zone = request.response
-        const len = zone.file.length
-        const arraybuffer = new ArrayBuffer(len)
-        const view = new Uint8Array(arraybuffer)
-        const decoded = atob(zone.file)
-        for (let i = 0; i < decoded.length; i++) {
-          view[i] = decoded.charCodeAt(i)
-        }
-        context.decodeAudioData(arraybuffer, audioBuffer => {
-          zone.buffer = audioBuffer
+        const zoneList = request.response.map((z) => {
+          const arraybuffer = base64ToArrayBuffer(z.file)
+          const zone = {
+            keyRangeLow: z.keyRangeLow,
+            keyRangeMiddle: z.keyRangeMiddle,
+            keyRangeHigh: z.keyRangeHigh,
+            buffer: null,
+            loop: z.loop,
+            loopStart: z.loopStart || 0,
+            loopEnd: z.loopEnd || 0,
+            sampleRate: z.sampleRate || 44100
+          }
+          context.decodeAudioData(arraybuffer, (audioBuffer) => {
+            zone.buffer = audioBuffer
+          })
+          return zone
         })
-        zone.loopStart = zone.loopStart || 0
-        zone.loopEnd = zone.loopEnd || 0
-        zone.coarseTune = zone.coarseTune || 0
-        zone.fineTune = zone.fineTune || 0
-        zone.originalPitch = zone.originalPitch || 6000
-        zone.sampleRate = zone.sampleRate || 44100
-        soundFontMap[name] = zone
-        resolve(zone)
+        soundFontMap[name] = zoneList
+        resolve(zoneList)
       }
       request.onerror = () => {
         reject(new Error('zone request err!'))
       }
       request.send(null)
     }
-  }).then(zone => {
-    currentZone = zone
+  }).then(zoneList => {
+    currentZoneList = zoneList
     instanceList.forEach(instance => {
-      instance.zone = zone
+      instance.zoneList = zoneList
     })
   })
 }
 
-if (!localStorage.getItem('instrument')) {
-  localStorage.setItem('instrument', 'harp')
-}
-Music.setZone(localStorage.getItem('instrument'))
+// if (!localStorage.getItem('instrument')) {
+//   localStorage.setItem('instrument', 'harp')
+// }
+// Music.setZone(localStorage.getItem('instrument'))
 
 export default Music
