@@ -42,8 +42,8 @@
         <!-- :style="{ opacity: showTip ? '1' : '0' }" -->
         <!-- @click="showTip = !showTip" -->
         <span style="color: #cfcfcf;">
-          <a href="https://fffff.games" target="_blank" style="color: #ff9800;">2.0.beta 传送门</a>
-          <span style="padding-left:8px;">欢迎试用，希望能得到你的反馈~</span>
+          <span style="padding-left:8px;">1.0将于<span style="color: #ffeb3b;">2022.10.14</span><span style="color: #f00">停止服务</span>，请大家去用2.0吧</span>
+          <a href="https://fffff.games" target="_blank" style="color: #ff9800;">2.0 传送门</a>
         </span>
         <p v-if="!isMobile">
           Made with <span style="color: #e91e63;">❤</span>
@@ -56,6 +56,8 @@
     <instrument-menu></instrument-menu>
     <!-- 使用须知 -->
     <about-use></about-use>
+    <!-- 公告 -->
+    <notice-dialog></notice-dialog>
     <!-- 乐谱选择 -->
     <music-score :filter="hasDialogOpended || showMusicScore"></music-score>
   </div>
@@ -68,6 +70,7 @@ import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 import InstrumentMenu from './instrumentMenu/InstrumentMenu'
 import MusicScore from './musicScore/MusicScore'
 import AboutUse from './aboutUse/AboutUse'
+import NoticeDialog from './noticeDialog/NoticeDialog'
 
 const musician = new Music()
 
@@ -80,7 +83,8 @@ export default {
     KeyboardMenu,
     InstrumentMenu,
     MusicScore,
-    AboutUse
+    AboutUse,
+    NoticeDialog
   },
   data() {
     return {
@@ -105,7 +109,7 @@ export default {
     hasDialogOpended() {
       return this.$store.getters.showKeyboardMenu ||
         this.$store.getters.showInstrumentMenu ||
-        this.$store.getters.showAboutUse
+        this.$store.getters.showAboutUse || this.$store.getters.showNotice
     }
   },
   created() {

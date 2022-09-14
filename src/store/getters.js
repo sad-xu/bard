@@ -6,7 +6,8 @@ const getters = {
   isMobile: state => state.app.isMobile,
   showMusicScore: state => state.app.showMusicScore,
   showAboutUse: state => state.app.showAboutUse,
-  showInstrumentMenu: state => state.app.showInstrumentMenu
+  showInstrumentMenu: state => state.app.showInstrumentMenu,
+  showNotice: state => state.app.showNotice
 }
 
 export default getters

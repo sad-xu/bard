@@ -2,7 +2,8 @@ const state = {
   isMobile: /Android|webOS|iPhone|iPod|BlackBerry/i.test(window.navigator.userAgent),
   showMusicScore: false,
   showAboutUse: false,
-  showInstrumentMenu: false
+  showInstrumentMenu: false,
+  showNotice: false
 }
 
 const mutations = {
@@ -14,6 +15,9 @@ const mutations = {
   },
   SET_SHOW_INSTRUMENT_MENU: (state, v) => {
     state.showInstrumentMenu = v
+  },
+  SET_SHOW_NOTICE: (state, v) => {
+    state.showNotice = v
   }
 }
 
@@ -26,6 +30,9 @@ const actions = {
   },
   toggleInstrumentMenu({ commit, state }) {
     commit('SET_SHOW_INSTRUMENT_MENU', !state.showInstrumentMenu)
+  },
+  toggleNotice({ commit, state }) {
+    commit('SET_SHOW_NOTICE', !state.showNotice)
   }
 }
 
