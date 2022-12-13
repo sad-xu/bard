@@ -48,7 +48,7 @@ canvas 波形图  当前播放曲目 + 键盘演奏响应
 
 MIDI 相关 解析mid文件生成谱子并播放
 
-歌曲列表随机、顺序、重播功能 歌曲暂停、倍速、上下一首功能 
+歌曲列表随机、顺序、重播功能 歌曲暂停、倍速、上下一首功能
 
 进度条显示、拖拽功能
 
@@ -78,21 +78,21 @@ ff-button 按钮
 
 ## 参考
 
-https://googlechromelabs.github.io/web-audio-samples/
+<https://googlechromelabs.github.io/web-audio-samples/>
 
-https://googlechromelabs.github.io/web-audio-samples/archive/demos/samples.html
+<https://googlechromelabs.github.io/web-audio-samples/archive/demos/samples.html>
 
-https://xsound.app/
+<https://xsound.app/>
 
 ## MIDI
 
-https://www.jianshu.com/p/31d02765e1ec
+<https://www.jianshu.com/p/31d02765e1ec>
 
-https://github.com/grimmdude/MidiPlayerJS/blob/9c3bc8ddd1f0eed026d6be6e9d4f73bcdd0d637f/src/player.js
+<https://github.com/grimmdude/MidiPlayerJS/blob/9c3bc8ddd1f0eed026d6be6e9d4f73bcdd0d637f/src/player.js>
 
-http://read.pudn.com/downloads64/doc/fileformat/227082/midi_information_and_standard_midi_file_format_anatomy.pdf
+<http://read.pudn.com/downloads64/doc/fileformat/227082/midi_information_and_standard_midi_file_format_anatomy.pdf>
 
-https://www.jianshu.com/p/6c495b51a40c
+<https://www.jianshu.com/p/6c495b51a40c>
 
 歌曲资源网站 - `https://www.midishow.com/search/result?q=ff14&sort=marks`
 
@@ -102,9 +102,9 @@ https://www.jianshu.com/p/6c495b51a40c
 
   方案一：
 
-  https://web.dev/keyboard-lock/
+  <https://web.dev/keyboard-lock/>
 
-  https://garykac.github.io/system-keyboard-lock/
+  <https://garykac.github.io/system-keyboard-lock/>
 
   先通过代码进入全屏模式（F11无效）
   调用 lock
@@ -114,7 +114,7 @@ https://www.jianshu.com/p/6c495b51a40c
   await navigator.keyboard.lock()
   ```
 
-  `chrome://flags/#system-keyboard-lock = Default / Enabled` 
+  `chrome://flags/#system-keyboard-lock = Default / Enabled`
 
   方案二：
 
@@ -143,9 +143,9 @@ https://www.jianshu.com/p/6c495b51a40c
 
 自定义波形参数
 
-https://github.com/lukehorvat/web-audio-oscillators/tree/master/lib
+<https://github.com/lukehorvat/web-audio-oscillators/tree/master/lib>
 
-https://github.com/mohayonao/wave-tables
+<https://github.com/mohayonao/wave-tables>
 
 * 已改为使用音频数据
 
