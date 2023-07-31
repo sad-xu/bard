@@ -41,10 +41,10 @@
         </p>
         <!-- :style="{ opacity: showTip ? '1' : '0' }" -->
         <!-- @click="showTip = !showTip" -->
-        <span style="color: #cfcfcf;">
+        <!-- <span style="color: #cfcfcf;">
           <span style="padding-left:8px;">1.0将于<span style="color: #ffeb3b;">2022.10.14</span><span style="color: #f00">停止服务</span>，请大家去用2.0吧</span>
           <a href="https://fffff.games" target="_blank" style="color: #ff9800;">2.0 传送门</a>
-        </span>
+        </span> -->
         <p v-if="!isMobile">
           Made with <span style="color: #e91e63;">❤</span>
         </p>
@@ -57,7 +57,7 @@
     <!-- 使用须知 -->
     <about-use></about-use>
     <!-- 公告 -->
-    <notice-dialog></notice-dialog>
+    <!-- <notice-dialog></notice-dialog> -->
     <!-- 乐谱选择 -->
     <music-score :filter="hasDialogOpended || showMusicScore"></music-score>
   </div>
@@ -70,7 +70,7 @@ import KeyboardMenu from './keyboardmenu/KeyboardMenu'
 import InstrumentMenu from './instrumentMenu/InstrumentMenu'
 import MusicScore from './musicScore/MusicScore'
 import AboutUse from './aboutUse/AboutUse'
-import NoticeDialog from './noticeDialog/NoticeDialog'
+// import NoticeDialog from './noticeDialog/NoticeDialog'
 
 const musician = new Music()
 
@@ -83,8 +83,8 @@ export default {
     KeyboardMenu,
     InstrumentMenu,
     MusicScore,
-    AboutUse,
-    NoticeDialog
+    AboutUse
+    // NoticeDialog
   },
   data() {
     return {

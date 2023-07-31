@@ -116,7 +116,7 @@ export default {
       this.isPlay = false
 
       const request = new XMLHttpRequest()
-      request.open('GET', `/mids/${item.name}.mid`, true)
+      request.open('GET', `./mids/${item.name}.mid`, true)
       request.responseType = 'arraybuffer'
       request.onload = () => {
         this.parseBinary(request.response)

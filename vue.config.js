@@ -10,7 +10,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-  publicPath: '/',
+  publicPath: '/bard',
   outputDir: 'dist',
   assetsDir: 'static',
   productionSourceMap: false,
@@ -32,7 +32,6 @@ module.exports = {
     }
   },
   pwa: {
-
     name: '光之演奏家',
     themeColor: '#343838',
     msTileColor: '#343838',
@@ -136,11 +135,11 @@ module.exports = {
         // 打包分析
         // new BundleAnalyzerPlugin()
       ]
-      config.externals = {
-        vue: 'Vue',
-        'vue-router': 'VueRouter',
-        vuex: 'Vuex'
-      }
+      // config.externals = {
+      //   vue: 'Vue',
+      //   'vue-router': 'VueRouter',
+      //   vuex: 'Vuex'
+      // }
     }
     config.plugins = [
       ...config.plugins,
@@ -156,19 +155,19 @@ module.exports = {
       .set('views', resolve('srv/views'))
 
     // 打包时使用cdn替换依赖
-    if (!isDev) {
-      config.plugin('html')
-        .tap(args => {
-          args[0].cdn = {
-            js: [
-              'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vue@2.6.js',
-              'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vue-router@3.2.js',
-              'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vuex@3.6.js'
-            ]
-          }
-          return args
-        })
-    }
+    // if (!isDev) {
+    //   config.plugin('html')
+    //     .tap(args => {
+    //       args[0].cdn = {
+    //         js: [
+    //           'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vue@2.6.js',
+    //           'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vue-router@3.2.js',
+    //           'https://ff14-3gaz7i4cedb8328b-1304999371.tcloudbaseapp.com/cdn/vuex@3.6.js'
+    //         ]
+    //       }
+    //       return args
+    //     })
+    // }
 
     // 去除 console
     config.optimization.minimizer('terser').tap(args => {

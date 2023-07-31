@@ -131,7 +131,7 @@ Music.setZone = function(name = 'ff-grandpiano') {
         ? instanceList[0].context
         : new window.AudioContext()
       const request = new XMLHttpRequest()
-      request.open('GET', `/soundfonts/${name}.json`, true)
+      request.open('GET', `./soundfonts/${name}.json`, true)
       request.responseType = 'json'
       request.onload = () => {
         const zoneList = request.response.map((z) => {
